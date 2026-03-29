@@ -760,7 +760,7 @@ nav {
       <span class="line2">Trova chi la costruisce</span><br>
       <span class="highlight">insieme a te.</span>
     </h1>
-    <p class="hero-sub">Dai videogiochi indie ai progetti architettonici. Ogni progetto è tuo — certificato con data e paternità. Apri le porte ai collaboratori giusti.</p>
+    <p class="hero-sub">Dai videogiochi indie ai progetti architettonici. Ogni progetto è tuo — registrato con data e autore su Crewtiv. Apri le porte ai collaboratori giusti.</p>
     <div class="hero-actions">
       <button class="btn btn-accent btn-lg" onclick="openNewProject()">Pubblica un progetto ✦</button>
       <button class="btn btn-ghost btn-lg" onclick="document.querySelector('.search-wrap').scrollIntoView({behavior:'smooth'})">Esplora i progetti</button>
@@ -851,7 +851,7 @@ nav {
       <div class="scard">
         <div class="scard-title">💡 Come funziona</div>
         <div class="how-steps">
-          <div class="hstep"><div class="hnum">1</div><div class="htext"><strong>Pubblica il progetto</strong><span>Paternità certificata con data. La tua idea, il tuo nome.</span></div></div>
+          <div class="hstep"><div class="hnum">1</div><div class="htext"><strong>Pubblica il progetto</strong><span>Il tuo progetto viene registrato con data e nome. Prova di anteriorità sulla piattaforma.</span></div></div>
           <div class="hstep"><div class="hnum">2</div><div class="htext"><strong>Ricevi proposte</strong><span>Gli interessati ti mandano richieste di collaborazione.</span></div></div>
           <div class="hstep"><div class="hnum">3</div><div class="htext"><strong>Accetta o declina</strong><span>Scegli tu chi entra nel team.</span></div></div>
           <div class="hstep"><div class="hnum">4</div><div class="htext"><strong>Costruite insieme</strong><span>Collaborazione trasparente, crediti condivisi.</span></div></div>
@@ -865,18 +865,28 @@ nav {
 
 <!-- ══════════════════ PROFILE PAGE ══════════════════ -->
 <div id="page-profile" class="page">
+  <!-- Complete profile banner -->
+  <div id="profileCompleteBanner" style="display:none;background:var(--accent-dim);border-bottom:1px solid rgba(200,255,87,0.2);padding:12px 32px;display:none;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:1">
+    <span style="font-size:13px;color:var(--text2)">✦ <strong style="color:var(--text)">Completa il tuo profilo</strong> — aggiungi bio e skills per essere notato dai creatori!</span>
+    <button class="btn btn-accent btn-sm" onclick="openEditProfile()">Completa ora →</button>
+  </div>
   <div class="profile-hero">
     <div class="profile-inner">
       <div class="profile-avatar" id="profileAvatar" style="background:#c8ff57">?</div>
-      <div>
+      <div style="flex:1">
         <div class="profile-name" id="profileName">—</div>
-        <div class="profile-bio" id="profileBio">Accedi per vedere il tuo profilo.</div>
-        <div class="profile-meta">
+        <div id="profileProfTitle" style="font-size:13px;color:var(--accent);margin-top:4px;font-weight:500"></div>
+        <div class="profile-bio" id="profileBio" style="margin-top:8px">Accedi per vedere il tuo profilo.</div>
+        <div id="profileSkillsWrap" style="display:none;margin-top:10px;display:flex;flex-wrap:wrap;gap:6px"></div>
+        <div class="profile-meta" style="margin-top:12px">
           <span class="pmeta-item">📅 Iscritto da <strong id="profileJoined">—</strong></span>
           <span class="pmeta-item">🗂 <strong id="profileProjectCount">0</strong> progetti</span>
         </div>
       </div>
-      <div class="profile-badge">✦ Creatore Verificato</div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        <div class="profile-badge">✦ Creatore Verificato</div>
+        <button class="btn btn-ghost btn-sm" onclick="openEditProfile()" id="editProfileBtn" style="display:none">Modifica profilo</button>
+      </div>
     </div>
   </div>
   <div class="profile-content">
@@ -1059,7 +1069,7 @@ nav {
             </div>
             <div class="act-item">
               <div class="act-dot" style="background:var(--purple)"></div>
-              <div><div class="act-text">Nuovo progetto <strong>EchoVerse RPG</strong> pubblicato e certificato</div><div class="act-time">3 giorni fa</div></div>
+              <div><div class="act-text">Nuovo progetto <strong>EchoVerse RPG</strong> pubblicato e registrato</div><div class="act-time">3 giorni fa</div></div>
             </div>
           </div>
         </div>
@@ -1176,8 +1186,71 @@ nav {
           </select>
         </div>
       </div>
-      <button class="btn btn-accent" style="margin-top:4px" onclick="submitNewProject()">Pubblica e certifica ✦</button>
-      <div class="form-note">🔒 Data e paternità vengono certificate automaticamente.</div>
+      <button class="btn btn-accent" style="margin-top:4px" onclick="submitNewProject()">Pubblica e registra ✦</button>
+      <div class="form-note">🔒 Data e autore vengono registrati automaticamente al momento della pubblicazione.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MODAL: EDIT PROJECT ══════════════ -->
+<div class="overlay" id="editProjectModal" onclick="closeIfBg(event,'editProjectModal')">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Modifica progetto</div>
+        <div class="modal-title" id="editProjectTitle">—</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('editProjectModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--surface3);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--text3)">
+        ℹ️ Il titolo e la categoria non sono modificabili — fanno parte della registrazione originale.
+      </div>
+      <div class="form-group">
+        <label class="form-label">Stato</label>
+        <select class="form-select" id="eStatus">
+          <option value="open">Aperto a collaborazioni</option>
+          <option value="progress">In corso</option>
+          <option value="closed">Chiuso</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descrizione</label>
+        <textarea class="form-textarea" id="eDesc" placeholder="Aggiorna la descrizione del progetto…"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tag <span style="color:var(--text3);font-weight:300">(separati da virgola)</span></label>
+        <input class="form-input" id="eTags" placeholder="Unity, C#, RPG…">
+      </div>
+      <button class="btn btn-accent" style="margin-top:4px" onclick="submitEditProject()">Salva modifiche ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MODAL: EDIT PROFILE ══════════════ -->
+<div class="overlay" id="editProfileModal" onclick="closeIfBg(event,'editProfileModal')">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Il tuo profilo</div>
+        <div class="modal-title">Modifica profilo</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('editProfileModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Titolo professionale</label>
+        <input class="form-input" id="epTitle" placeholder="es. Graphic Designer, Sviluppatore iOS, Architetto…">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bio</label>
+        <textarea class="form-textarea" id="epBio" placeholder="Raccontati — chi sei, cosa fai, cosa cerchi su Crewtiv…"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Skills <span style="color:var(--text3);font-weight:300">(separate da virgola)</span></label>
+        <input class="form-input" id="epSkills" placeholder="es. Figma, Unity, C#, Fotografia…">
+      </div>
+      <button class="btn btn-accent" style="margin-top:4px" onclick="submitEditProfile()">Salva profilo ✦</button>
     </div>
   </div>
 </div>
@@ -1224,7 +1297,7 @@ nav {
     <h2 style="font-family:'Syne',sans-serif;font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:32px;line-height:1.1">Ogni progetto creativo merita di trovare le persone giuste.</h2>
     <div style="font-size:15px;color:var(--text2);line-height:1.9;display:flex;flex-direction:column;gap:20px;font-weight:300">
       <p>Crewtiv nasce da un'idea semplice: ogni progetto creativo merita di trovare le persone giuste per prendere vita.</p>
-      <p>Siamo una piattaforma dove artisti, sviluppatori, architetti, musicisti e creativi di ogni tipo possono pubblicare le loro idee, certificarne la paternità e trovare collaboratori che condividono la stessa visione.</p>
+      <p>Siamo una piattaforma dove artisti, sviluppatori, architetti, musicisti e creativi di ogni tipo possono pubblicare le loro idee, registrarle con data e autore e trovare collaboratori che condividono la stessa visione.</p>
       <p>Ogni progetto pubblicato su Crewtiv è tuo — registrato con data e autore. Perché le idee hanno un valore, e chi le ha avute merita il riconoscimento.</p>
       <p>Siamo appena nati. Stiamo costruendo qualcosa di grande, un progetto alla volta.</p>
     </div>
@@ -1349,7 +1422,10 @@ function renderProjects(list, containerId='projectsList') {
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <span class="status-badge ${sMap[p.status]}">${sLabel[p.status]}</span>
-          ${isOwner ? `<button style="background:rgba(255,87,87,0.1);border:1px solid rgba(255,87,87,0.2);color:var(--red);font-size:11px;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:'Instrument Sans',sans-serif" onclick="event.stopPropagation();deleteProject('${p.id}')">Elimina</button>` : ''}
+          ${isOwner ? `
+            <button style="background:rgba(200,255,87,0.1);border:1px solid rgba(200,255,87,0.2);color:var(--accent);font-size:11px;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:'Instrument Sans',sans-serif" onclick="event.stopPropagation();openEditProject('${p.id}')">Modifica</button>
+            <button style="background:rgba(255,87,87,0.1);border:1px solid rgba(255,87,87,0.2);color:var(--red);font-size:11px;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:'Instrument Sans',sans-serif" onclick="event.stopPropagation();deleteProject('${p.id}')">Elimina</button>
+          ` : ''}
         </div>
       </div>
       <div class="pcard-title">${p.title}</div>
@@ -1478,10 +1554,10 @@ async function submitNewProject() {
     author_name: name,
     collab_type: document.getElementById('nCollab').value
   }).select().single();
-  btn.disabled = false; btn.textContent = 'Pubblica e certifica ✦';
+  btn.disabled = false; btn.textContent = 'Pubblica e registra ✦';
   if (error) { showToast('❌ Errore: ' + error.message); return; }
   closeModal('newProjectModal');
-  showToast('🎉 Progetto pubblicato e certificato!');
+  showToast('🎉 Progetto pubblicato e registrato!');
   ['nTitle','nDesc','nTags'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   await loadRealProjects();
 }
@@ -1578,11 +1654,32 @@ async function loadUserProfile() {
   const name = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
   const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   document.getElementById('profileName').textContent = name;
-  document.getElementById('profileBio').textContent = currentUser.email;
   document.getElementById('profileAvatar').textContent = initials;
   document.getElementById('statEmail').textContent = currentUser.email;
+  document.getElementById('editProfileBtn').style.display = 'inline-flex';
   const joined = new Date(currentUser.created_at).toLocaleDateString('it-IT', {month:'long', year:'numeric'});
   document.getElementById('profileJoined').textContent = joined;
+
+  // Load profile data from DB
+  const { data: profileData } = await _supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+  if (profileData) {
+    document.getElementById('profileProfTitle').textContent = profileData.title || '';
+    document.getElementById('profileBio').textContent = profileData.bio || '';
+    const skillsWrap = document.getElementById('profileSkillsWrap');
+    if (profileData.skills && profileData.skills.length > 0) {
+      skillsWrap.style.display = 'flex';
+      skillsWrap.innerHTML = profileData.skills.map(s=>`<span class="tag">${s}</span>`).join('');
+    } else {
+      skillsWrap.style.display = 'none';
+    }
+    // Show complete profile banner if bio is empty
+    const banner = document.getElementById('profileCompleteBanner');
+    if (!profileData.bio) { banner.style.display = 'flex'; } else { banner.style.display = 'none'; }
+  } else {
+    document.getElementById('profileBio').textContent = '';
+    document.getElementById('profileCompleteBanner').style.display = 'flex';
+  }
+
   // Load user's projects
   const { data } = await _supabase.from('projects').select('*').eq('author_id', currentUser.id).order('created_at', {ascending: false});
   const userProjects = (data||[]).map(p => ({
@@ -1604,6 +1701,62 @@ async function loadUserProfile() {
     document.getElementById('profileEmpty').style.display = 'none';
     renderProjects(userProjects, 'profileProjectsList');
   }
+}
+
+let editingProjectId = null;
+
+function openEditProject(id) {
+  const p = realProjects.find(p=>p.id===id);
+  if (!p) return;
+  editingProjectId = id;
+  document.getElementById('editProjectTitle').textContent = p.title;
+  document.getElementById('eStatus').value = p.status;
+  document.getElementById('eDesc').value = p.desc;
+  document.getElementById('eTags').value = p.tags.join(', ');
+  document.getElementById('editProjectModal').classList.add('open');
+}
+
+async function submitEditProject() {
+  if (!editingProjectId) return;
+  const status = document.getElementById('eStatus').value;
+  const desc = document.getElementById('eDesc').value;
+  const tags = document.getElementById('eTags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const btn = document.querySelector('#editProjectModal .btn-accent');
+  btn.disabled = true; btn.textContent = 'Salvataggio…';
+  const { error } = await _supabase.from('projects').update({ status, description: desc, tags }).eq('id', editingProjectId);
+  btn.disabled = false; btn.textContent = 'Salva modifiche ✦';
+  if (error) { showToast('❌ Errore: ' + error.message); return; }
+  closeModal('editProjectModal');
+  showToast('✅ Progetto aggiornato!');
+  await loadRealProjects();
+  await loadUserProfile();
+}
+
+function openEditProfile() {
+  document.getElementById('editProfileModal').classList.add('open');
+  // Pre-fill with existing data
+  _supabase.from('profiles').select('*').eq('id', currentUser.id).single().then(({data}) => {
+    if (data) {
+      document.getElementById('epTitle').value = data.title || '';
+      document.getElementById('epBio').value = data.bio || '';
+      document.getElementById('epSkills').value = (data.skills||[]).join(', ');
+    }
+  });
+}
+
+async function submitEditProfile() {
+  if (!currentUser) return;
+  const title = document.getElementById('epTitle').value.trim();
+  const bio = document.getElementById('epBio').value.trim();
+  const skills = document.getElementById('epSkills').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const btn = document.querySelector('#editProfileModal .btn-accent');
+  btn.disabled = true; btn.textContent = 'Salvataggio…';
+  const { error } = await _supabase.from('profiles').upsert({ id: currentUser.id, title, bio, skills });
+  btn.disabled = false; btn.textContent = 'Salva profilo ✦';
+  if (error) { showToast('❌ Errore: ' + error.message); return; }
+  closeModal('editProfileModal');
+  showToast('✅ Profilo aggiornato!');
+  await loadUserProfile();
 }
 
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
@@ -1723,7 +1876,7 @@ const i18n = {
     nav_login: 'Accedi', nav_register: 'Registrati', nav_logout: 'Esci', nav_new: '+ Nuovo Progetto',
     hero_eyebrow: 'La piattaforma per i creativi',
     hero_h1_1: 'Condividi la tua visione.', hero_h1_2: 'Trova chi la costruisce', hero_h1_3: 'insieme a te.',
-    hero_sub: 'Dai videogiochi indie ai progetti architettonici. Ogni progetto è tuo — certificato con data e paternità. Apri le porte ai collaboratori giusti.',
+    hero_sub: 'Dai videogiochi indie ai progetti architettonici. Ogni progetto è tuo — registrato con data e autore su Crewtiv. Apri le porte ai collaboratori giusti.',
     hero_cta1: 'Pubblica un progetto ✦', hero_cta2: 'Esplora i progetti',
     stat1: 'Progetti pubblicati', stat2: 'Creativi attivi', stat3: 'Proposte accettate', stat4: 'Categorie',
     search_placeholder: 'Cerca progetti, tecnologie, categorie…', search_btn: 'Cerca',
@@ -1732,7 +1885,7 @@ const i18n = {
     demo_banner: 'Questi sono <strong style="color:var(--text)">progetti di esempio</strong> — il sito è in beta.',
     demo_cta: 'Registrati per pubblicare il tuo →',
     how_title: '💡 Come funziona',
-    how1_t: 'Pubblica il progetto', how1_d: 'Paternità certificata con data. La tua idea, il tuo nome.',
+    how1_t: 'Pubblica il progetto', how1_d: 'Il tuo progetto viene registrato con data e nome. Prova di anteriorità sulla piattaforma.',
     how2_t: 'Ricevi proposte', how2_d: 'Gli interessati ti mandano richieste di collaborazione.',
     how3_t: 'Accetta o declina', how3_d: 'Scegli tu chi entra nel team.',
     how4_t: 'Costruite insieme', how4_d: 'Collaborazione trasparente, crediti condivisi.',
@@ -1757,8 +1910,8 @@ const i18n = {
     new_proj_cat: 'Categoria *', new_proj_status: 'Stato',
     new_proj_desc: 'Descrizione *', new_proj_desc_ph: 'Descrivi il tuo progetto — cosa stai costruendo, cosa ti ha ispirato, che collaboratori cerchi…',
     new_proj_tags: 'Tag', new_proj_tags_ph: 'Unity, C#, RPG, open-world…',
-    new_proj_collab: 'Tipo di collaborazione', new_proj_btn: 'Pubblica e certifica ✦',
-    new_proj_note: '🔒 Data e paternità vengono certificate automaticamente.',
+    new_proj_collab: 'Tipo di collaborazione', new_proj_btn: 'Pubblica e registra ✦',
+    new_proj_note: '🔒 Data e autore vengono registrati automaticamente al momento della pubblicazione.',
     status_open: 'Aperto a collaborazioni', status_progress: 'In corso', status_closed: 'Chiuso',
     sort_recent: 'Più recenti', sort_popular: 'Più popolari', sort_open: 'Cercano collaboratori',
   },
@@ -1767,7 +1920,7 @@ const i18n = {
     nav_login: 'Sign in', nav_register: 'Sign up', nav_logout: 'Sign out', nav_new: '+ New Project',
     hero_eyebrow: 'The platform for creatives',
     hero_h1_1: 'Share your vision.', hero_h1_2: 'Find who builds it', hero_h1_3: 'with you.',
-    hero_sub: 'From indie games to architectural projects. Every project is yours — certified with date and authorship. Open the doors to the right collaborators.',
+    hero_sub: 'From indie games to architectural projects. Every project is yours — registered with date and author on Crewtiv. Open the doors to the right collaborators.',
     hero_cta1: 'Publish a project ✦', hero_cta2: 'Explore projects',
     stat1: 'Published projects', stat2: 'Active creatives', stat3: 'Accepted proposals', stat4: 'Categories',
     search_placeholder: 'Search projects, technologies, categories…', search_btn: 'Search',
@@ -1776,7 +1929,7 @@ const i18n = {
     demo_banner: 'These are <strong style="color:var(--text)">example projects</strong> — the site is in beta.',
     demo_cta: 'Sign up to publish yours →',
     how_title: '💡 How it works',
-    how1_t: 'Publish your project', how1_d: 'Authorship certified with date. Your idea, your name.',
+    how1_t: 'Publish your project', how1_d: 'Your project is registered with date and name on Crewtiv. Proof of prior art on the platform.',
     how2_t: 'Receive proposals', how2_d: 'Interested people send you collaboration requests.',
     how3_t: 'Accept or decline', how3_d: 'You choose who joins the team.',
     how4_t: 'Build together', how4_d: 'Transparent collaboration, shared credits.',
@@ -1801,8 +1954,8 @@ const i18n = {
     new_proj_cat: 'Category *', new_proj_status: 'Status',
     new_proj_desc: 'Description *', new_proj_desc_ph: 'Describe your project — what you\'re building, what inspired you, what collaborators you\'re looking for…',
     new_proj_tags: 'Tags', new_proj_tags_ph: 'Unity, C#, RPG, open-world…',
-    new_proj_collab: 'Collaboration type', new_proj_btn: 'Publish & certify ✦',
-    new_proj_note: '🔒 Date and authorship are automatically certified.',
+    new_proj_collab: 'Collaboration type', new_proj_btn: 'Publish & register ✦',
+    new_proj_note: '🔒 Date and author are automatically registered at the time of publication.',
     status_open: 'Open to collaborations', status_progress: 'In progress', status_closed: 'Closed',
     sort_recent: 'Most recent', sort_popular: 'Most popular', sort_open: 'Looking for collaborators',
   }
