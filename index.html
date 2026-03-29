@@ -1178,7 +1178,7 @@ nav {
 </div>
 
 <!-- BETA POPUP -->
-<div class="beta-overlay open" id="betaOverlay">
+<div class="beta-overlay" id="betaOverlay">
   <div class="beta-box">
     <div class="beta-badge">✦ Beta</div>
     <div class="beta-title">Sei tra i primi su Crewtiv ✦</div>
@@ -1487,15 +1487,6 @@ function showToast(msg) {
   setTimeout(()=>t.classList.remove('show'), 3000);
 }
 
-function closeBeta() {
-  document.getElementById('betaOverlay').classList.remove('open');
-  sessionStorage.setItem('betaSeen', '1');
-}
-// Don't show again in same session
-if (sessionStorage.getItem('betaSeen')) {
-  document.getElementById('betaOverlay').classList.remove('open');
-}
-
 // ── AUTH ──────────────────────────────────────────
 let currentUser = null;
 let authMode = 'login';
@@ -1745,4 +1736,46 @@ function applyLang() {
   if (betaTitle) betaTitle.textContent = t.beta_title;
   const betaText = document.querySelector('.beta-text');
   if (betaText) betaText.innerHTML = t.beta_text;
-  const betaBtn = document.querySelec
+  const betaBtn = document.querySelector('.beta-btn');
+  if (betaBtn) betaBtn.textContent = t.beta_btn;
+  // Auth modal
+  document.getElementById('authSubtitle').textContent = authMode === 'login' ? t.auth_login_sub : t.auth_reg_sub;
+  document.getElementById('tabLogin').textContent = t.auth_tab_login;
+  document.getElementById('tabRegister').textContent = t.auth_tab_reg;
+  document.getElementById('authEmail').placeholder = t.auth_email;
+  document.getElementById('authPassword').placeholder = t.auth_password;
+  document.getElementById('authName').placeholder = t.auth_name;
+  document.getElementById('authSubmitBtn').textContent = authMode === 'login' ? t.auth_submit_login : t.auth_submit_reg;
+  document.getElementById('authNote').textContent = t.auth_note;
+  // Trending
+  const trendTitle = document.querySelector('.scard-title');
+  // How it works
+  const howSteps = document.querySelectorAll('.hstep .htext');
+  if (howSteps[0]) howSteps[0].innerHTML = `<strong>${t.how1_t}</strong><span>${t.how1_d}</span>`;
+  if (howSteps[1]) howSteps[1].innerHTML = `<strong>${t.how2_t}</strong><span>${t.how2_d}</span>`;
+  if (howSteps[2]) howSteps[2].innerHTML = `<strong>${t.how3_t}</strong><span>${t.how3_d}</span>`;
+  if (howSteps[3]) howSteps[3].innerHTML = `<strong>${t.how4_t}</strong><span>${t.how4_d}</span>`;
+  // Re-render projects with updated labels
+  renderProjects(filtered);
+}
+
+// Apply on load
+applyLang();
+
+// ── END I18N ──────────────────────────────────────
+
+// ── BETA POPUP ──────────────────────────────────────
+function closeBeta() {
+  document.getElementById('betaOverlay').classList.remove('open');
+  sessionStorage.setItem('betaSeen', '1');
+}
+if (!sessionStorage.getItem('betaSeen')) {
+  setTimeout(() => document.getElementById('betaOverlay').classList.add('open'), 500);
+}
+// ── END BETA POPUP ────────────────────────────────
+
+// Init
+renderProjects(projects);
+</script>
+</body>
+</html>
