@@ -603,6 +603,46 @@ nav {
 .act-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
 .act-time { font-size: 10px; color: var(--text3); margin-top: 2px; }
 
+/* BETA POPUP */
+.beta-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .3s;
+}
+.beta-overlay.open { opacity: 1; pointer-events: all; }
+.beta-box {
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 18px; padding: 32px 28px; width: 100%; max-width: 420px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+  text-align: center;
+}
+.beta-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--accent-dim); border: 1px solid rgba(200,255,87,0.25);
+  color: var(--accent); padding: 5px 14px; border-radius: 100px;
+  font-size: 11px; font-weight: 600; letter-spacing: .8px;
+  text-transform: uppercase; margin-bottom: 18px;
+}
+.beta-title {
+  font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800;
+  color: var(--text); letter-spacing: -.5px; margin-bottom: 12px;
+}
+.beta-text {
+  font-size: 13px; color: var(--text2); line-height: 1.75;
+  margin-bottom: 24px; font-weight: 300;
+}
+.beta-text strong { color: var(--text); font-weight: 500; }
+.beta-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px; border-radius: 10px;
+  background: var(--accent); color: #0a0a0f;
+  border: none; font-family: 'Instrument Sans', sans-serif;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: background .2s;
+}
+.beta-btn:hover { background: #d4ff6a; }
+
 /* AUTH MODAL */
 .auth-overlay {
   position: fixed; inset: 0; z-index: 200;
@@ -694,14 +734,17 @@ nav {
 <nav>
   <a class="nav-logo" href="#" onclick="showPage('home')">Crewtiv<span class="dot">.</span></a>
   <div class="nav-center">
-    <button class="nav-link active" id="nav-home" onclick="showPage('home')">Home</button>
-    <button class="nav-link" id="nav-messages" onclick="showPage('messages')">Messaggi</button>
-    <button class="nav-link" id="nav-dashboard" onclick="showPage('dashboard')">Dashboard</button>
-    <button class="nav-link" id="nav-profile" onclick="showPage('profile')">Profilo</button>
+    <button class="nav-link active" id="nav-home" onclick="showPage('home')" data-i18n="nav_home">Home</button>
+    <button class="nav-link" id="nav-messages" onclick="showPage('messages')" data-i18n="nav_messages">Messaggi</button>
+    <button class="nav-link" id="nav-dashboard" onclick="showPage('dashboard')" data-i18n="nav_dashboard">Dashboard</button>
+    <button class="nav-link" id="nav-profile" onclick="showPage('profile')" data-i18n="nav_profile">Profilo</button>
   </div>
-  <div class="nav-right" id="navRight">
-    <button class="btn btn-ghost btn-sm" onclick="openAuth('login')">Accedi</button>
-    <button class="btn btn-accent btn-sm" onclick="openAuth('register')">Registrati</button>
+  <div style="display:flex;align-items:center;gap:10px">
+    <button onclick="setLang(currentLang==='it'?'en':'it')" style="background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all .2s" id="langToggle">EN</button>
+    <div class="nav-right" id="navRight">
+      <button class="btn btn-ghost btn-sm" onclick="openAuth('login')" data-i18n="nav_login">Accedi</button>
+      <button class="btn btn-accent btn-sm" onclick="openAuth('register')" data-i18n="nav_register">Registrati</button>
+    </div>
   </div>
 </nav>
 
@@ -710,7 +753,7 @@ nav {
 
   <section class="hero">
     <div class="hero-glow"></div>
-    <div class="hero-eyebrow">🎮 La piattaforma per i creativi</div>
+    <div class="hero-eyebrow">La piattaforma per i creativi</div>
     <h1>
       Condividi la tua visione.<br>
       <span class="line2">Trova chi la costruisce</span><br>
@@ -766,6 +809,10 @@ nav {
           <option value="open">Cercano collaboratori</option>
         </select>
       </div>
+      <div style="background:var(--accent-dim);border:1px solid rgba(200,255,87,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:16px">✦</span>
+        <span style="font-size:13px;color:var(--text2)"><span id="demoBannerText">Questi sono <strong style="color:var(--text)">progetti di esempio</strong> — il sito è in beta.</span> <span id="demoBannerCta" style="color:var(--accent);cursor:pointer;font-weight:500" onclick="openAuth('register')">Registrati per pubblicare il tuo →</span></span>
+      </div>
       <div class="projects-list" id="projectsList"></div>
     </div>
 
@@ -803,23 +850,6 @@ nav {
         <button class="btn btn-accent" style="width:100%;margin-top:16px;justify-content:center" onclick="openNewProject()">Pubblica ora ✦</button>
       </div>
 
-      <div class="scard">
-        <div class="scard-title">💰 Prezzi</div>
-        <div class="pricing-tiers">
-          <div class="ptier free">
-            <div class="ptier-head"><span class="ptier-name">Gratis</span><span class="ptier-price">€0</span></div>
-            <div class="ptier-desc">2 pubblicazioni al mese. Accesso completo alla community.</div>
-          </div>
-          <div class="ptier paid">
-            <div class="ptier-head"><span class="ptier-name">Pay-per-publish</span><span class="ptier-price">€2–5</span></div>
-            <div class="ptier-desc">Pubblica oltre le 2 gratuite. Paghi solo quando ne hai bisogno.</div>
-          </div>
-          <div class="ptier boost">
-            <div class="ptier-head"><span class="ptier-name">Boost</span><span class="ptier-price">da €3</span></div>
-            <div class="ptier-desc">Metti il tuo progetto in evidenza in home per massima visibilità.</div>
-          </div>
-        </div>
-      </div>
     </aside>
   </div>
 </div>
@@ -1056,23 +1086,29 @@ nav {
         <div class="collab-list" id="mCollabs"></div>
       </div>
       <div id="mProposeSection">
-        <div class="msec-title">PROPONI COLLABORAZIONE</div>
-        <div class="form-group">
-          <label class="form-label">Il tuo ruolo</label>
-          <input class="form-input" id="propRole" placeholder="es. Dev backend, 3D artist, compositore…">
+        <div class="msec-title" data-i18n-propose-title>PROPONI COLLABORAZIONE</div>
+        <div id="proposeDemoNotice" style="display:none;background:var(--accent-dim);border:1px solid rgba(200,255,87,0.2);border-radius:10px;padding:16px;text-align:center;margin-bottom:12px">
+          <div style="font-size:13px;color:var(--text2);margin-bottom:12px" id="proposeDemoText">✦ Questo è un progetto di esempio. Registrati e pubblica il tuo per ricevere proposte reali!</div>
+          <button class="btn btn-accent btn-sm" onclick="closeModal('projectModal');openAuth('register')" id="proposeDemoBtn">Registrati gratis →</button>
         </div>
-        <div class="form-group">
-          <label class="form-label">Tipo di collaborazione</label>
-          <select class="form-select" id="propType">
-            <option>Volontaria</option>
-            <option>Retribuita — da discutere</option>
-          </select>
+        <div id="proposeForm">
+          <div class="form-group">
+            <label class="form-label" data-i18n="propose_role">Il tuo ruolo</label>
+            <input class="form-input" id="propRole" placeholder="es. Dev backend, 3D artist, compositore…">
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="propose_type">Tipo di collaborazione</label>
+            <select class="form-select" id="propType">
+              <option>Volontaria</option>
+              <option>Retribuita — da discutere</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="propose_msg">Messaggio per il creatore</label>
+            <textarea class="form-textarea" id="propMsg" placeholder="Racconta cosa puoi portare al progetto…"></textarea>
+          </div>
+          <button class="btn btn-accent" onclick="submitProposal()" data-i18n="propose_btn">Invia proposta →</button>
         </div>
-        <div class="form-group">
-          <label class="form-label">Messaggio per il creatore</label>
-          <textarea class="form-textarea" id="propMsg" placeholder="Racconta cosa puoi portare al progetto…"></textarea>
-        </div>
-        <button class="btn btn-accent" onclick="submitProposal()">Invia proposta →</button>
       </div>
     </div>
   </div>
@@ -1138,6 +1174,19 @@ nav {
       <button class="btn btn-accent" style="margin-top:4px" onclick="submitNewProject()">Pubblica e certifica ✦</button>
       <div class="form-note">🔒 Data e paternità vengono certificate automaticamente.</div>
     </div>
+  </div>
+</div>
+
+<!-- BETA POPUP -->
+<div class="beta-overlay open" id="betaOverlay">
+  <div class="beta-box">
+    <div class="beta-badge">✦ Beta</div>
+    <div class="beta-title">Sei tra i primi su Crewtiv ✦</div>
+    <div class="beta-text">
+      La piattaforma è appena nata. Per ora tutto è <strong>gratuito</strong> — esplora, pubblica, collabora.<br><br>
+      Quando lanceremo ufficialmente ti avviseremo in anticipo sulle tariffe.
+    </div>
+    <button class="beta-btn" onclick="closeBeta()">Entra nella beta →</button>
   </div>
 </div>
 
@@ -1294,7 +1343,18 @@ function openProjectById(id) {
       <span class="cstatus ${c.s==='accepted'?'cs-accepted':'cs-pending'}">${c.s==='accepted'?'✓ Accettato':'⏳ In attesa'}</span>
     </div>`).join('') : '<div style="font-size:12px;color:var(--text3);padding:8px 0">Nessun collaboratore ancora — sii il primo!</div>';
   const ps = document.getElementById('mProposeSection');
-  if (p.status==='closed') ps.innerHTML = '<div style="padding:14px;background:var(--surface2);border-radius:8px;font-size:13px;color:var(--text3);text-align:center">Questo progetto non accetta più proposte.</div>';
+  const demoNotice = document.getElementById('proposeDemoNotice');
+  const proposeForm = document.getElementById('proposeForm');
+  const t = i18n[currentLang];
+  if (p.status==='closed') {
+    ps.innerHTML = `<div style="padding:14px;background:var(--surface2);border-radius:8px;font-size:13px;color:var(--text3);text-align:center">${currentLang==='it'?'Questo progetto non accetta più proposte.':'This project is no longer accepting proposals.'}</div>`;
+  } else {
+    // All current projects are demo
+    demoNotice.style.display = 'block';
+    proposeForm.style.display = 'none';
+    document.getElementById('proposeDemoText').textContent = t.propose_demo;
+    document.getElementById('proposeDemoBtn').textContent = t.propose_demo_btn;
+  }
   document.getElementById('projectModal').classList.add('open');
 }
 
@@ -1384,6 +1444,15 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+function closeBeta() {
+  document.getElementById('betaOverlay').classList.remove('open');
+  sessionStorage.setItem('betaSeen', '1');
+}
+// Don't show again in same session
+if (sessionStorage.getItem('betaSeen')) {
+  document.getElementById('betaOverlay').classList.remove('open');
 }
 
 // ── AUTH ──────────────────────────────────────────
@@ -1483,6 +1552,185 @@ _supabase.auth.getSession().then(({ data: { session } }) => {
 });
 
 // ── END AUTH ──────────────────────────────────────
+
+// ── I18N ──────────────────────────────────────────
+let currentLang = localStorage.getItem('lang') || 'it';
+
+const i18n = {
+  it: {
+    nav_home: 'Home', nav_messages: 'Messaggi', nav_dashboard: 'Dashboard', nav_profile: 'Profilo',
+    nav_login: 'Accedi', nav_register: 'Registrati', nav_logout: 'Esci', nav_new: '+ Nuovo Progetto',
+    hero_eyebrow: 'La piattaforma per i creativi',
+    hero_h1_1: 'Condividi la tua visione.', hero_h1_2: 'Trova chi la costruisce', hero_h1_3: 'insieme a te.',
+    hero_sub: 'Dai videogiochi indie ai progetti architettonici. Ogni progetto è tuo — certificato con data e paternità. Apri le porte ai collaboratori giusti.',
+    hero_cta1: 'Pubblica un progetto ✦', hero_cta2: 'Esplora i progetti',
+    stat1: 'Progetti pubblicati', stat2: 'Creativi attivi', stat3: 'Proposte accettate', stat4: 'Categorie',
+    search_placeholder: 'Cerca progetti, tecnologie, categorie…', search_btn: 'Cerca',
+    filter_label: 'Filtra:', filter_all: 'Tutti',
+    projects_title: 'Ultimi progetti',
+    demo_banner: 'Questi sono <strong style="color:var(--text)">progetti di esempio</strong> — il sito è in beta.',
+    demo_cta: 'Registrati per pubblicare il tuo →',
+    how_title: '💡 Come funziona',
+    how1_t: 'Pubblica il progetto', how1_d: 'Paternità certificata con data. La tua idea, il tuo nome.',
+    how2_t: 'Ricevi proposte', how2_d: 'Gli interessati ti mandano richieste di collaborazione.',
+    how3_t: 'Accetta o declina', how3_d: 'Scegli tu chi entra nel team.',
+    how4_t: 'Costruite insieme', how4_d: 'Collaborazione trasparente, crediti condivisi.',
+    how_btn: 'Pubblica ora ✦',
+    trending_title: '🔥 In tendenza',
+    beta_badge: '✦ Beta',
+    beta_title: 'Sei tra i primi su Crewtiv ✦',
+    beta_text: 'La piattaforma è appena nata. Per ora tutto è <strong>gratuito</strong> — esplora, pubblica, collabora.<br><br>Quando lanceremo ufficialmente ti avviseremo in anticipo sulle tariffe.',
+    beta_btn: 'Entra nella beta →',
+    auth_login_sub: 'Bentornato su Crewtiv!', auth_reg_sub: 'Crea il tuo account gratuito',
+    auth_tab_login: 'Accedi', auth_tab_reg: 'Registrati',
+    auth_email: 'Email', auth_password: 'Password', auth_name: 'Il tuo nome (es. Marco Ferretti)',
+    auth_submit_login: 'Accedi', auth_submit_reg: 'Crea account',
+    auth_note: 'Creando un account accetti i termini di servizio.',
+    propose_title: 'PROPONI COLLABORAZIONE', propose_role: 'Il tuo ruolo', propose_role_ph: 'es. Dev backend, 3D artist, compositore…',
+    propose_type: 'Tipo di collaborazione', propose_msg: 'Messaggio per il creatore', propose_msg_ph: 'Racconta cosa puoi portare al progetto…',
+    propose_btn: 'Invia proposta →',
+    propose_demo: '✦ Questo è un progetto di esempio. Registrati e pubblica il tuo per ricevere proposte reali!',
+    propose_demo_btn: 'Registrati gratis →',
+    new_proj_label: 'Nuovo progetto', new_proj_title: 'Pubblica il tuo progetto',
+    new_proj_t: 'Titolo del progetto *', new_proj_t_ph: 'Un titolo chiaro e accattivante…',
+    new_proj_cat: 'Categoria *', new_proj_status: 'Stato',
+    new_proj_desc: 'Descrizione *', new_proj_desc_ph: 'Descrivi il tuo progetto — cosa stai costruendo, cosa ti ha ispirato, che collaboratori cerchi…',
+    new_proj_tags: 'Tag', new_proj_tags_ph: 'Unity, C#, RPG, open-world…',
+    new_proj_collab: 'Tipo di collaborazione', new_proj_btn: 'Pubblica e certifica ✦',
+    new_proj_note: '🔒 Data e paternità vengono certificate automaticamente.',
+    status_open: 'Aperto a collaborazioni', status_progress: 'In corso', status_closed: 'Chiuso',
+    sort_recent: 'Più recenti', sort_popular: 'Più popolari', sort_open: 'Cercano collaboratori',
+  },
+  en: {
+    nav_home: 'Home', nav_messages: 'Messages', nav_dashboard: 'Dashboard', nav_profile: 'Profile',
+    nav_login: 'Sign in', nav_register: 'Sign up', nav_logout: 'Sign out', nav_new: '+ New Project',
+    hero_eyebrow: 'The platform for creatives',
+    hero_h1_1: 'Share your vision.', hero_h1_2: 'Find who builds it', hero_h1_3: 'with you.',
+    hero_sub: 'From indie games to architectural projects. Every project is yours — certified with date and authorship. Open the doors to the right collaborators.',
+    hero_cta1: 'Publish a project ✦', hero_cta2: 'Explore projects',
+    stat1: 'Published projects', stat2: 'Active creatives', stat3: 'Accepted proposals', stat4: 'Categories',
+    search_placeholder: 'Search projects, technologies, categories…', search_btn: 'Search',
+    filter_label: 'Filter:', filter_all: 'All',
+    projects_title: 'Latest projects',
+    demo_banner: 'These are <strong style="color:var(--text)">example projects</strong> — the site is in beta.',
+    demo_cta: 'Sign up to publish yours →',
+    how_title: '💡 How it works',
+    how1_t: 'Publish your project', how1_d: 'Authorship certified with date. Your idea, your name.',
+    how2_t: 'Receive proposals', how2_d: 'Interested people send you collaboration requests.',
+    how3_t: 'Accept or decline', how3_d: 'You choose who joins the team.',
+    how4_t: 'Build together', how4_d: 'Transparent collaboration, shared credits.',
+    how_btn: 'Publish now ✦',
+    trending_title: '🔥 Trending',
+    beta_badge: '✦ Beta',
+    beta_title: "You're among the first on Crewtiv ✦",
+    beta_text: "The platform just launched. For now everything is <strong>free</strong> — explore, publish, collaborate.<br><br>When we officially launch, we'll let you know about pricing in advance.",
+    beta_btn: 'Enter the beta →',
+    auth_login_sub: 'Welcome back to Crewtiv!', auth_reg_sub: 'Create your free account',
+    auth_tab_login: 'Sign in', auth_tab_reg: 'Sign up',
+    auth_email: 'Email', auth_password: 'Password', auth_name: 'Your name (e.g. Marco Ferretti)',
+    auth_submit_login: 'Sign in', auth_submit_reg: 'Create account',
+    auth_note: 'By creating an account you agree to the terms of service.',
+    propose_title: 'PROPOSE COLLABORATION', propose_role: 'Your role', propose_role_ph: 'e.g. Backend dev, 3D artist, composer…',
+    propose_type: 'Collaboration type', propose_msg: 'Message to the creator', propose_msg_ph: 'Tell them what you can bring to the project…',
+    propose_btn: 'Send proposal →',
+    propose_demo: '✦ This is an example project. Sign up and publish yours to receive real proposals!',
+    propose_demo_btn: 'Sign up for free →',
+    new_proj_label: 'New project', new_proj_title: 'Publish your project',
+    new_proj_t: 'Project title *', new_proj_t_ph: 'A clear and catchy title…',
+    new_proj_cat: 'Category *', new_proj_status: 'Status',
+    new_proj_desc: 'Description *', new_proj_desc_ph: 'Describe your project — what you\'re building, what inspired you, what collaborators you\'re looking for…',
+    new_proj_tags: 'Tags', new_proj_tags_ph: 'Unity, C#, RPG, open-world…',
+    new_proj_collab: 'Collaboration type', new_proj_btn: 'Publish & certify ✦',
+    new_proj_note: '🔒 Date and authorship are automatically certified.',
+    status_open: 'Open to collaborations', status_progress: 'In progress', status_closed: 'Closed',
+    sort_recent: 'Most recent', sort_popular: 'Most popular', sort_open: 'Looking for collaborators',
+  }
+};
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('lang', lang);
+  document.getElementById('langToggle').textContent = lang === 'it' ? 'EN' : 'IT';
+  applyLang();
+}
+
+function applyLang() {
+  const t = i18n[currentLang];
+  // Nav
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key]) el.textContent = t[key];
+  });
+  // Hero
+  const eyebrow = document.querySelector('.hero-eyebrow');
+  if (eyebrow) eyebrow.textContent = t.hero_eyebrow;
+  const h1lines = document.querySelectorAll('.hero h1 .line1, .hero h1 .line2, .hero h1 .highlight');
+  const heroH1 = document.querySelector('.hero h1');
+  if (heroH1) heroH1.innerHTML = `${t.hero_h1_1}<br><span class="line2">${t.hero_h1_2}</span><br><span class="highlight">${t.hero_h1_3}</span>`;
+  const heroSub = document.querySelector('.hero-sub');
+  if (heroSub) heroSub.textContent = t.hero_sub;
+  const heroCta1 = document.querySelector('.hero-actions .btn-accent');
+  if (heroCta1) heroCta1.textContent = t.hero_cta1;
+  const heroCta2 = document.querySelector('.hero-actions .btn-ghost');
+  if (heroCta2) heroCta2.textContent = t.hero_cta2;
+  // Stats
+  const statLabels = document.querySelectorAll('.stat-label');
+  if (statLabels[0]) statLabels[0].textContent = t.stat1;
+  if (statLabels[1]) statLabels[1].textContent = t.stat2;
+  if (statLabels[2]) statLabels[2].textContent = t.stat3;
+  if (statLabels[3]) statLabels[3].textContent = t.stat4;
+  // Search
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) searchInput.placeholder = t.search_placeholder;
+  const searchBtn = document.querySelector('.search-btn');
+  if (searchBtn) searchBtn.textContent = t.search_btn;
+  // Filter
+  const catsLabel = document.querySelector('.cats-label');
+  if (catsLabel) catsLabel.textContent = t.filter_label;
+  const allPill = document.querySelector('.cat-pill');
+  if (allPill) allPill.textContent = t.filter_all;
+  // Projects title
+  const projTitle = document.querySelector('.projects-title');
+  if (projTitle) projTitle.textContent = t.projects_title;
+  // Demo banner
+  const demoBanner = document.getElementById('demoBannerText');
+  if (demoBanner) demoBanner.innerHTML = t.demo_banner;
+  const demoCta = document.getElementById('demoBannerCta');
+  if (demoCta) demoCta.textContent = t.demo_cta;
+  // Beta popup
+  const betaBadge = document.querySelector('.beta-badge');
+  if (betaBadge) betaBadge.textContent = t.beta_badge;
+  const betaTitle = document.querySelector('.beta-title');
+  if (betaTitle) betaTitle.textContent = t.beta_title;
+  const betaText = document.querySelector('.beta-text');
+  if (betaText) betaText.innerHTML = t.beta_text;
+  const betaBtn = document.querySelector('.beta-btn');
+  if (betaBtn) betaBtn.textContent = t.beta_btn;
+  // Auth modal
+  document.getElementById('authSubtitle').textContent = authMode === 'login' ? t.auth_login_sub : t.auth_reg_sub;
+  document.getElementById('tabLogin').textContent = t.auth_tab_login;
+  document.getElementById('tabRegister').textContent = t.auth_tab_reg;
+  document.getElementById('authEmail').placeholder = t.auth_email;
+  document.getElementById('authPassword').placeholder = t.auth_password;
+  document.getElementById('authName').placeholder = t.auth_name;
+  document.getElementById('authSubmitBtn').textContent = authMode === 'login' ? t.auth_submit_login : t.auth_submit_reg;
+  document.getElementById('authNote').textContent = t.auth_note;
+  // Trending
+  const trendTitle = document.querySelector('.scard-title');
+  // How it works
+  const howSteps = document.querySelectorAll('.hstep .htext');
+  if (howSteps[0]) howSteps[0].innerHTML = `<strong>${t.how1_t}</strong><span>${t.how1_d}</span>`;
+  if (howSteps[1]) howSteps[1].innerHTML = `<strong>${t.how2_t}</strong><span>${t.how2_d}</span>`;
+  if (howSteps[2]) howSteps[2].innerHTML = `<strong>${t.how3_t}</strong><span>${t.how3_d}</span>`;
+  if (howSteps[3]) howSteps[3].innerHTML = `<strong>${t.how4_t}</strong><span>${t.how4_d}</span>`;
+  // Re-render projects with updated labels
+  renderProjects(filtered);
+}
+
+// Apply on load
+applyLang();
+
+// ── END I18N ──────────────────────────────────────
 
 // Init
 renderProjects(projects);
