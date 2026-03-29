@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crewtiv — Condividi la tua visione. Costruisci il tuo team.</title>
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-K8WGWDESEM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-K8WGWDESEM');
+</script>
+
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "w3e5hsa0gv");
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #111118;
+  --surface2: #16161f;
+  --surface3: #1c1c28;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #f0eee8;
+  --text2: #9896a0;
+  --text3: #5a5864;
+  --accent: #c8ff57;
+  --accent-dim: rgba(200,255,87,0.12);
+  --accent-glow: rgba(200,255,87,0.25);
+  --red: #ff5757;
+  --blue: #57b4ff;
+  --purple: #b057ff;
+  --orange: #ff9d57;
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* NOISE OVERLAY */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; opacity: .4;
+}
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; height: 62px;
+  background: rgba(10,10,15,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 20px;
+  color: var(--text); text-decoration: none;
+  letter-spacing: -0.5px;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav-logo .dot { color: var(--accent); }
+.nav-center { display: flex; gap: 6px; }
+.nav-link {
+  padding: 6px 14px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; color: var(--text2);
+  text-decoration: none; transition: all .2s; cursor: pointer;
+  border: none; background: none;
+  font-family: 'Instrument Sans', sans-serif;
+}
+.nav-link:hover { color: var(--text); background: var(--surface2); }
+.nav-link.active { color: var(--text); background: var(--surface3); }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border-radius: 8px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all .2s;
+  border: none; text-decoration: none;
+}
+.btn-ghost {
+  background: transparent; color: var(--text2);
+  border: 1px solid var(--border2);
+}
+.btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
+.btn-accent {
+  background: var(--accent); color: #0a0a0f;
+  font-weight: 600;
+}
+.btn-accent:hover { background: #d4ff6a; transform: translateY(-1px); box-shadow: 0 4px 20px var(--accent-glow); }
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+
+/* HERO */
+.hero {
+  position: relative; z-index: 1;
+  padding: 90px 32px 80px;
+  text-align: center;
+  max-width: 900px; margin: 0 auto;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent-dim); border: 1px solid rgba(200,255,87,0.2);
+  color: var(--accent); padding: 5px 14px; border-radius: 100px;
+  font-size: 12px; font-weight: 500; letter-spacing: .5px;
+  margin-bottom: 32px;
+}
+.hero-eyebrow::before {
+  content: ''; width: 5px; height: 5px;
+  background: var(--accent); border-radius: 50%;
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
+
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(42px, 7vw, 76px);
+  font-weight: 800; line-height: 1.0;
+  letter-spacing: -2.5px; color: var(--text);
+  margin-bottom: 24px;
+}
+.hero h1 .line2 { color: var(--text3); }
+.hero h1 .highlight {
+  color: var(--accent);
+  position: relative; display: inline-block;
+}
+.hero-sub {
+  font-size: 17px; color: var(--text2);
+  max-width: 520px; margin: 0 auto 40px;
+  line-height: 1.75; font-weight: 300;
+}
+.hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-lg { padding: 13px 28px; font-size: 15px; border-radius: 10px; }
+
+.hero-glow {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 300px;
+  background: radial-gradient(ellipse, rgba(200,255,87,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* STATS */
+.stats-bar {
+  position: relative; z-index: 1;
+  display: flex; justify-content: center; gap: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  overflow: hidden;
+}
+.stat-item {
+  flex: 1; max-width: 200px;
+  padding: 28px 20px; text-align: center;
+  border-right: 1px solid var(--border);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 30px; font-weight: 800;
+  color: var(--text); letter-spacing: -1px;
+}
+.stat-num span { color: var(--accent); }
+.stat-label { font-size: 12px; color: var(--text3); margin-top: 4px; letter-spacing: .3px; }
+
+/* SEARCH */
+.search-wrap {
+  position: relative; z-index: 1;
+  padding: 40px 32px 0;
+  max-width: 1100px; margin: 0 auto;
+}
+.search-row {
+  display: flex; gap: 10px; align-items: center;
+}
+.search-box {
+  flex: 1; display: flex; align-items: center;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 10px; overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+.search-box:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+.search-box input {
+  flex:1; padding: 13px 16px; background: transparent;
+  border: none; outline: none; color: var(--text);
+  font-family: 'Instrument Sans', sans-serif; font-size: 14px;
+}
+.search-box input::placeholder { color: var(--text3); }
+.search-icon { padding: 0 14px; color: var(--text3); font-size: 16px; }
+.search-btn {
+  padding: 10px 18px; margin: 4px;
+  background: var(--accent); color: #0a0a0f;
+  border: none; border-radius: 7px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: background .2s;
+}
+.search-btn:hover { background: #d4ff6a; }
+
+/* CATEGORIES */
+.cats-wrap {
+  position: relative; z-index: 1;
+  padding: 24px 32px 0;
+  max-width: 1100px; margin: 0 auto;
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+}
+.cats-label { font-size: 12px; color: var(--text3); font-weight: 500; margin-right: 4px; }
+.cat-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 100px;
+  background: var(--surface); border: 1px solid var(--border);
+  font-size: 12px; font-weight: 500; color: var(--text2);
+  cursor: pointer; transition: all .2s;
+}
+.cat-pill:hover { border-color: var(--border2); color: var(--text); }
+.cat-pill.active {
+  background: var(--accent-dim); border-color: rgba(200,255,87,0.3);
+  color: var(--accent);
+}
+
+/* MAIN LAYOUT */
+.main {
+  position: relative; z-index: 1;
+  max-width: 1100px; margin: 0 auto;
+  padding: 40px 32px 100px;
+  display: grid; grid-template-columns: 1fr 300px; gap: 32px;
+}
+
+/* PROJECTS */
+.projects-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.projects-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px; font-weight: 700; color: var(--text);
+}
+.projects-meta { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.sort-select {
+  padding: 7px 12px; border-radius: 8px;
+  background: var(--surface); border: 1px solid var(--border2);
+  color: var(--text2); font-family: 'Instrument Sans', sans-serif;
+  font-size: 12px; outline: none; cursor: pointer;
+}
+
+.projects-list { display: flex; flex-direction: column; gap: 16px; }
+
+/* PROJECT CARD */
+.pcard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s, transform .2s;
+  animation: fadeUp .35s both;
+  position: relative; overflow: hidden;
+}
+.pcard::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  opacity: 0; transition: opacity .3s;
+}
+.pcard:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+.pcard:hover::before { opacity: 1; }
+.pcard.featured {
+  background: linear-gradient(135deg, #13131e 0%, #0f0f1a 100%);
+  border-color: rgba(200,255,87,0.2);
+}
+.pcard.featured:hover { border-color: rgba(200,255,87,0.4); box-shadow: 0 8px 40px rgba(200,255,87,0.08); }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(14px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+.pcard-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.pcard-author { display: flex; align-items: center; gap: 10px; }
+.avatar {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px; font-weight: 700; color: #0a0a0f; flex-shrink: 0;
+}
+.author-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.author-date { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.status-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 100px;
+  font-size: 11px; font-weight: 600;
+}
+.status-badge::before { content:''; width:5px; height:5px; border-radius:50%; }
+.s-open { background: rgba(87,255,133,0.1); color: #57ff85; }
+.s-open::before { background: #57ff85; }
+.s-progress { background: rgba(255,157,87,0.1); color: var(--orange); }
+.s-progress::before { background: var(--orange); }
+.s-closed { background: rgba(255,87,87,0.1); color: var(--red); }
+.s-closed::before { background: var(--red); }
+
+.featured-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 8px; display: flex; align-items: center; gap: 5px;
+}
+.pcard-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 19px; font-weight: 700;
+  color: var(--text); margin-bottom: 8px;
+  letter-spacing: -0.4px; line-height: 1.25;
+}
+.pcard-desc {
+  font-size: 13px; color: var(--text2);
+  line-height: 1.7; margin-bottom: 14px;
+  font-weight: 300;
+}
+.pcard-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.tag {
+  padding: 3px 10px; border-radius: 6px;
+  background: var(--surface3); color: var(--text3);
+  font-size: 11px; font-weight: 500; border: 1px solid var(--border);
+}
+.pcard-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 14px; border-top: 1px solid var(--border);
+}
+.pcard-stats { display: flex; gap: 16px; }
+.pstat { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 4px; }
+.pcard-action .btn-accent { padding: 7px 14px; font-size: 12px; border-radius: 7px; }
+
+/* SIDEBAR */
+.sidebar { display: flex; flex-direction: column; gap: 20px; }
+.scard {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+}
+.scard-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px; font-weight: 700; color: var(--text);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+
+.trending-list { display: flex; flex-direction: column; gap: 12px; }
+.titem { display: flex; gap: 12px; cursor: pointer; padding: 8px; border-radius: 8px; transition: background .2s; }
+.titem:hover { background: var(--surface2); }
+.trank {
+  font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800;
+  color: var(--border2); line-height: 1; min-width: 20px;
+}
+.ttitle { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; }
+.tmeta { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+.how-steps { display: flex; flex-direction: column; gap: 14px; }
+.hstep { display: flex; gap: 12px; align-items: flex-start; }
+.hnum {
+  width: 24px; height: 24px; border-radius: 6px;
+  background: var(--accent-dim); color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+  border: 1px solid rgba(200,255,87,0.2);
+}
+.htext strong { font-size: 12px; font-weight: 600; color: var(--text); display: block; margin-bottom: 2px; }
+.htext span { font-size: 11px; color: var(--text3); line-height: 1.5; }
+
+.pricing-tiers { display: flex; flex-direction: column; gap: 10px; }
+.ptier {
+  padding: 12px 14px; border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+}
+.ptier-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.ptier-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.ptier-price { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--accent); }
+.ptier-desc { font-size: 11px; color: var(--text3); line-height: 1.5; }
+.ptier.free { border-color: rgba(87,255,133,0.15); }
+.ptier.paid { border-color: rgba(200,255,87,0.15); }
+.ptier.boost { border-color: rgba(87,180,255,0.15); }
+
+/* ── MODAL ── */
+.overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(5,5,10,0.8); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 18px; width: 100%; max-width: 620px;
+  max-height: 88vh; overflow-y: auto;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+  transform: translateY(20px) scale(.97);
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.overlay.open .modal { transform: translateY(0) scale(1); }
+.modal-head {
+  padding: 24px 24px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; gap: 14px; justify-content: space-between; align-items: flex-start;
+}
+.modal-close {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: var(--surface3); border: none; cursor: pointer;
+  color: var(--text2); font-size: 16px; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0;
+  transition: background .2s;
+}
+.modal-close:hover { background: var(--border2); color: var(--text); }
+.modal-body { padding: 22px 24px 26px; }
+.modal-title {
+  font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800;
+  letter-spacing: -.5px; line-height: 1.2;
+}
+.modal-author-row { display: flex; align-items: center; gap: 8px; margin: 12px 0 4px; }
+.modal-author-row span { font-size: 12px; color: var(--text3); }
+.modal-desc { font-size: 14px; color: var(--text2); line-height: 1.75; margin: 14px 0 16px; font-weight: 300; }
+.msec-title {
+  font-size: 10px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text3); margin-bottom: 10px;
+}
+.collab-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.citem {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; border-radius: 8px;
+  background: var(--surface2); border: 1px solid var(--border);
+}
+.citem-left { display: flex; align-items: center; gap: 10px; }
+.cname { font-size: 13px; font-weight: 500; }
+.crole { font-size: 11px; color: var(--text3); }
+.cstatus {
+  font-size: 11px; font-weight: 600; padding: 3px 9px;
+  border-radius: 100px;
+}
+.cs-accepted { background: rgba(87,255,133,0.1); color: #57ff85; }
+.cs-pending { background: rgba(255,157,87,0.1); color: var(--orange); }
+
+.form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.form-label { font-size: 12px; font-weight: 500; color: var(--text2); }
+.form-input, .form-textarea, .form-select {
+  padding: 10px 14px; border-radius: 8px;
+  background: var(--surface2); border: 1px solid var(--border2);
+  color: var(--text); font-family: 'Instrument Sans', sans-serif;
+  font-size: 13px; outline: none; transition: border-color .2s, box-shadow .2s;
+  resize: vertical;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+.form-textarea { min-height: 85px; }
+.form-select option { background: var(--surface2); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-note { font-size: 11px; color: var(--text3); margin-top: 8px; display: flex; align-items: center; gap: 5px; }
+
+/* PAGE VIEWS */
+.page { display: none; }
+.page.active { display: block; }
+
+/* PROFILE PAGE */
+.profile-hero {
+  position: relative; z-index: 1;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 40px 32px;
+}
+.profile-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: flex-end; gap: 24px; }
+.profile-avatar {
+  width: 80px; height: 80px; border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800;
+  color: #0a0a0f; flex-shrink: 0;
+}
+.profile-name {
+  font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800;
+  letter-spacing: -.8px;
+}
+.profile-bio { font-size: 14px; color: var(--text2); margin-top: 6px; font-weight: 300; }
+.profile-meta { display: flex; gap: 20px; margin-top: 12px; }
+.pmeta-item { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 5px; }
+.pmeta-item strong { color: var(--text); }
+.profile-badge {
+  margin-left: auto; padding: 6px 14px; border-radius: 100px;
+  background: var(--accent-dim); border: 1px solid rgba(200,255,87,0.2);
+  font-size: 11px; font-weight: 600; color: var(--accent);
+}
+.profile-content { max-width: 1100px; margin: 0 auto; padding: 36px 32px 80px; display: grid; grid-template-columns: 1fr 280px; gap: 32px; position: relative; z-index: 1; }
+.profile-projects .section-head { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+
+/* MESSAGES PAGE */
+.messages-wrap { max-width: 1100px; margin: 0 auto; padding: 36px 32px 80px; display: grid; grid-template-columns: 280px 1fr; gap: 0; position: relative; z-index: 1; min-height: calc(100vh - 62px); }
+.msg-list { border-right: 1px solid var(--border); padding-right: 0; }
+.msg-list-head { padding: 0 20px 16px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; }
+.msg-item {
+  padding: 14px 20px; cursor: pointer; transition: background .2s;
+  border-left: 2px solid transparent;
+}
+.msg-item:hover { background: var(--surface2); }
+.msg-item.active { background: var(--surface2); border-left-color: var(--accent); }
+.msg-item-name { font-size: 13px; font-weight: 500; }
+.msg-item-preview { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.msg-item-time { font-size: 10px; color: var(--text3); float: right; }
+.msg-unread {
+  display: inline-flex; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--accent); color: #0a0a0f;
+  font-size: 9px; font-weight: 700; align-items: center; justify-content: center;
+  float: right; margin-top: 2px;
+}
+.chat-area { padding: 0 0 0 28px; display: flex; flex-direction: column; }
+.chat-head { display: flex; align-items: center; gap: 12px; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+.chat-head-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
+.chat-head-project { font-size: 12px; color: var(--text3); }
+.chat-messages { flex: 1; display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+.cmsg { max-width: 75%; }
+.cmsg.me { align-self: flex-end; }
+.cmsg-bubble {
+  padding: 10px 14px; border-radius: 12px;
+  font-size: 13px; line-height: 1.6;
+}
+.cmsg.them .cmsg-bubble { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 12px 12px 12px 4px; }
+.cmsg.me .cmsg-bubble { background: var(--accent); color: #0a0a0f; font-weight: 500; border-radius: 12px 12px 4px 12px; }
+.cmsg-time { font-size: 10px; color: var(--text3); margin-top: 4px; padding: 0 4px; }
+.cmsg.me .cmsg-time { text-align: right; }
+.chat-input-row { display: flex; gap: 10px; }
+.chat-input {
+  flex: 1; padding: 11px 16px; border-radius: 10px;
+  background: var(--surface2); border: 1px solid var(--border2);
+  color: var(--text); font-family: 'Instrument Sans', sans-serif;
+  font-size: 13px; outline: none; transition: border-color .2s;
+}
+.chat-input:focus { border-color: var(--accent); }
+.chat-send {
+  padding: 11px 18px; border-radius: 10px;
+  background: var(--accent); color: #0a0a0f;
+  border: none; font-family: 'Instrument Sans', sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: background .2s;
+}
+.chat-send:hover { background: #d4ff6a; }
+
+/* DASHBOARD PAGE */
+.dash-wrap { max-width: 1100px; margin: 0 auto; padding: 36px 32px 80px; position: relative; z-index: 1; }
+.dash-head { margin-bottom: 32px; }
+.dash-greeting { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -.8px; }
+.dash-sub { font-size: 14px; color: var(--text2); margin-top: 6px; }
+.dash-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+.kpi {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+}
+.kpi-val { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
+.kpi-val span { color: var(--accent); }
+.kpi-label { font-size: 12px; color: var(--text3); margin-top: 4px; }
+.kpi-delta { font-size: 11px; color: #57ff85; margin-top: 8px; }
+.dash-grid { display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
+.dash-section-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 14px; }
+.proposal-list { display: flex; flex-direction: column; gap: 10px; }
+.prop-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.prop-avatar { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #0a0a0f; flex-shrink: 0; }
+.prop-name { font-size: 13px; font-weight: 500; }
+.prop-role { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.prop-msg { font-size: 12px; color: var(--text2); margin-top: 6px; line-height: 1.5; }
+.prop-actions { display: flex; gap: 7px; margin-top: 10px; }
+.btn-accept { background: rgba(87,255,133,0.12); color: #57ff85; border: 1px solid rgba(87,255,133,0.2); font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 6px; cursor: pointer; transition: background .2s; font-family: 'Instrument Sans', sans-serif; }
+.btn-accept:hover { background: rgba(87,255,133,0.22); }
+.btn-decline { background: rgba(255,87,87,0.08); color: var(--red); border: 1px solid rgba(255,87,87,0.15); font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 6px; cursor: pointer; transition: background .2s; font-family: 'Instrument Sans', sans-serif; }
+.btn-decline:hover { background: rgba(255,87,87,0.18); }
+.activity-list { display: flex; flex-direction: column; gap: 10px; }
+.act-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.act-item:last-child { border-bottom: none; }
+.act-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.act-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
+.act-time { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 1000;
+  background: var(--surface2); border: 1px solid var(--border2);
+  color: var(--text); padding: 12px 18px; border-radius: 10px;
+  font-size: 13px; font-weight: 500;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  transform: translateY(16px); opacity: 0;
+  transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  pointer-events: none; max-width: 320px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* MOBILE */
+@media (max-width: 768px) {
+  nav { padding: 0 16px; }
+  .nav-center { display: none; }
+  .hero { padding: 50px 20px 40px; }
+  .hero h1 { font-size: 38px; }
+  .stats-bar { flex-wrap: wrap; }
+  .stat-item { min-width: 50%; border-right: none; border-bottom: 1px solid var(--border); }
+  .main { grid-template-columns: 1fr; padding: 24px 16px 60px; }
+  .sidebar { display: none; }
+  .search-wrap, .cats-wrap { padding-left: 16px; padding-right: 16px; }
+  .profile-content { grid-template-columns: 1fr; }
+  .messages-wrap { grid-template-columns: 1fr; }
+  .msg-list { border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 20px; }
+  .chat-area { padding: 0; }
+  .dash-kpis { grid-template-columns: 1fr 1fr; }
+  .dash-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .profile-inner { flex-direction: column; align-items: flex-start; }
+  .profile-badge { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#" onclick="showPage('home')">Crewtiv<span class="dot">.</span></a>
+  <div class="nav-center">
+    <button class="nav-link active" id="nav-home" onclick="showPage('home')">Home</button>
+    <button class="nav-link" id="nav-messages" onclick="showPage('messages')">Messaggi</button>
+    <button class="nav-link" id="nav-dashboard" onclick="showPage('dashboard')">Dashboard</button>
+    <button class="nav-link" id="nav-profile" onclick="showPage('profile')">Profilo</button>
+  </div>
+  <div class="nav-right">
+    <button class="btn btn-ghost btn-sm" onclick="showToast('🔐 Accesso — in arrivo!')">Accedi</button>
+    <button class="btn btn-accent btn-sm" onclick="openNewProject()">+ Nuovo Progetto</button>
+  </div>
+</nav>
+
+<!-- ══════════════════ HOME PAGE ══════════════════ -->
+<div id="page-home" class="page active">
+
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-eyebrow">🎮 La piattaforma per i creativi</div>
+    <h1>
+      Condividi la tua visione.<br>
+      <span class="line2">Trova chi la costruisce</span><br>
+      <span class="highlight">insieme a te.</span>
+    </h1>
+    <p class="hero-sub">Dai videogiochi indie ai progetti architettonici. Ogni progetto è tuo — certificato con data e paternità. Apri le porte ai collaboratori giusti.</p>
+    <div class="hero-actions">
+      <button class="btn btn-accent btn-lg" onclick="openNewProject()">Pubblica un progetto ✦</button>
+      <button class="btn btn-ghost btn-lg" onclick="document.querySelector('.search-wrap').scrollIntoView({behavior:'smooth'})">Esplora i progetti</button>
+    </div>
+  </section>
+
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-num">2<span>.</span>4k</div><div class="stat-label">Progetti pubblicati</div></div>
+    <div class="stat-item"><div class="stat-num">8<span>.</span>1k</div><div class="stat-label">Creativi attivi</div></div>
+    <div class="stat-item"><div class="stat-num">94<span>%</span></div><div class="stat-label">Proposte accettate</div></div>
+    <div class="stat-item"><div class="stat-num">47</div><div class="stat-label">Categorie</div></div>
+  </div>
+
+  <div class="search-wrap">
+    <div class="search-row">
+      <div class="search-box">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="searchInput" placeholder="Cerca progetti, tecnologie, categorie…" oninput="applyFilters()">
+      </div>
+      <button class="search-btn" onclick="applyFilters()">Cerca</button>
+    </div>
+  </div>
+
+  <div class="cats-wrap">
+    <span class="cats-label">Filtra:</span>
+    <span class="cat-pill active" onclick="setCategory('all',this)">Tutti</span>
+    <span class="cat-pill" onclick="setCategory('game',this)">🎮 Videogiochi</span>
+    <span class="cat-pill" onclick="setCategory('arch',this)">🏛 Architettura</span>
+    <span class="cat-pill" onclick="setCategory('app',this)">📱 App</span>
+    <span class="cat-pill" onclick="setCategory('art',this)">🎨 Arte & Design</span>
+    <span class="cat-pill" onclick="setCategory('music',this)">🎵 Musica</span>
+    <span class="cat-pill" onclick="setCategory('science',this)">🔬 Scienza</span>
+    <span class="cat-pill" onclick="setCategory('film',this)">🎬 Film</span>
+    <span class="cat-pill" onclick="setCategory('hardware',this)">🔧 Hardware</span>
+  </div>
+
+  <div class="main">
+    <div>
+      <div class="projects-header">
+        <div>
+          <div class="projects-title">Ultimi progetti</div>
+          <div class="projects-meta" id="pMeta">6 progetti trovati</div>
+        </div>
+        <select class="sort-select" onchange="sortProjects(this.value)">
+          <option value="recent">Più recenti</option>
+          <option value="popular">Più popolari</option>
+          <option value="open">Cercano collaboratori</option>
+        </select>
+      </div>
+      <div class="projects-list" id="projectsList"></div>
+    </div>
+
+    <aside class="sidebar">
+      <div class="scard">
+        <div class="scard-title">🔥 In tendenza</div>
+        <div class="trending-list">
+          <div class="titem" onclick="openProjectById(0)">
+            <div class="trank">01</div>
+            <div><div class="ttitle">EchoVerse RPG</div><div class="tmeta">🎮 Videogiochi · 128 viste</div></div>
+          </div>
+          <div class="titem" onclick="openProjectById(2)">
+            <div class="trank">02</div>
+            <div><div class="ttitle">Palazzo Vouta Verde</div><div class="tmeta">🏛 Architettura · 95 viste</div></div>
+          </div>
+          <div class="titem" onclick="openProjectById(3)">
+            <div class="trank">03</div>
+            <div><div class="ttitle">SynthWave Composer</div><div class="tmeta">🎵 Musica · 84 viste</div></div>
+          </div>
+          <div class="titem" onclick="openProjectById(1)">
+            <div class="trank">04</div>
+            <div><div class="ttitle">NeuroScan AI</div><div class="tmeta">🔬 Scienza · 71 viste</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scard">
+        <div class="scard-title">💡 Come funziona</div>
+        <div class="how-steps">
+          <div class="hstep"><div class="hnum">1</div><div class="htext"><strong>Pubblica il progetto</strong><span>Paternità certificata con data. La tua idea, il tuo nome.</span></div></div>
+          <div class="hstep"><div class="hnum">2</div><div class="htext"><strong>Ricevi proposte</strong><span>Gli interessati ti mandano richieste di collaborazione.</span></div></div>
+          <div class="hstep"><div class="hnum">3</div><div class="htext"><strong>Accetta o declina</strong><span>Scegli tu chi entra nel team.</span></div></div>
+          <div class="hstep"><div class="hnum">4</div><div class="htext"><strong>Costruite insieme</strong><span>Collaborazione trasparente, crediti condivisi.</span></div></div>
+        </div>
+        <button class="btn btn-accent" style="width:100%;margin-top:16px;justify-content:center" onclick="openNewProject()">Pubblica ora ✦</button>
+      </div>
+
+      <div class="scard">
+        <div class="scard-title">💰 Prezzi</div>
+        <div class="pricing-tiers">
+          <div class="ptier free">
+            <div class="ptier-head"><span class="ptier-name">Gratis</span><span class="ptier-price">€0</span></div>
+            <div class="ptier-desc">2 pubblicazioni al mese. Accesso completo alla community.</div>
+          </div>
+          <div class="ptier paid">
+            <div class="ptier-head"><span class="ptier-name">Pay-per-publish</span><span class="ptier-price">€2–5</span></div>
+            <div class="ptier-desc">Pubblica oltre le 2 gratuite. Paghi solo quando ne hai bisogno.</div>
+          </div>
+          <div class="ptier boost">
+            <div class="ptier-head"><span class="ptier-name">Boost</span><span class="ptier-price">da €3</span></div>
+            <div class="ptier-desc">Metti il tuo progetto in evidenza in home per massima visibilità.</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ══════════════════ PROFILE PAGE ══════════════════ -->
+<div id="page-profile" class="page">
+  <div class="profile-hero">
+    <div class="profile-inner">
+      <div class="profile-avatar" style="background:#c8ff57">MF</div>
+      <div>
+        <div class="profile-name">Marco Ferretti</div>
+        <div class="profile-bio">Sviluppatore indie · Unity · Appassionato di narrative design. Costruisco mondi un progetto alla volta.</div>
+        <div class="profile-meta">
+          <span class="pmeta-item">📅 Iscritto da <strong>Gen 2026</strong></span>
+          <span class="pmeta-item">🗂 <strong>3</strong> progetti</span>
+          <span class="pmeta-item">🤝 <strong>2</strong> collaborazioni</span>
+          <span class="pmeta-item">❤️ <strong>112</strong> like ricevuti</span>
+        </div>
+      </div>
+      <div class="profile-badge">✦ Creatore Verificato</div>
+    </div>
+  </div>
+  <div class="profile-content">
+    <div>
+      <div class="profile-projects">
+        <div class="section-head">I miei progetti</div>
+        <div class="projects-list" id="profileProjectsList"></div>
+      </div>
+    </div>
+    <div>
+      <div class="scard" style="margin-bottom:16px">
+        <div class="scard-title">📊 Stats</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+            <span style="font-size:12px;color:var(--text3)">Viste totali</span>
+            <span style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700">341</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+            <span style="font-size:12px;color:var(--text3)">Proposte ricevute</span>
+            <span style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700">11</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+            <span style="font-size:12px;color:var(--text3)">Collaboratori accettati</span>
+            <span style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--accent)">4</span>
+          </div>
+        </div>
+      </div>
+      <div class="scard">
+        <div class="scard-title">🏷 Skills</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <span class="tag">Unity</span><span class="tag">C#</span><span class="tag">Game Design</span>
+          <span class="tag">Narrative</span><span class="tag">Pixel Art</span><span class="tag">Level Design</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MESSAGES PAGE ══════════════════ -->
+<div id="page-messages" class="page">
+  <div class="messages-wrap">
+    <div class="msg-list">
+      <div class="msg-list-head">Messaggi</div>
+      <div class="msg-item active" onclick="selectChat(0)">
+        <span class="msg-item-time">2h fa</span>
+        <span class="msg-unread">2</span>
+        <div class="msg-item-name">Sofia Russo</div>
+        <div class="msg-item-preview">Posso aiutarti con il sistema narrativo!</div>
+      </div>
+      <div class="msg-item" onclick="selectChat(1)">
+        <span class="msg-item-time">1g fa</span>
+        <div class="msg-item-name">Luca Verdi</div>
+        <div class="msg-item-preview">Ecco i miei sample di sound design…</div>
+      </div>
+      <div class="msg-item" onclick="selectChat(2)">
+        <span class="msg-item-time">2g fa</span>
+        <div class="msg-item-name">Anna Pellegrini</div>
+        <div class="msg-item-preview">Il progetto paesaggistico è pronto</div>
+      </div>
+      <div class="msg-item" onclick="selectChat(3)">
+        <span class="msg-item-time">3g fa</span>
+        <div class="msg-item-name">Pietro Mori</div>
+        <div class="msg-item-preview">Ti ho inviato i risultati del modello ML</div>
+      </div>
+    </div>
+    <div class="chat-area">
+      <div class="chat-head">
+        <div class="avatar" style="background:#c8ff57;width:38px;height:38px;border-radius:10px;font-size:13px;font-weight:700;color:#0a0a0f" id="chatAvatar">SR</div>
+        <div>
+          <div class="chat-head-name" id="chatName">Sofia Russo</div>
+          <div class="chat-head-project" id="chatProject">Re: EchoVerse RPG — Narrative Designer</div>
+        </div>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="cmsg them">
+          <div class="cmsg-bubble">Ciao! Ho visto il tuo progetto EchoVerse — il concetto delle linee temporali parallele è brillante. Sono una narrative designer con 3 anni di esperienza negli RPG.</div>
+          <div class="cmsg-time">Ieri, 10:23</div>
+        </div>
+        <div class="cmsg me">
+          <div class="cmsg-bubble">Grazie Sofia! Il tuo portfolio è ottimo. Hai già lavorato con sistemi di dialogo ramificati?</div>
+          <div class="cmsg-time">Ieri, 11:05</div>
+        </div>
+        <div class="cmsg them">
+          <div class="cmsg-bubble">Sì! Ho lavorato su due RPG indie usando l'integrazione Ink + Unity. Posso condividere i progetti se vuoi vederli.</div>
+          <div class="cmsg-time">Ieri, 11:18</div>
+        </div>
+        <div class="cmsg me">
+          <div class="cmsg-bubble">Mandali pure! È esattamente lo stack che uso per EchoVerse.</div>
+          <div class="cmsg-time">Ieri, 11:42</div>
+        </div>
+        <div class="cmsg them">
+          <div class="cmsg-bubble">Posso aiutarti con il sistema narrativo! Ti mando un breve design doc con idee per la meccanica delle linee temporali 🎮</div>
+          <div class="cmsg-time">2h fa</div>
+        </div>
+      </div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="chatInput" type="text" placeholder="Scrivi un messaggio…" onkeydown="if(event.key==='Enter')sendMessage()">
+        <button class="chat-send" onclick="sendMessage()">Invia ↑</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ DASHBOARD PAGE ══════════════════ -->
+<div id="page-dashboard" class="page">
+  <div class="dash-wrap">
+    <div class="dash-head">
+      <div class="dash-greeting">Bentornato, Marco 👋</div>
+      <div class="dash-sub">Ecco cosa sta succedendo con i tuoi progetti oggi.</div>
+    </div>
+    <div class="dash-kpis">
+      <div class="kpi">
+        <div class="kpi-val">3<span>41</span></div>
+        <div class="kpi-label">Viste totali progetti</div>
+        <div class="kpi-delta">↑ +28 questa settimana</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val">1<span>1</span></div>
+        <div class="kpi-label">Proposte ricevute</div>
+        <div class="kpi-delta">↑ +3 nuove</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val">4</div>
+        <div class="kpi-label">Collaboratori attivi</div>
+        <div class="kpi-delta" style="color:var(--orange)">2 in attesa</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val">2</div>
+        <div class="kpi-label">Pubblicazioni gratuite rimaste</div>
+        <div class="kpi-delta" style="color:var(--text3)">Si resettano tra 18 giorni</div>
+      </div>
+    </div>
+    <div class="dash-grid">
+      <div>
+        <div class="dash-section-title">Proposte in attesa</div>
+        <div class="proposal-list" id="proposalList">
+          <div class="prop-item">
+            <div class="prop-avatar" style="background:#57b4ff">LV</div>
+            <div style="flex:1">
+              <div class="prop-name">Luca Verdi</div>
+              <div class="prop-role">Sound Designer · per EchoVerse RPG</div>
+              <div class="prop-msg">"Compongo per videogiochi indie da 4 anni. Ecco un link alla mia ultima OST — penso si adatti perfettamente al tuo mondo."</div>
+              <div class="prop-actions">
+                <button class="btn-accept" onclick="acceptProposal(this,'Luca Verdi')">✓ Accetta</button>
+                <button class="btn-decline" onclick="declineProposal(this,'Luca Verdi')">✕ Rifiuta</button>
+              </div>
+            </div>
+          </div>
+          <div class="prop-item">
+            <div class="prop-avatar" style="background:#b057ff">KM</div>
+            <div style="flex:1">
+              <div class="prop-name">Kenji Matsuda</div>
+              <div class="prop-role">3D Artist · per EchoVerse RPG</div>
+              <div class="prop-msg">"Sono specializzato in ambienti stilizzati. Adoro l'estetica che stai cercando e mi piacerebbe progettare i visual del mondo parallelo."</div>
+              <div class="prop-actions">
+                <button class="btn-accept" onclick="acceptProposal(this,'Kenji Matsuda')">✓ Accetta</button>
+                <button class="btn-decline" onclick="declineProposal(this,'Kenji Matsuda')">✕ Rifiuta</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="dash-section-title">Attività recente</div>
+        <div class="scard">
+          <div class="activity-list">
+            <div class="act-item">
+              <div class="act-dot" style="background:#57ff85"></div>
+              <div><div class="act-text"><strong>Sofia Russo</strong> accettata come Narrative Designer su EchoVerse</div><div class="act-time">2 ore fa</div></div>
+            </div>
+            <div class="act-item">
+              <div class="act-dot" style="background:var(--accent)"></div>
+              <div><div class="act-text"><strong>EchoVerse RPG</strong> ha raggiunto 128 viste</div><div class="act-time">5 ore fa</div></div>
+            </div>
+            <div class="act-item">
+              <div class="act-dot" style="background:var(--blue)"></div>
+              <div><div class="act-text"><strong>Kenji Matsuda</strong> ha inviato una proposta di collaborazione</div><div class="act-time">1 giorno fa</div></div>
+            </div>
+            <div class="act-item">
+              <div class="act-dot" style="background:var(--orange)"></div>
+              <div><div class="act-text"><strong>Luca Verdi</strong> ha inviato una proposta di collaborazione</div><div class="act-time">2 giorni fa</div></div>
+            </div>
+            <div class="act-item">
+              <div class="act-dot" style="background:var(--purple)"></div>
+              <div><div class="act-text">Nuovo progetto <strong>EchoVerse RPG</strong> pubblicato e certificato</div><div class="act-time">3 giorni fa</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MODAL: PROJECT DETAIL ══════════════ -->
+<div class="overlay" id="projectModal" onclick="closeIfBg(event,'projectModal')">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div id="mStatus" class="status-badge s-open" style="margin-bottom:10px"></div>
+        <div class="modal-title" id="mTitle"></div>
+        <div class="modal-author-row">
+          <div class="avatar" id="mAvatar" style="width:28px;height:28px;border-radius:7px;font-size:11px"></div>
+          <span>by <strong id="mAuthor" style="color:var(--text)"></strong></span>
+          <span id="mDate"></span>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('projectModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc" id="mDesc"></p>
+      <div class="pcard-tags" id="mTags" style="margin-bottom:18px"></div>
+      <div id="mCollabSection" style="margin-bottom:20px">
+        <div class="msec-title">COLLABORATORI</div>
+        <div class="collab-list" id="mCollabs"></div>
+      </div>
+      <div id="mProposeSection">
+        <div class="msec-title">PROPONI COLLABORAZIONE</div>
+        <div class="form-group">
+          <label class="form-label">Il tuo ruolo</label>
+          <input class="form-input" id="propRole" placeholder="es. Dev backend, 3D artist, compositore…">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo di collaborazione</label>
+          <select class="form-select" id="propType">
+            <option>Volontaria</option>
+            <option>Retribuita — da discutere</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Messaggio per il creatore</label>
+          <textarea class="form-textarea" id="propMsg" placeholder="Racconta cosa puoi portare al progetto…"></textarea>
+        </div>
+        <button class="btn btn-accent" onclick="submitProposal()">Invia proposta →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MODAL: NEW PROJECT ══════════════ -->
+<div class="overlay" id="newProjectModal" onclick="closeIfBg(event,'newProjectModal')">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Nuovo progetto</div>
+        <div class="modal-title">Pubblica il tuo progetto</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('newProjectModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Titolo del progetto *</label>
+        <input class="form-input" id="nTitle" placeholder="Un titolo chiaro e accattivante…">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Categoria *</label>
+          <select class="form-select" id="nCat">
+            <option value="">Seleziona…</option>
+            <option value="game">🎮 Videogiochi</option>
+            <option value="arch">🏛 Architettura</option>
+            <option value="app">📱 App</option>
+            <option value="art">🎨 Arte & Design</option>
+            <option value="music">🎵 Musica</option>
+            <option value="science">🔬 Scienza</option>
+            <option value="hardware">🔧 Hardware</option>
+            <option value="film">🎬 Film</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Stato</label>
+          <select class="form-select" id="nStatus">
+            <option value="open">Aperto a collaborazioni</option>
+            <option value="progress">In corso</option>
+            <option value="closed">Chiuso</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descrizione *</label>
+        <textarea class="form-textarea" id="nDesc" placeholder="Descrivi il tuo progetto — cosa stai costruendo, cosa ti ha ispirato, che collaboratori cerchi…"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Tag <span style="color:var(--text3);font-weight:300">(separati da virgola)</span></label>
+          <input class="form-input" id="nTags" placeholder="Unity, C#, RPG, open-world…">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo di collaborazione</label>
+          <select class="form-select" id="nCollab">
+            <option>Volontaria</option>
+            <option>Retribuita</option>
+            <option>Entrambe accettate</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-accent" style="margin-top:4px" onclick="submitNewProject()">Pubblica e certifica ✦</button>
+      <div class="form-note">🔒 Data e paternità vengono certificate automaticamente.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const COLORS = ['#c8ff57','#57b4ff','#ff9d57','#b057ff','#57ff85','#ff5757','#57ffe0'];
+const AVCOLORS = ['#c8ff57','#57b4ff','#ff9d57','#b057ff','#57ff85'];
+
+const projects = [
+  { id:0, featured:true, title:"EchoVerse — RPG Open World", author:"Marco Ferretti", initials:"MF", color:"#c8ff57", date:"Oggi, 09:41", category:"game", status:"open",
+    desc:"Un RPG open-world post-quantistico dove la realtà si frammenta in echi paralleli. I giocatori navigano linee temporali ramificate con conseguenze permanenti sul mondo di gioco. Sviluppato in Unity. Cerco narrative designer, sound designer e 3D artist.",
+    tags:["Unity","C#","Open World","RPG","Narrativa"], views:128, proposals:4, likes:31,
+    collabs:[{n:"Sofia R.",r:"Narrative Designer",s:"accepted"},{n:"Luca V.",r:"Sound Designer",s:"pending"}] },
+  { id:1, featured:false, title:"NeuroScan AI — Diagnosi Precoce Alzheimer", author:"Dr. Elena Conti", initials:"EC", color:"#57b4ff", date:"Ieri, 14:23", category:"science", status:"open",
+    desc:"Modello ML che analizza immagini MRI per rilevare segnali precoci di Alzheimer con 3-5 anni di anticipo rispetto ai metodi attuali. Ricerca ad accesso aperto. Cerco neurologi, data scientist e sviluppatori Python.",
+    tags:["Machine Learning","Python","MRI","Healthcare","Open Source"], views:71, proposals:2, likes:44,
+    collabs:[{n:"Pietro M.",r:"Data Scientist",s:"pending"}] },
+  { id:2, featured:false, title:"Palazzo a Vouta Verde — Residenza Sostenibile", author:"Arch. Giulia Mancini", initials:"GM", color:"#57ff85", date:"26 Mar 2026", category:"arch", status:"progress",
+    desc:"Residenza privata di 400mq con struttura a volta ribassata in legno lamellare e copertura verde. L'edificio produce più energia di quanta ne consuma. In fase esecutiva — cerco ingegnere strutturista e paesaggista.",
+    tags:["Legno Lamellare","Green Roof","Sostenibilità","Residenziale","AutoCAD"], views:95, proposals:3, likes:27,
+    collabs:[{n:"Franco B.",r:"Ingegnere Strutturista",s:"accepted"},{n:"Anna P.",r:"Paesaggista",s:"pending"},{n:"Matteo L.",r:"BIM Specialist",s:"accepted"}] },
+  { id:3, featured:false, title:"SynthWave Composer — Generatore di Colonne Sonore", author:"Diego Riva", initials:"DR", color:"#b057ff", date:"25 Mar 2026", category:"music", status:"open",
+    desc:"Strumento web che genera colonne sonore synthwave in tempo reale in base ai parametri visivi dell'utente (immagini, palette, mood). Modello MIDI addestrato su 10.000 tracce anni '80. Cerco web developer e musicisti.",
+    tags:["Web Audio API","JavaScript","MIDI","Synthwave","IA Generativa"], views:84, proposals:5, likes:38, collabs:[] },
+  { id:4, featured:false, title:"FoldBot — Micro-robot Chirurgico Origami", author:"Sara Kim", initials:"SK", color:"#ff9d57", date:"24 Mar 2026", category:"hardware", status:"open",
+    desc:"Micro-robot in lega a memoria di forma ispirato all'origami, progettato per procedure chirurgiche mininvasive. Il robot si piega per passare attraverso piccole incisioni e si dispiega internamente. Cerco ingegneri biomedici e robotici.",
+    tags:["Robotica","Biomedico","SMA","Origami Engineering","CAD"], views:62, proposals:1, likes:19, collabs:[] },
+  { id:5, featured:false, title:"Cartoline dall'Assente — Cortometraggio", author:"Valentina Greco", initials:"VG", color:"#ff5757", date:"23 Mar 2026", category:"film", status:"closed",
+    desc:"Cortometraggio di 18 minuti sul lutto raccontato attraverso oggetti lasciati indietro. Girato in super-8 digitale, estetica anni '70. Il team è al completo — progetto in post-produzione. Non accetta più proposte.",
+    tags:["Super-8","Cortometraggio","Post-produzione","Indie","Drama"], views:56, proposals:7, likes:52,
+    collabs:[{n:"Carlo F.",r:"Colorist",s:"accepted"},{n:"Irene T.",r:"Sound Mix",s:"accepted"}] }
+];
+
+let filtered = [...projects];
+let activeCategory = 'all';
+let currentProject = null;
+
+const chatData = [
+  { name:"Sofia Russo", initials:"SR", color:"#c8ff57", project:"EchoVerse RPG — Narrative Designer" },
+  { name:"Luca Verdi", initials:"LV", color:"#57b4ff", project:"EchoVerse RPG — Sound Designer" },
+  { name:"Anna Pellegrini", initials:"AP", color:"#57ff85", project:"Palazzo Vouta Verde — Paesaggista" },
+  { name:"Pietro Mori", initials:"PM", color:"#b057ff", project:"NeuroScan AI — Data Scientist" }
+];
+
+function renderProjects(list, containerId='projectsList') {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const meta = document.getElementById('pMeta');
+  if (meta) meta.textContent = `${list.length} progett${list.length!==1?'i':'o'} trovati`;
+  el.innerHTML = '';
+  if (!list.length) {
+    el.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--text3)">Nessun progetto trovato.<br><br><button class="btn btn-accent" onclick="openNewProject()">Sii il primo a pubblicare!</button></div>`;
+    return;
+  }
+  list.forEach((p,i) => {
+    const sMap = {open:'s-open',progress:'s-progress',closed:'s-closed'};
+    const sLabel = {open:'Aperto',progress:'In corso',closed:'Chiuso'};
+    const d = document.createElement('div');
+    d.className = `pcard${p.featured?' featured':''}`;
+    d.style.animationDelay = `${i*.07}s`;
+    d.onclick = () => openProjectById(p.id);
+    d.innerHTML = `
+      ${p.featured?'<div class="featured-label">✦ In evidenza</div>':''}
+      <div class="pcard-top">
+        <div class="pcard-author">
+          <div class="avatar" style="background:${p.color}">${p.initials}</div>
+          <div><div class="author-name">${p.author}</div><div class="author-date">📅 ${p.date}</div></div>
+        </div>
+        <span class="status-badge ${sMap[p.status]}">${sLabel[p.status]}</span>
+      </div>
+      <div class="pcard-title">${p.title}</div>
+      <div class="pcard-desc">${p.desc.slice(0,185)}${p.desc.length>185?'…':''}</div>
+      <div class="pcard-tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <div class="pcard-footer">
+        <div class="pcard-stats">
+          <span class="pstat">👁 ${p.views}</span>
+          <span class="pstat">❤️ ${p.likes}</span>
+          <span class="pstat">💬 ${p.proposals}</span>
+        </div>
+        <div class="pcard-action">
+          ${p.status!=='closed'?`<button class="btn btn-accent btn-sm" onclick="event.stopPropagation();openProjectById(${p.id})">Proponi →</button>`:'<span style="font-size:11px;color:var(--text3)">Team al completo</span>'}
+        </div>
+      </div>`;
+    el.appendChild(d);
+  });
+}
+
+function setCategory(cat, el) {
+  activeCategory = cat;
+  document.querySelectorAll('.cat-pill').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = (document.getElementById('searchInput')?.value||'').toLowerCase();
+  filtered = projects.filter(p => {
+    const mc = activeCategory==='all' || p.category===activeCategory;
+    const mq = !q || p.title.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q) || p.tags.some(t=>t.toLowerCase().includes(q)) || p.author.toLowerCase().includes(q);
+    return mc && mq;
+  });
+  renderProjects(filtered);
+}
+
+function sortProjects(val) {
+  if (val==='popular') filtered.sort((a,b)=>b.likes-a.likes);
+  else if (val==='recent') filtered.sort((a,b)=>a.id-b.id);
+  else if (val==='open') filtered.sort((a,b)=>(b.status==='open'?1:0)-(a.status==='open'?1:0));
+  renderProjects(filtered);
+}
+
+function openProjectById(id) {
+  currentProject = projects.find(p=>p.id===id);
+  const p = currentProject;
+  const sMap = {open:'s-open',progress:'s-progress',closed:'s-closed'};
+  const sLabel = {open:'Aperto a collaborazioni',progress:'In corso',closed:'Chiuso'};
+  document.getElementById('mStatus').className = `status-badge ${sMap[p.status]}`;
+  document.getElementById('mStatus').textContent = sLabel[p.status];
+  document.getElementById('mTitle').textContent = p.title;
+  document.getElementById('mAvatar').style.background = p.color;
+  document.getElementById('mAvatar').textContent = p.initials;
+  document.getElementById('mAuthor').textContent = p.author;
+  document.getElementById('mDate').textContent = '· '+p.date;
+  document.getElementById('mDesc').textContent = p.desc;
+  document.getElementById('mTags').innerHTML = p.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+  const cl = document.getElementById('mCollabs');
+  cl.innerHTML = p.collabs.length ? p.collabs.map(c=>`
+    <div class="citem">
+      <div class="citem-left">
+        <div class="avatar" style="width:30px;height:30px;border-radius:7px;font-size:10px;background:${AVCOLORS[Math.floor(Math.random()*AVCOLORS.length)]}">${c.n.split(' ').map(x=>x[0]).join('')}</div>
+        <div><div class="cname">${c.n}</div><div class="crole">${c.r}</div></div>
+      </div>
+      <span class="cstatus ${c.s==='accepted'?'cs-accepted':'cs-pending'}">${c.s==='accepted'?'✓ Accettato':'⏳ In attesa'}</span>
+    </div>`).join('') : '<div style="font-size:12px;color:var(--text3);padding:8px 0">Nessun collaboratore ancora — sii il primo!</div>';
+  const ps = document.getElementById('mProposeSection');
+  if (p.status==='closed') ps.innerHTML = '<div style="padding:14px;background:var(--surface2);border-radius:8px;font-size:13px;color:var(--text3);text-align:center">Questo progetto non accetta più proposte.</div>';
+  document.getElementById('projectModal').classList.add('open');
+}
+
+function submitProposal() {
+  const role = document.getElementById('propRole')?.value;
+  const msg = document.getElementById('propMsg')?.value;
+  if (!role||!msg) { showToast('⚠️ Compila tutti i campi'); return; }
+  closeModal('projectModal');
+  showToast(`✅ Proposta inviata a ${currentProject.author}!`);
+  currentProject.proposals++;
+}
+
+function openNewProject() { document.getElementById('newProjectModal').classList.add('open'); }
+
+function submitNewProject() {
+  const title = document.getElementById('nTitle').value;
+  const cat = document.getElementById('nCat').value;
+  const desc = document.getElementById('nDesc').value;
+  if (!title||!cat||!desc) { showToast('⚠️ Compila i campi obbligatori'); return; }
+  const tags = document.getElementById('nTags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const now = new Date();
+  const dateStr = `Oggi, ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+  projects.unshift({ id:projects.length, featured:false, title, author:"Tu", initials:title.slice(0,2).toUpperCase(), color:COLORS[projects.length%COLORS.length], date:dateStr, category:cat, status:document.getElementById('nStatus').value, desc, tags:tags.length?tags:['Nuovo'], views:1, proposals:0, likes:0, collabs:[] });
+  filtered = [...projects];
+  renderProjects(filtered);
+  closeModal('newProjectModal');
+  showToast('🎉 Progetto pubblicato e certificato!');
+  ['nTitle','nDesc','nTags'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+}
+
+function selectChat(i) {
+  document.querySelectorAll('.msg-item').forEach((el,idx)=>el.classList.toggle('active',idx===i));
+  const c = chatData[i];
+  document.getElementById('chatAvatar').textContent = c.initials;
+  document.getElementById('chatAvatar').style.background = c.color;
+  document.getElementById('chatName').textContent = c.name;
+  document.getElementById('chatProject').textContent = 'Re: '+c.project;
+  document.getElementById('chatMessages').innerHTML = `<div class="cmsg them"><div class="cmsg-bubble">Ciao! Sono molto interessato al tuo progetto e mi piacerebbe collaborare.</div><div class="cmsg-time">2 giorni fa</div></div><div class="cmsg me"><div class="cmsg-bubble">Grazie per esserti fatto vivo! Raccontami della tua esperienza.</div><div class="cmsg-time">2 giorni fa</div></div>`;
+}
+
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  const container = document.getElementById('chatMessages');
+  const d = document.createElement('div');
+  d.className = 'cmsg me';
+  d.innerHTML = `<div class="cmsg-bubble">${msg}</div><div class="cmsg-time">Just now</div>`;
+  container.appendChild(d);
+  input.value = '';
+  container.scrollTop = container.scrollHeight;
+  setTimeout(() => {
+    const r = document.createElement('div');
+    r.className = 'cmsg them';
+    r.innerHTML = `<div class="cmsg-bubble">Grazie per il messaggio! Ti rispondo presto 🙌</div><div class="cmsg-time">Adesso</div>`;
+    container.appendChild(r);
+    container.scrollTop = container.scrollHeight;
+  }, 1200);
+}
+
+function acceptProposal(btn, name) {
+  btn.closest('.prop-item').style.opacity = '.5';
+  btn.closest('.prop-item').style.pointerEvents = 'none';
+  showToast(`✅ ${name} accettato come collaboratore!`);
+}
+
+function declineProposal(btn, name) {
+  btn.closest('.prop-item').remove();
+  showToast(`Proposta di ${name} rifiutata.`);
+}
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  const navEl = document.getElementById('nav-'+page);
+  if (navEl) navEl.classList.add('active');
+  if (page==='profile') renderProjects(projects.slice(0,3),'profileProjectsList');
+  window.scrollTo(0,0);
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeIfBg(e,id) { if(e.target===document.getElementById(id)) closeModal(id); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// Init
+renderProjects(projects);
+</script>
+</body>
+</html>
