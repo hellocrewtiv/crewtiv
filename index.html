@@ -14,6 +14,14 @@
   gtag('config', 'G-K8WGWDESEM');
 </script>
 
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://efshwliprayimvtapcsk.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_g0ZEpEB_6YBD0BFfDzaM9g_GLe0JSEz';
+  const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
+
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
   (function(c,l,a,r,i,t,y){
@@ -595,6 +603,54 @@ nav {
 .act-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
 .act-time { font-size: 10px; color: var(--text3); margin-top: 2px; }
 
+/* AUTH MODAL */
+.auth-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.auth-overlay.open { opacity: 1; pointer-events: all; }
+.auth-box {
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 18px; padding: 36px 32px; width: 100%; max-width: 400px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+}
+.auth-logo {
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px;
+  color: var(--text); margin-bottom: 6px;
+}
+.auth-logo span { color: var(--accent); }
+.auth-subtitle { font-size: 13px; color: var(--text3); margin-bottom: 28px; }
+.auth-tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--surface); border-radius: 8px; padding: 4px; }
+.auth-tab {
+  flex: 1; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 500;
+  color: var(--text3); cursor: pointer; border: none; background: transparent;
+  font-family: 'Instrument Sans', sans-serif; transition: all .2s;
+}
+.auth-tab.active { background: var(--surface3); color: var(--text); }
+.auth-input {
+  width: 100%; padding: 11px 14px; border-radius: 8px;
+  background: var(--surface); border: 1px solid var(--border2);
+  color: var(--text); font-family: 'Instrument Sans', sans-serif;
+  font-size: 14px; outline: none; margin-bottom: 12px;
+  transition: border-color .2s;
+}
+.auth-input:focus { border-color: var(--accent); }
+.auth-input::placeholder { color: var(--text3); }
+.auth-btn {
+  width: 100%; padding: 12px; border-radius: 8px;
+  background: var(--accent); color: #0a0a0f;
+  border: none; font-family: 'Instrument Sans', sans-serif;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: background .2s; margin-top: 4px;
+}
+.auth-btn:hover { background: #d4ff6a; }
+.auth-btn:disabled { opacity: .5; cursor: not-allowed; }
+.auth-error { font-size: 12px; color: var(--red); margin-top: 8px; text-align: center; min-height: 18px; }
+.auth-note { font-size: 11px; color: var(--text3); text-align: center; margin-top: 14px; }
+.auth-close { float: right; background: none; border: none; color: var(--text3); font-size: 18px; cursor: pointer; margin-top: -4px; }
+
 /* TOAST */
 .toast {
   position: fixed; bottom: 24px; right: 24px; z-index: 1000;
@@ -643,9 +699,9 @@ nav {
     <button class="nav-link" id="nav-dashboard" onclick="showPage('dashboard')">Dashboard</button>
     <button class="nav-link" id="nav-profile" onclick="showPage('profile')">Profilo</button>
   </div>
-  <div class="nav-right">
-    <button class="btn btn-ghost btn-sm" onclick="showToast('🔐 Accesso — in arrivo!')">Accedi</button>
-    <button class="btn btn-accent btn-sm" onclick="openNewProject()">+ Nuovo Progetto</button>
+  <div class="nav-right" id="navRight">
+    <button class="btn btn-ghost btn-sm" onclick="openAuth('login')">Accedi</button>
+    <button class="btn btn-accent btn-sm" onclick="openAuth('register')">Registrati</button>
   </div>
 </nav>
 
@@ -1085,6 +1141,25 @@ nav {
   </div>
 </div>
 
+<!-- AUTH MODAL -->
+<div class="auth-overlay" id="authOverlay" onclick="closeAuthIfBg(event)">
+  <div class="auth-box">
+    <button class="auth-close" onclick="closeAuth()">✕</button>
+    <div class="auth-logo">Crewtiv<span>.</span></div>
+    <div class="auth-subtitle" id="authSubtitle">Accedi per pubblicare e collaborare</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Accedi</button>
+      <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">Registrati</button>
+    </div>
+    <input class="auth-input" id="authEmail" type="email" placeholder="Email">
+    <input class="auth-input" id="authPassword" type="password" placeholder="Password">
+    <input class="auth-input" id="authName" type="text" placeholder="Il tuo nome (es. Marco Ferretti)" style="display:none">
+    <button class="auth-btn" id="authSubmitBtn" onclick="submitAuth()">Accedi</button>
+    <div class="auth-error" id="authError"></div>
+    <div class="auth-note" id="authNote">Creando un account accetti i termini di servizio.</div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -1310,6 +1385,104 @@ function showToast(msg) {
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'), 3000);
 }
+
+// ── AUTH ──────────────────────────────────────────
+let currentUser = null;
+let authMode = 'login';
+
+function openAuth(mode) {
+  authMode = mode || 'login';
+  switchTab(authMode);
+  document.getElementById('authOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('authEmail').focus(), 100);
+}
+function closeAuth() { document.getElementById('authOverlay').classList.remove('open'); }
+function closeAuthIfBg(e) { if (e.target === document.getElementById('authOverlay')) closeAuth(); }
+
+function switchTab(tab) {
+  authMode = tab;
+  document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+  document.getElementById('authName').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('authSubmitBtn').textContent = tab === 'login' ? 'Accedi' : 'Crea account';
+  document.getElementById('authSubtitle').textContent = tab === 'login' ? 'Bentornato su Crewtiv!' : 'Crea il tuo account gratuito';
+  document.getElementById('authError').textContent = '';
+}
+
+async function submitAuth() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const name = document.getElementById('authName').value.trim();
+  const btn = document.getElementById('authSubmitBtn');
+  const errEl = document.getElementById('authError');
+  errEl.textContent = '';
+  if (!email || !password) { errEl.textContent = 'Inserisci email e password.'; return; }
+  btn.disabled = true;
+  btn.textContent = authMode === 'login' ? 'Accesso…' : 'Registrazione…';
+  try {
+    if (authMode === 'login') {
+      const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      onLogin(data.user);
+    } else {
+      if (!name) { errEl.textContent = 'Inserisci il tuo nome.'; btn.disabled = false; btn.textContent = 'Crea account'; return; }
+      const { data, error } = await _supabase.auth.signUp({ email, password, options: { data: { full_name: name } } });
+      if (error) throw error;
+      if (data.user && !data.session) {
+        errEl.style.color = 'var(--accent)';
+        errEl.textContent = '✅ Controlla la tua email per confermare!';
+        btn.disabled = false; btn.textContent = 'Crea account'; return;
+      }
+      onLogin(data.user);
+    }
+  } catch(err) {
+    errEl.style.color = 'var(--red)';
+    errEl.textContent = err.message === 'Invalid login credentials' ? 'Email o password errati.' : err.message;
+    btn.disabled = false;
+    btn.textContent = authMode === 'login' ? 'Accedi' : 'Crea account';
+  }
+}
+
+function onLogin(user) {
+  currentUser = user;
+  closeAuth();
+  updateNavForUser(user);
+  showToast('✅ Benvenuto su Crewtiv!');
+}
+
+function updateNavForUser(user) {
+  const navRight = document.getElementById('navRight');
+  if (user) {
+    const name = user.user_metadata?.full_name || user.email.split('@')[0];
+    const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    navRight.innerHTML = `
+      <button class="btn btn-accent btn-sm" onclick="openNewProject()">+ Nuovo Progetto</button>
+      <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="showPage('profile')">
+        <div class="avatar" style="width:32px;height:32px;border-radius:9px;font-size:12px;background:var(--accent);color:#0a0a0f">${initials}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Esci</button>
+    `;
+  } else {
+    navRight.innerHTML = `
+      <button class="btn btn-ghost btn-sm" onclick="openAuth('login')">Accedi</button>
+      <button class="btn btn-accent btn-sm" onclick="openAuth('register')">Registrati</button>
+    `;
+  }
+}
+
+async function logout() {
+  await _supabase.auth.signOut();
+  currentUser = null;
+  updateNavForUser(null);
+  showToast('Hai effettuato il logout.');
+}
+
+// Check session on load
+_supabase.auth.getSession().then(({ data: { session } }) => {
+  if (session?.user) onLogin(session.user);
+});
+
+// ── END AUTH ──────────────────────────────────────
 
 // Init
 renderProjects(projects);
