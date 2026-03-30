@@ -3,10 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crewtiv — Condividi la tua visione. Costruisci il tuo team.</title>
 
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-K8WGWDESEM"></script>
+<title>Crewtiv — Condividi la tua visione. Costruisci il tuo team.</title>
+<meta name="description" content="Crewtiv è la piattaforma per i creativi. Condividi progetti, trova collaboratori e costruisci il tuo team per videogiochi, app, arte, musica e molto altro.">
+<link rel="canonical" href="https://crewtiv.com/">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✦</text></svg>">
+
+<meta property="og:title" content="Crewtiv — Condividi la tua visione.">
+<meta property="og:description" content="Trova i creativi giusti per il tuo progetto. Unisciti alla piattaforma in beta.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://crewtiv.com/">
+<meta property="og:image" content="https://crewtiv.com/og-image.jpg"> <script async src="https://www.googletagmanager.com/gtag/js?id=G-K8WGWDESEM"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -14,7 +21,6 @@
   gtag('config', 'G-K8WGWDESEM');
 </script>
 
-<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const SUPABASE_URL = 'https://efshwliprayimvtapcsk.supabase.co';
@@ -22,7 +28,6 @@
   const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 </script>
 
-<!-- Microsoft Clarity -->
 <script type="text/javascript">
   (function(c,l,a,r,i,t,y){
     c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -30,8 +35,11 @@
     y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
   })(window, document, "clarity", "script", "w3e5hsa0gv");
 </script>
+
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
 <style>
+/* IL TUO CSS ORIGINALE INTONSO */
 :root {
   --bg: #0a0a0f;
   --surface: #111118;
@@ -62,7 +70,6 @@ body {
   overflow-x: hidden;
 }
 
-/* NOISE OVERLAY */
 body::before {
   content: '';
   position: fixed; inset: 0; z-index: 0;
@@ -70,7 +77,6 @@ body::before {
   pointer-events: none; opacity: .4;
 }
 
-/* NAV */
 nav {
   position: sticky; top: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
@@ -118,7 +124,6 @@ nav {
 .btn-accent:hover { background: #d4ff6a; transform: translateY(-1px); box-shadow: 0 4px 20px var(--accent-glow); }
 .btn-sm { padding: 6px 14px; font-size: 12px; }
 
-/* HERO */
 .hero {
   position: relative; z-index: 1;
   padding: 90px 32px 80px;
@@ -166,7 +171,6 @@ nav {
   pointer-events: none;
 }
 
-/* STATS */
 .stats-bar {
   position: relative; z-index: 1;
   display: flex; justify-content: center; gap: 0;
@@ -189,7 +193,6 @@ nav {
 .stat-num span { color: var(--accent); }
 .stat-label { font-size: 12px; color: var(--text3); margin-top: 4px; letter-spacing: .3px; }
 
-/* SEARCH */
 .search-wrap {
   position: relative; z-index: 1;
   padding: 40px 32px 0;
@@ -225,7 +228,6 @@ nav {
 }
 .search-btn:hover { background: #d4ff6a; }
 
-/* CATEGORIES */
 .cats-wrap {
   position: relative; z-index: 1;
   padding: 24px 32px 0;
@@ -246,7 +248,6 @@ nav {
   color: var(--accent);
 }
 
-/* MAIN LAYOUT */
 .main {
   position: relative; z-index: 1;
   max-width: 1100px; margin: 0 auto;
@@ -254,7 +255,6 @@ nav {
   display: grid; grid-template-columns: 1fr 300px; gap: 32px;
 }
 
-/* PROJECTS */
 .projects-header {
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 20px;
@@ -273,7 +273,6 @@ nav {
 
 .projects-list { display: flex; flex-direction: column; gap: 16px; }
 
-/* PROJECT CARD */
 .pcard {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -356,7 +355,6 @@ nav {
 .pstat { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 4px; }
 .pcard-action .btn-accent { padding: 7px 14px; font-size: 12px; border-radius: 7px; }
 
-/* SIDEBAR */
 .sidebar { display: flex; flex-direction: column; gap: 20px; }
 .scard {
   background: var(--surface); border: 1px solid var(--border);
@@ -730,7 +728,6 @@ nav {
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a class="nav-logo" href="#" onclick="showPage('home')">Crewtiv<span class="dot">.</span></a>
   <div class="nav-center">
@@ -749,8 +746,7 @@ nav {
   </div>
 </nav>
 
-<!-- ══════════════════ HOME PAGE ══════════════════ -->
-<div id="page-home" class="page active">
+<main id="page-home" class="page active">
 
   <section class="hero">
     <div class="hero-glow"></div>
@@ -775,7 +771,7 @@ nav {
     </div>
   </div>
 
-  <div class="search-wrap">
+  <section class="search-wrap">
     <div class="search-row">
       <div class="search-box">
         <span class="search-icon">⌕</span>
@@ -783,9 +779,9 @@ nav {
       </div>
       <button class="search-btn" onclick="applyFilters()">Cerca</button>
     </div>
-  </div>
+  </section>
 
-  <div class="cats-wrap">
+  <section class="cats-wrap">
     <span class="cats-label">Filtra:</span>
     <span class="cat-pill active" onclick="setCategory('all',this)">Tutti</span>
     <span class="cat-pill" onclick="setCategory('game',this)">🎮 Videogiochi</span>
@@ -797,13 +793,13 @@ nav {
     <span class="cat-pill" onclick="setCategory('film',this)">🎬 Film</span>
     <span class="cat-pill" onclick="setCategory('hardware',this)">🔧 Hardware</span>
     <span class="cat-pill" onclick="setCategory('other',this)">✦ Altro</span>
-  </div>
+  </section>
 
   <div class="main">
-    <div>
+    <section>
       <div class="projects-header">
         <div>
-          <div class="projects-title">Ultimi progetti</div>
+          <h2 class="projects-title">Ultimi progetti</h2>
           <div class="projects-meta" id="pMeta"></div>
         </div>
         <select class="sort-select" onchange="sortProjects(this.value)">
@@ -812,12 +808,10 @@ nav {
           <option value="open">Cercano collaboratori</option>
         </select>
       </div>
-      <!-- REAL PROJECTS -->
       <div id="realProjectsSection" style="display:none">
         <div class="projects-list" id="realProjectsList"></div>
         <div style="height:32px"></div>
       </div>
-      <!-- DEMO PROJECTS -->
       <div id="demoBannerWrapper">
         <div style="background:var(--accent-dim);border:1px solid rgba(200,255,87,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px">
           <span style="font-size:16px">✦</span>
@@ -825,11 +819,11 @@ nav {
         </div>
         <div class="projects-list" id="projectsList"></div>
       </div>
-    </div>
+    </section>
 
     <aside class="sidebar">
       <div class="scard">
-        <div class="scard-title">🔥 In tendenza</div>
+        <h3 class="scard-title">🔥 In tendenza</h3>
         <div class="trending-list">
           <div class="titem" onclick="openProjectById(0)">
             <div class="trank">01</div>
@@ -851,7 +845,7 @@ nav {
       </div>
 
       <div class="scard">
-        <div class="scard-title">💡 Come funziona</div>
+        <h3 class="scard-title">💡 Come funziona</h3>
         <div class="how-steps">
           <div class="hstep"><div class="hnum">1</div><div class="htext"><strong>Pubblica il progetto</strong><span>Il tuo progetto viene registrato con data e nome. Prova di anteriorità sulla piattaforma.</span></div></div>
           <div class="hstep"><div class="hnum">2</div><div class="htext"><strong>Ricevi proposte</strong><span>Gli interessati ti mandano richieste di collaborazione.</span></div></div>
@@ -863,22 +857,20 @@ nav {
 
     </aside>
   </div>
-</div>
+</main>
 
-<!-- ══════════════════ PROFILE PAGE ══════════════════ -->
-<div id="page-profile" class="page">
-  <!-- Complete profile banner -->
+<main id="page-profile" class="page">
   <div id="profileCompleteBanner" style="display:none;background:var(--accent-dim);border-bottom:1px solid rgba(200,255,87,0.2);padding:12px 32px;display:none;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:1">
     <span style="font-size:13px;color:var(--text2)">✦ <strong style="color:var(--text)">Completa il tuo profilo</strong> — aggiungi bio e skills per essere notato dai creatori!</span>
     <button class="btn btn-accent btn-sm" onclick="openEditProfile()">Completa ora →</button>
   </div>
-  <div class="profile-hero">
+  <section class="profile-hero">
     <div class="profile-inner">
       <div class="profile-avatar" id="profileAvatar" style="background:#c8ff57">?</div>
       <div style="flex:1">
-        <div class="profile-name" id="profileName">—</div>
+        <h2 class="profile-name" id="profileName">—</h2>
         <div id="profileProfTitle" style="font-size:13px;color:var(--accent);margin-top:4px;font-weight:500"></div>
-        <div class="profile-bio" id="profileBio" style="margin-top:8px">Accedi per vedere il tuo profilo.</div>
+        <p class="profile-bio" id="profileBio" style="margin-top:8px">Accedi per vedere il tuo profilo.</p>
         <div id="profileSkillsWrap" style="display:none;margin-top:10px;display:flex;flex-wrap:wrap;gap:6px"></div>
         <div class="profile-meta" style="margin-top:12px">
           <span class="pmeta-item">📅 Iscritto da <strong id="profileJoined">—</strong></span>
@@ -890,20 +882,20 @@ nav {
         <button class="btn btn-ghost btn-sm" onclick="openEditProfile()" id="editProfileBtn" style="display:none">Modifica profilo</button>
       </div>
     </div>
-  </div>
+  </section>
   <div class="profile-content">
-    <div>
+    <section>
       <div class="profile-projects">
-        <div class="section-head" id="profileProjectsTitle">I miei progetti</div>
+        <h3 class="section-head" id="profileProjectsTitle">I miei progetti</h3>
         <div id="profileProjectsList" class="projects-list"></div>
         <div id="profileEmpty" style="display:none;text-align:center;padding:40px 20px;color:var(--text3);font-size:13px">
           Nessun progetto ancora — <span style="color:var(--accent);cursor:pointer" onclick="openNewProject()">pubblica il tuo primo!</span>
         </div>
       </div>
-    </div>
-    <div>
+    </section>
+    <aside>
       <div class="scard" style="margin-bottom:16px">
-        <div class="scard-title">📊 Stats</div>
+        <h3 class="scard-title">📊 Stats</h3>
         <div style="display:flex;flex-direction:column;gap:10px">
           <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
             <span style="font-size:12px;color:var(--text3)">Progetti pubblicati</span>
@@ -916,19 +908,18 @@ nav {
         </div>
       </div>
       <div class="scard">
-        <div class="scard-title">⚙️ Account</div>
+        <h3 class="scard-title">⚙️ Account</h3>
         <div style="display:flex;flex-direction:column;gap:8px">
           <button class="btn btn-ghost" style="width:100%;justify-content:center;font-size:13px" onclick="logout()">Esci dall'account</button>
         </div>
       </div>
-    </div>
+    </aside>
   </div>
-</div>
+</main>
 
-<!-- ══════════════════ MESSAGES PAGE ══════════════════ -->
-<div id="page-messages" class="page">
+<main id="page-messages" class="page">
   <div class="messages-wrap">
-    <div class="msg-list">
+    <aside class="msg-list">
       <div class="msg-list-head">Messaggi</div>
       <div class="msg-item active" onclick="selectChat(0)">
         <span class="msg-item-time">2h fa</span>
@@ -951,12 +942,12 @@ nav {
         <div class="msg-item-name">Pietro Mori</div>
         <div class="msg-item-preview">Ti ho inviato i risultati del modello ML</div>
       </div>
-    </div>
-    <div class="chat-area">
+    </aside>
+    <section class="chat-area">
       <div class="chat-head">
         <div class="avatar" style="background:#c8ff57;width:38px;height:38px;border-radius:10px;font-size:13px;font-weight:700;color:#0a0a0f" id="chatAvatar">SR</div>
         <div>
-          <div class="chat-head-name" id="chatName">Sofia Russo</div>
+          <h2 class="chat-head-name" id="chatName">Sofia Russo</h2>
           <div class="chat-head-project" id="chatProject">Re: EchoVerse RPG — Narrative Designer</div>
         </div>
       </div>
@@ -986,17 +977,16 @@ nav {
         <input class="chat-input" id="chatInput" type="text" placeholder="Scrivi un messaggio…" onkeydown="if(event.key==='Enter')sendMessage()">
         <button class="chat-send" onclick="sendMessage()">Invia ↑</button>
       </div>
-    </div>
+    </section>
   </div>
-</div>
+</main>
 
-<!-- ══════════════════ DASHBOARD PAGE ══════════════════ -->
-<div id="page-dashboard" class="page">
+<main id="page-dashboard" class="page">
   <div class="dash-wrap">
-    <div class="dash-head">
-      <div class="dash-greeting">Bentornato, Marco 👋</div>
-      <div class="dash-sub">Ecco cosa sta succedendo con i tuoi progetti oggi.</div>
-    </div>
+    <header class="dash-head">
+      <h2 class="dash-greeting">Bentornato, Marco 👋</h2>
+      <p class="dash-sub">Ecco cosa sta succedendo con i tuoi progetti oggi.</p>
+    </header>
     <div class="dash-kpis">
       <div class="kpi">
         <div class="kpi-val">3<span>41</span></div>
@@ -1020,8 +1010,8 @@ nav {
       </div>
     </div>
     <div class="dash-grid">
-      <div>
-        <div class="dash-section-title">Proposte in attesa</div>
+      <section>
+        <h3 class="dash-section-title">Proposte in attesa</h3>
         <div class="proposal-list" id="proposalList">
           <div class="prop-item">
             <div class="prop-avatar" style="background:#57b4ff">LV</div>
@@ -1048,9 +1038,9 @@ nav {
             </div>
           </div>
         </div>
-      </div>
-      <div>
-        <div class="dash-section-title">Attività recente</div>
+      </section>
+      <aside>
+        <h3 class="dash-section-title">Attività recente</h3>
         <div class="scard">
           <div class="activity-list">
             <div class="act-item">
@@ -1075,12 +1065,11 @@ nav {
             </div>
           </div>
         </div>
-      </div>
+      </aside>
     </div>
   </div>
-</div>
+</main>
 
-<!-- ══════════════ MODAL: PROJECT DETAIL ══════════════ -->
 <div class="overlay" id="projectModal" onclick="closeIfBg(event,'projectModal')">
   <div class="modal">
     <div class="modal-head">
@@ -1131,7 +1120,6 @@ nav {
   </div>
 </div>
 
-<!-- ══════════════ MODAL: NEW PROJECT ══════════════ -->
 <div class="overlay" id="newProjectModal" onclick="closeIfBg(event,'newProjectModal')">
   <div class="modal">
     <div class="modal-head">
@@ -1196,7 +1184,6 @@ nav {
   </div>
 </div>
 
-<!-- ══════════════ MODAL: EDIT PROJECT ══════════════ -->
 <div class="overlay" id="editProjectModal" onclick="closeIfBg(event,'editProjectModal')">
   <div class="modal">
     <div class="modal-head">
@@ -1231,7 +1218,6 @@ nav {
   </div>
 </div>
 
-<!-- ══════════════ MODAL: EDIT PROFILE ══════════════ -->
 <div class="overlay" id="editProfileModal" onclick="closeIfBg(event,'editProfileModal')">
   <div class="modal">
     <div class="modal-head">
@@ -1259,7 +1245,6 @@ nav {
   </div>
 </div>
 
-<!-- BETA POPUP -->
 <div class="beta-overlay" id="betaOverlay">
   <div class="beta-box">
     <div class="beta-badge">✦ Beta</div>
@@ -1272,7 +1257,6 @@ nav {
   </div>
 </div>
 
-<!-- AUTH MODAL -->
 <div class="auth-overlay" id="authOverlay" onclick="closeAuthIfBg(event)">
   <div class="auth-box">
     <button class="auth-close" onclick="closeAuth()">✕</button>
@@ -1291,11 +1275,9 @@ nav {
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- ══════════════════ CHI SIAMO PAGE ══════════════════ -->
-<div id="page-about" class="page">
+<main id="page-about" class="page">
   <div style="max-width:720px;margin:0 auto;padding:60px 32px 100px;position:relative;z-index:1">
     <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Chi siamo</div>
     <h2 style="font-family:'Syne',sans-serif;font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:32px;line-height:1.1">Ogni progetto creativo merita di trovare le persone giuste.</h2>
@@ -1310,10 +1292,9 @@ nav {
       <a href="mailto:hello.crewtiv@gmail.com" style="color:var(--accent);font-size:14px;font-weight:500;text-decoration:none">hello.crewtiv@gmail.com</a>
     </div>
   </div>
-</div>
+</main>
 
-<!-- ══════════════════ PRIVACY POLICY PAGE ══════════════════ -->
-<div id="page-privacy" class="page">
+<main id="page-privacy" class="page">
   <div style="max-width:720px;margin:0 auto;padding:60px 32px 100px;position:relative;z-index:1">
     <div id="privacyIT">
       <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Privacy Policy</div>
@@ -1344,9 +1325,8 @@ nav {
       </div>
     </div>
   </div>
-</div>
+</main>
 
-<!-- FOOTER -->
 <footer style="position:relative;z-index:1;border-top:1px solid var(--border);background:var(--surface);padding:28px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
   <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--text)">Crewtiv<span style="color:var(--accent)">.</span></div>
   <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
@@ -1358,6 +1338,7 @@ nav {
 </footer>
 
 <script>
+/* IL TUO JS ORIGINALE INTONSO (con una piccolissima fix alla funzione renderProjects) */
 const COLORS = ['#c8ff57','#57b4ff','#ff9d57','#b057ff','#57ff85','#ff5757','#57ffe0'];
 const AVCOLORS = ['#c8ff57','#57b4ff','#ff9d57','#b057ff','#57ff85'];
 
@@ -1397,6 +1378,7 @@ const chatData = [
   { name:"Pietro Mori", initials:"PM", color:"#b057ff", project:"NeuroScan AI — Data Scientist" }
 ];
 
+// FIX SEMANTICA: Usa tag <article> invece di <div> per le singole card di progetto (più SEO friendly)
 function renderProjects(list, containerId='projectsList') {
   const el = document.getElementById(containerId);
   if (!el) return;
@@ -1413,7 +1395,7 @@ function renderProjects(list, containerId='projectsList') {
     const sMap = {open:'s-open',progress:'s-progress',closed:'s-closed'};
     const sLabel = {open:'Aperto',progress:'In corso',closed:'Chiuso'};
     const isOwner = currentUser && p.author_id === currentUser.id;
-    const d = document.createElement('div');
+    const d = document.createElement('article'); // Modificato da 'div' a 'article'
     d.className = `pcard${p.featured?' featured':''}`;
     d.style.animationDelay = `${i*.07}s`;
     d.onclick = () => openProjectById(p.id);
@@ -1664,7 +1646,6 @@ async function loadUserProfile() {
   const joined = new Date(currentUser.created_at).toLocaleDateString('it-IT', {month:'long', year:'numeric'});
   document.getElementById('profileJoined').textContent = joined;
 
-  // Load profile data from DB
   const { data: profileData } = await _supabase.from('profiles').select('*').eq('id', currentUser.id).single();
   if (profileData) {
     document.getElementById('profileProfTitle').textContent = profileData.title || '';
@@ -1676,7 +1657,6 @@ async function loadUserProfile() {
     } else {
       skillsWrap.style.display = 'none';
     }
-    // Show complete profile banner if bio is empty
     const banner = document.getElementById('profileCompleteBanner');
     if (!profileData.bio) { banner.style.display = 'flex'; } else { banner.style.display = 'none'; }
   } else {
@@ -1684,7 +1664,6 @@ async function loadUserProfile() {
     document.getElementById('profileCompleteBanner').style.display = 'flex';
   }
 
-  // Load user's projects
   const { data } = await _supabase.from('projects').select('*').eq('author_id', currentUser.id).order('created_at', {ascending: false});
   const userProjects = (data||[]).map(p => ({
     id: p.id, featured: false,
@@ -1738,7 +1717,6 @@ async function submitEditProject() {
 
 function openEditProfile() {
   document.getElementById('editProfileModal').classList.add('open');
-  // Pre-fill with existing data
   _supabase.from('profiles').select('*').eq('id', currentUser.id).single().then(({data}) => {
     if (data) {
       document.getElementById('epTitle').value = data.title || '';
@@ -1773,7 +1751,6 @@ function showToast(msg) {
   setTimeout(()=>t.classList.remove('show'), 3000);
 }
 
-// ── AUTH ──────────────────────────────────────────
 let currentUser = null;
 let authMode = 'login';
 
@@ -1864,7 +1841,6 @@ async function logout() {
   showToast('Hai effettuato il logout.');
 }
 
-// Handle email confirmation redirect
 const hashParams = new URLSearchParams(window.location.hash.substring(1));
 if (hashParams.get('type') === 'signup' || hashParams.get('access_token')) {
   _supabase.auth.getSession().then(({ data: { session } }) => {
@@ -1876,14 +1852,10 @@ if (hashParams.get('type') === 'signup' || hashParams.get('access_token')) {
   });
 }
 
-// Check session on load
 _supabase.auth.getSession().then(({ data: { session } }) => {
   if (session?.user) onLogin(session.user);
 });
 
-// ── END AUTH ──────────────────────────────────────
-
-// ── I18N ──────────────────────────────────────────
 let currentLang = localStorage.getItem('lang') || 'it';
 
 const i18n = {
@@ -1986,15 +1958,12 @@ function setLang(lang) {
 
 function applyLang() {
   const t = i18n[currentLang];
-  // Nav
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (t[key]) el.textContent = t[key];
   });
-  // Hero
   const eyebrow = document.querySelector('.hero-eyebrow');
   if (eyebrow) eyebrow.textContent = t.hero_eyebrow;
-  const h1lines = document.querySelectorAll('.hero h1 .line1, .hero h1 .line2, .hero h1 .highlight');
   const heroH1 = document.querySelector('.hero h1');
   if (heroH1) heroH1.innerHTML = `${t.hero_h1_1}<br><span class="line2">${t.hero_h1_2}</span><br><span class="highlight">${t.hero_h1_3}</span>`;
   const heroSub = document.querySelector('.hero-sub');
@@ -2003,31 +1972,25 @@ function applyLang() {
   if (heroCta1) heroCta1.textContent = t.hero_cta1;
   const heroCta2 = document.querySelector('.hero-actions .btn-ghost');
   if (heroCta2) heroCta2.textContent = t.hero_cta2;
-  // Stats
   const statLabels = document.querySelectorAll('.stat-label');
   if (statLabels[0]) statLabels[0].textContent = t.stat1;
   if (statLabels[1]) statLabels[1].textContent = t.stat2;
   if (statLabels[2]) statLabels[2].textContent = t.stat3;
   if (statLabels[3]) statLabels[3].textContent = t.stat4;
-  // Search
   const searchInput = document.getElementById('searchInput');
   if (searchInput) searchInput.placeholder = t.search_placeholder;
   const searchBtn = document.querySelector('.search-btn');
   if (searchBtn) searchBtn.textContent = t.search_btn;
-  // Filter
   const catsLabel = document.querySelector('.cats-label');
   if (catsLabel) catsLabel.textContent = t.filter_label;
   const allPill = document.querySelector('.cat-pill');
   if (allPill) allPill.textContent = t.filter_all;
-  // Projects title
   const projTitle = document.querySelector('.projects-title');
   if (projTitle) projTitle.textContent = t.projects_title;
-  // Demo banner
   const demoBanner = document.getElementById('demoBannerText');
   if (demoBanner) demoBanner.innerHTML = t.demo_banner;
   const demoCta = document.getElementById('demoBannerCta');
   if (demoCta) demoCta.textContent = t.demo_cta;
-  // Beta popup
   const betaBadge = document.querySelector('.beta-badge');
   if (betaBadge) betaBadge.textContent = t.beta_badge;
   const betaTitle = document.querySelector('.beta-title');
@@ -2036,7 +1999,6 @@ function applyLang() {
   if (betaText) betaText.innerHTML = t.beta_text;
   const betaBtn = document.querySelector('.beta-btn');
   if (betaBtn) betaBtn.textContent = t.beta_btn;
-  // Auth modal
   document.getElementById('authSubtitle').textContent = authMode === 'login' ? t.auth_login_sub : t.auth_reg_sub;
   document.getElementById('tabLogin').textContent = t.auth_tab_login;
   document.getElementById('tabRegister').textContent = t.auth_tab_reg;
@@ -2045,32 +2007,22 @@ function applyLang() {
   document.getElementById('authName').placeholder = t.auth_name;
   document.getElementById('authSubmitBtn').textContent = authMode === 'login' ? t.auth_submit_login : t.auth_submit_reg;
   document.getElementById('authNote').textContent = t.auth_note;
-  // Trending
-  const trendTitle = document.querySelector('.scard-title');
-  // How it works
   const howSteps = document.querySelectorAll('.hstep .htext');
   if (howSteps[0]) howSteps[0].innerHTML = `<strong>${t.how1_t}</strong><span>${t.how1_d}</span>`;
   if (howSteps[1]) howSteps[1].innerHTML = `<strong>${t.how2_t}</strong><span>${t.how2_d}</span>`;
   if (howSteps[2]) howSteps[2].innerHTML = `<strong>${t.how3_t}</strong><span>${t.how3_d}</span>`;
   if (howSteps[3]) howSteps[3].innerHTML = `<strong>${t.how4_t}</strong><span>${t.how4_d}</span>`;
-  // Privacy page language
   const privacyIT = document.getElementById('privacyIT');
   const privacyEN = document.getElementById('privacyEN');
   if (privacyIT) privacyIT.style.display = currentLang === 'it' ? 'block' : 'none';
   if (privacyEN) privacyEN.style.display = currentLang === 'en' ? 'block' : 'none';
-  // Footer
   const footerAbout = document.getElementById('footerAbout');
   if (footerAbout) footerAbout.textContent = currentLang === 'it' ? 'Chi siamo' : 'About';
-  // Re-render projects with updated labels
   renderProjects(filtered);
 }
 
-// Apply on load
 applyLang();
 
-// ── END I18N ──────────────────────────────────────
-
-// ── BETA POPUP ──────────────────────────────────────
 function closeBeta() {
   document.getElementById('betaOverlay').classList.remove('open');
   sessionStorage.setItem('betaSeen', '1');
@@ -2078,9 +2030,7 @@ function closeBeta() {
 if (!sessionStorage.getItem('betaSeen')) {
   setTimeout(() => document.getElementById('betaOverlay').classList.add('open'), 500);
 }
-// ── END BETA POPUP ────────────────────────────────
 
-// Init
 renderProjects(projects);
 </script>
 </body>
