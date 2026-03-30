@@ -1667,18 +1667,23 @@ async function loadUserProfile() {
       propList.innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">Nessuna proposta in attesa al momento.</div>`;
   }
 
-  const { data: sentProps } = await _supabase.from('proposals').select('*, projects(title)').eq('applicant_id', currentUser.id);
+// Modificato per chiedere anche l'ID del progetto e renderlo cliccabile
+  const { data: sentProps } = await _supabase.from('proposals').select('*, projects(id, title)').eq('applicant_id', currentUser.id);
   const sentPropList = document.getElementById('sentProposalList');
   if(sentProps && sentProps.length > 0) {
       sentPropList.innerHTML = sentProps.map(pr => {
           const statusColors = { pending: 'var(--orange)', accepted: '#57ff85', declined: 'var(--red)' };
           const statusLabels = { pending: 'In attesa', accepted: 'Accettata', declined: 'Rifiutata' };
+          const projId = pr.projects?.id;
+          const onClickAttr = projId ? `onclick="openProjectById('${projId}')" style="cursor:pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'"` : '';
           return `
-          <div class="prop-item" style="align-items:center;">
+          <div class="prop-item" ${onClickAttr}>
               <div style="flex:1">
-                  <div class="prop-role" style="font-size:13px;">Ti sei proposto come <strong>${pr.role}</strong> per <strong>${pr.projects?.title || 'Progetto eliminato'}</strong></div>
-                  <div style="font-size:11px; font-weight:600; color:${statusColors[pr.status]}; margin-top:6px;">Stato: ${statusLabels[pr.status]}</div>
+                  <div class="prop-role" style="font-size:13px; color:var(--text);">Ruolo: <strong>${pr.role}</strong></div>
+                  <div style="font-size:11px; color:var(--text3); margin-top:2px;">per il progetto <strong style="color:var(--text2); text-decoration:underline;">${pr.projects?.title || 'Progetto eliminato'}</strong></div>
+                  <div style="font-size:11px; font-weight:600; color:${statusColors[pr.status]}; margin-top:8px; display:inline-block; padding:3px 8px; background:rgba(255,255,255,0.05); border-radius:4px;">Stato: ${statusLabels[pr.status]}</div>
               </div>
+              ${projId ? `<div style="font-size:18px; color:var(--text3); align-self:center; padding-left:10px;">→</div>` : ''}
           </div>`;
       }).join('');
   } else {
