@@ -736,7 +736,6 @@ nav {
   <div class="nav-center">
     <button class="nav-link active" id="nav-home" onclick="showPage('home')" data-i18n="nav_home">Home</button>
     <button class="nav-link" id="nav-messages" onclick="showPage('messages')" data-i18n="nav_messages">Messaggi</button>
-    <button class="nav-link" id="nav-dashboard" onclick="showPage('dashboard')" data-i18n="nav_dashboard">Dashboard</button>
     <button class="nav-link" id="nav-profile" onclick="showPage('profile')" data-i18n="nav_profile">Profilo</button>
     <button class="nav-link" id="nav-about" onclick="showPage('about')" data-i18n="nav_about">Chi siamo</button>
   </div>
@@ -891,6 +890,90 @@ nav {
       </div>
     </div>
   </div>
+  <!-- Dashboard Stats (moved from dashboard page) -->
+  <div class="dash-wrap" style="padding-bottom:0">
+    <div class="dash-kpis">
+      <div class="kpi">
+        <div class="kpi-val">3<span>41</span></div>
+        <div class="kpi-label">Viste totali progetti</div>
+        <div class="kpi-delta">↑ +28 questa settimana</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val">1<span>1</span></div>
+        <div class="kpi-label">Proposte ricevute</div>
+        <div class="kpi-delta">↑ +3 nuove</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val">4</div>
+        <div class="kpi-label">Collaboratori attivi</div>
+        <div class="kpi-delta" style="color:var(--orange)">2 in attesa</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val">2</div>
+        <div class="kpi-label">Pubblicazioni gratuite rimaste</div>
+        <div class="kpi-delta" style="color:var(--text3)">Si resettano tra 18 giorni</div>
+      </div>
+    </div>
+    <div class="dash-grid" style="margin-top:24px;margin-bottom:32px">
+      <div>
+        <div class="dash-section-title">Proposte in attesa</div>
+        <div class="proposal-list" id="proposalListProfile">
+          <div class="prop-item">
+            <div class="prop-avatar" style="background:#57b4ff">LV</div>
+            <div style="flex:1">
+              <div class="prop-name">Luca Verdi</div>
+              <div class="prop-role">Sound Designer · per EchoVerse RPG</div>
+              <div class="prop-msg">"Compongo per videogiochi indie da 4 anni. Ecco un link alla mia ultima OST — penso si adatti perfettamente al tuo mondo."</div>
+              <div class="prop-actions">
+                <button class="btn-accept" onclick="acceptProposal(this,'Luca Verdi')">✓ Accetta</button>
+                <button class="btn-decline" onclick="declineProposal(this,'Luca Verdi')">✕ Rifiuta</button>
+              </div>
+            </div>
+          </div>
+          <div class="prop-item">
+            <div class="prop-avatar" style="background:#b057ff">KM</div>
+            <div style="flex:1">
+              <div class="prop-name">Kenji Matsuda</div>
+              <div class="prop-role">3D Artist · per EchoVerse RPG</div>
+              <div class="prop-msg">"Sono specializzato in ambienti stilizzati. Adoro l'estetica che stai cercando e mi piacerebbe progettare i visual del mondo parallelo."</div>
+              <div class="prop-actions">
+                <button class="btn-accept" onclick="acceptProposal(this,'Kenji Matsuda')">✓ Accetta</button>
+                <button class="btn-decline" onclick="declineProposal(this,'Kenji Matsuda')">✕ Rifiuta</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="dash-section-title">Attività recente</div>
+        <div class="scard">
+          <div class="activity-list">
+            <div class="act-item">
+              <div class="act-dot" style="background:#57ff85"></div>
+              <div><div class="act-text"><strong>Sofia Russo</strong> accettata come Narrative Designer su EchoVerse</div><div class="act-time">2 ore fa</div></div>
+            </div>
+            <div class="act-item">
+              <div class="act-dot" style="background:var(--accent)"></div>
+              <div><div class="act-text"><strong>EchoVerse RPG</strong> ha raggiunto 128 viste</div><div class="act-time">5 ore fa</div></div>
+            </div>
+            <div class="act-item">
+              <div class="act-dot" style="background:var(--blue)"></div>
+              <div><div class="act-text"><strong>Kenji Matsuda</strong> ha inviato una proposta di collaborazione</div><div class="act-time">1 giorno fa</div></div>
+            </div>
+            <div class="act-item">
+              <div class="act-dot" style="background:var(--orange)"></div>
+              <div><div class="act-text"><strong>Luca Verdi</strong> ha inviato una proposta di collaborazione</div><div class="act-time">2 giorni fa</div></div>
+            </div>
+            <div class="act-item">
+              <div class="act-dot" style="background:var(--purple)"></div>
+              <div><div class="act-text">Nuovo progetto <strong>EchoVerse RPG</strong> pubblicato e registrato</div><div class="act-time">3 giorni fa</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="profile-content">
     <div>
       <div class="profile-projects">
@@ -985,96 +1068,6 @@ nav {
       <div class="chat-input-row">
         <input class="chat-input" id="chatInput" type="text" placeholder="Scrivi un messaggio…" onkeydown="if(event.key==='Enter')sendMessage()">
         <button class="chat-send" onclick="sendMessage()">Invia ↑</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════ DASHBOARD PAGE ══════════════════ -->
-<div id="page-dashboard" class="page">
-  <div class="dash-wrap">
-    <div class="dash-head">
-      <div class="dash-greeting">Bentornato, Marco 👋</div>
-      <div class="dash-sub">Ecco cosa sta succedendo con i tuoi progetti oggi.</div>
-    </div>
-    <div class="dash-kpis">
-      <div class="kpi">
-        <div class="kpi-val">3<span>41</span></div>
-        <div class="kpi-label">Viste totali progetti</div>
-        <div class="kpi-delta">↑ +28 questa settimana</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-val">1<span>1</span></div>
-        <div class="kpi-label">Proposte ricevute</div>
-        <div class="kpi-delta">↑ +3 nuove</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-val">4</div>
-        <div class="kpi-label">Collaboratori attivi</div>
-        <div class="kpi-delta" style="color:var(--orange)">2 in attesa</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-val">2</div>
-        <div class="kpi-label">Pubblicazioni gratuite rimaste</div>
-        <div class="kpi-delta" style="color:var(--text3)">Si resettano tra 18 giorni</div>
-      </div>
-    </div>
-    <div class="dash-grid">
-      <div>
-        <div class="dash-section-title">Proposte in attesa</div>
-        <div class="proposal-list" id="proposalList">
-          <div class="prop-item">
-            <div class="prop-avatar" style="background:#57b4ff">LV</div>
-            <div style="flex:1">
-              <div class="prop-name">Luca Verdi</div>
-              <div class="prop-role">Sound Designer · per EchoVerse RPG</div>
-              <div class="prop-msg">"Compongo per videogiochi indie da 4 anni. Ecco un link alla mia ultima OST — penso si adatti perfettamente al tuo mondo."</div>
-              <div class="prop-actions">
-                <button class="btn-accept" onclick="acceptProposal(this,'Luca Verdi')">✓ Accetta</button>
-                <button class="btn-decline" onclick="declineProposal(this,'Luca Verdi')">✕ Rifiuta</button>
-              </div>
-            </div>
-          </div>
-          <div class="prop-item">
-            <div class="prop-avatar" style="background:#b057ff">KM</div>
-            <div style="flex:1">
-              <div class="prop-name">Kenji Matsuda</div>
-              <div class="prop-role">3D Artist · per EchoVerse RPG</div>
-              <div class="prop-msg">"Sono specializzato in ambienti stilizzati. Adoro l'estetica che stai cercando e mi piacerebbe progettare i visual del mondo parallelo."</div>
-              <div class="prop-actions">
-                <button class="btn-accept" onclick="acceptProposal(this,'Kenji Matsuda')">✓ Accetta</button>
-                <button class="btn-decline" onclick="declineProposal(this,'Kenji Matsuda')">✕ Rifiuta</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div>
-        <div class="dash-section-title">Attività recente</div>
-        <div class="scard">
-          <div class="activity-list">
-            <div class="act-item">
-              <div class="act-dot" style="background:#57ff85"></div>
-              <div><div class="act-text"><strong>Sofia Russo</strong> accettata come Narrative Designer su EchoVerse</div><div class="act-time">2 ore fa</div></div>
-            </div>
-            <div class="act-item">
-              <div class="act-dot" style="background:var(--accent)"></div>
-              <div><div class="act-text"><strong>EchoVerse RPG</strong> ha raggiunto 128 viste</div><div class="act-time">5 ore fa</div></div>
-            </div>
-            <div class="act-item">
-              <div class="act-dot" style="background:var(--blue)"></div>
-              <div><div class="act-text"><strong>Kenji Matsuda</strong> ha inviato una proposta di collaborazione</div><div class="act-time">1 giorno fa</div></div>
-            </div>
-            <div class="act-item">
-              <div class="act-dot" style="background:var(--orange)"></div>
-              <div><div class="act-text"><strong>Luca Verdi</strong> ha inviato una proposta di collaborazione</div><div class="act-time">2 giorni fa</div></div>
-            </div>
-            <div class="act-item">
-              <div class="act-dot" style="background:var(--purple)"></div>
-              <div><div class="act-text">Nuovo progetto <strong>EchoVerse RPG</strong> pubblicato e registrato</div><div class="act-time">3 giorni fa</div></div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -1307,7 +1300,7 @@ nav {
     </div>
     <div style="margin-top:40px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:14px">
       <div style="font-size:13px;color:var(--text3);margin-bottom:8px">Contatti</div>
-      <a href="mailto:hello.crewtiv@gmail.com" style="color:var(--accent);font-size:14px;font-weight:500;text-decoration:none">hello.crewtiv@gmail.com</a>
+      <a href="/cdn-cgi/l/email-protection#e9818c858586c78a9b8c9e9d809fa98e84888085c78a8684" style="color:var(--accent);font-size:14px;font-weight:500;text-decoration:none"><span class="__cf_email__" data-cfemail="8de5e8e1e1e2a3eeffe8faf9e4fbcdeae0ece4e1a3eee2e0">[email&#160;protected]</span></a>
     </div>
   </div>
 </div>
@@ -1320,12 +1313,12 @@ nav {
       <h2 style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px">Informativa sul trattamento dei dati personali</h2>
       <p style="font-size:12px;color:var(--text3);margin-bottom:36px">ai sensi del Regolamento UE 2016/679 — GDPR</p>
       <div style="display:flex;flex-direction:column;gap:28px;font-size:14px;color:var(--text2);line-height:1.8;font-weight:300">
-        <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Titolare del trattamento</div><p>Crewtiv Team<br>Email: <a href="mailto:hello.crewtiv@gmail.com" style="color:var(--accent)">hello.crewtiv@gmail.com</a></p></div>
+        <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Titolare del trattamento</div><p>Crewtiv Team<br>Email: <a href="/cdn-cgi/l/email-protection#dbb3beb7b7b4f5b8a9beacafb2ad9bbcb6bab2b7f5b8b4b6" style="color:var(--accent)"><span class="__cf_email__" data-cfemail="78101d141417561b0a1d0f0c110e381f15191114561b1715">[email&#160;protected]</span></a></p></div>
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Dati raccolti</div><p>Raccogliamo i seguenti dati personali:<br>— Indirizzo email<br>— Numero di telefono (per verifica identità)</p></div>
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Finalità del trattamento</div><p>I dati sono utilizzati esclusivamente per creare e gestire il tuo account su Crewtiv e verificare l'autenticità del profilo.</p></div>
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Base giuridica</div><p>Il trattamento è basato sul consenso dell'utente, espresso al momento della registrazione.</p></div>
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Conservazione dei dati</div><p>I dati sono conservati fino alla cancellazione dell'account da parte dell'utente.</p></div>
-        <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Diritti dell'utente</div><p>Hai il diritto di accedere, modificare o cancellare i tuoi dati in qualsiasi momento. La gestione diretta dal profilo sarà disponibile a breve. Nel frattempo scrivi a <a href="mailto:hello.crewtiv@gmail.com" style="color:var(--accent)">hello.crewtiv@gmail.com</a></p></div>
+        <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Diritti dell'utente</div><p>Hai il diritto di accedere, modificare o cancellare i tuoi dati in qualsiasi momento. La gestione diretta dal profilo sarà disponibile a breve. Nel frattempo scrivi a <a href="/cdn-cgi/l/email-protection#1a727f7676753479687f6d6e736c5a7d777b737634797577" style="color:var(--accent)"><span class="__cf_email__" data-cfemail="a3cbc6cfcfcc8dc0d1c6d4d7cad5e3c4cec2cacf8dc0ccce">[email&#160;protected]</span></a></p></div>
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Sede del titolare</div><p>Italia</p></div>
       </div>
     </div>
@@ -1334,12 +1327,12 @@ nav {
       <h2 style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px">Privacy Policy</h2>
       <p style="font-size:12px;color:var(--text3);margin-bottom:36px">pursuant to EU Regulation 2016/679 — GDPR</p>
       <div style="display:flex;flex-direction:column;gap:28px;font-size:14px;color:var(--text2);line-height:1.8;font-weight:300">
-        <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Data Controller</div><p>Crewtiv Team<br>Email: <a href="mailto:hello.crewtiv@gmail.com" style="color:var(--accent)">hello.crewtiv@gmail.com</a></p></div>
+        <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Data Controller</div><p>Crewtiv Team<br>Email: <a href="/cdn-cgi/l/email-protection#a1c9c4cdcdce8fc2d3c4d6d5c8d7e1c6ccc0c8cd8fc2cecc" style="color:var(--accent)"><span class="__cf_email__" data-cfemail="0c6469606063226f7e697b78657a4c6b616d6560226f6361">[email&#160;protected]</span></a></p></div>
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Data Collected</div><p>We collect the following personal data:<br>— Email address<br>— Phone number (for identity verification)</p></div>
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Purpose</div><p>Data is used exclusively to create and manage your Crewtiv account and verify profile authenticity.</p></div>
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Legal Basis</div><p>Processing is based on user consent, given at the time of registration.</p></div>
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Data Retention</div><p>Data is retained until the user deletes their account.</p></div>
-        <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Your Rights</div><p>You have the right to access, modify or delete your data at any time. Direct profile management will be available soon. In the meantime, write to <a href="mailto:hello.crewtiv@gmail.com" style="color:var(--accent)">hello.crewtiv@gmail.com</a></p></div>
+        <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Your Rights</div><p>You have the right to access, modify or delete your data at any time. Direct profile management will be available soon. In the meantime, write to <a href="/cdn-cgi/l/email-protection#dab2bfb6b6b5f4b9a8bfadaeb3ac9abdb7bbb3b6f4b9b5b7" style="color:var(--accent)"><span class="__cf_email__" data-cfemail="b3dbd6dfdfdc9dd0c1d6c4c7dac5f3d4ded2dadf9dd0dcde">[email&#160;protected]</span></a></p></div>
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Location</div><p>Italy</p></div>
       </div>
     </div>
@@ -1352,12 +1345,12 @@ nav {
   <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
     <span onclick="showPage('about')" style="font-size:13px;color:var(--text3);cursor:pointer;transition:color .2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'" id="footerAbout">Chi siamo</span>
     <span onclick="showPage('privacy')" style="font-size:13px;color:var(--text3);cursor:pointer;transition:color .2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'" id="footerPrivacy">Privacy Policy</span>
-    <a href="mailto:hello.crewtiv@gmail.com" style="font-size:13px;color:var(--text3);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">hello.crewtiv@gmail.com</a>
+    <a href="/cdn-cgi/l/email-protection#751d1019191a5b16071002011c03351218141c195b161a18" style="font-size:13px;color:var(--text3);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'"><span class="__cf_email__" data-cfemail="7e161b121211501d0c1b090a17083e19131f1712501d1113">[email&#160;protected]</span></a>
   </div>
   <div style="font-size:12px;color:var(--text3)">© 2026 Crewtiv</div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const COLORS = ['#c8ff57','#57b4ff','#ff9d57','#b057ff','#57ff85','#ff5757','#57ffe0'];
 const AVCOLORS = ['#c8ff57','#57b4ff','#ff9d57','#b057ff','#57ff85'];
 
@@ -2059,29 +2052,4 @@ function applyLang() {
   if (privacyIT) privacyIT.style.display = currentLang === 'it' ? 'block' : 'none';
   if (privacyEN) privacyEN.style.display = currentLang === 'en' ? 'block' : 'none';
   // Footer
-  const footerAbout = document.getElementById('footerAbout');
-  if (footerAbout) footerAbout.textContent = currentLang === 'it' ? 'Chi siamo' : 'About';
-  // Re-render projects with updated labels
-  renderProjects(filtered);
-}
-
-// Apply on load
-applyLang();
-
-// ── END I18N ──────────────────────────────────────
-
-// ── BETA POPUP ──────────────────────────────────────
-function closeBeta() {
-  document.getElementById('betaOverlay').classList.remove('open');
-  sessionStorage.setItem('betaSeen', '1');
-}
-if (!sessionStorage.getItem('betaSeen')) {
-  setTimeout(() => document.getElementById('betaOverlay').classList.add('open'), 500);
-}
-// ── END BETA POPUP ────────────────────────────────
-
-// Init
-renderProjects(projects);
-</script>
-</body>
-</html>
+  const footer
