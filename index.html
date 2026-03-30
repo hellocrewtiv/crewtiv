@@ -716,7 +716,6 @@ nav {
   <div class="nav-center">
     <button class="nav-link active" id="nav-home" onclick="showPage('home')" data-i18n="nav_home">Home</button>
     <button class="nav-link" id="nav-messages" onclick="showPage('messages')" data-i18n="nav_messages">Messaggi</button>
-    <button class="nav-link" id="nav-profile" onclick="showPage('profile')" data-i18n="nav_profile">Profilo</button>
     <button class="nav-link" id="nav-about" onclick="showPage('about')" data-i18n="nav_about">Chi siamo</button>
   </div>
   <div style="display:flex;align-items:center;gap:10px">
@@ -842,7 +841,7 @@ nav {
 
 <main id="page-profile" class="page">
   <div id="profileCompleteBanner" style="display:none;background:var(--accent-dim);border-bottom:1px solid rgba(200,255,87,0.2);padding:12px 32px;display:none;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:1">
-    <span style="font-size:13px;color:var(--text2)">✦ <strong style="color:var(--text)">Completa il tuo profilo</strong> — aggiungi bio e skills per essere notato dai creatori!</span>
+    <span style="font-size:13px;color:var(--text2)">✦ <strong style="color:var(--text)">Completa il tuo profilo</strong> — aggiungi bio e skills per farti notare dai creatori!</span>
     <button class="btn btn-accent btn-sm" onclick="openEditProfile()">Completa ora →</button>
   </div>
   
@@ -857,6 +856,7 @@ nav {
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
         <button class="btn btn-ghost btn-sm" onclick="openEditProfile()" id="editProfileBtn" style="display:none">✏️ Modifica Profilo</button>
+        <button class="btn btn-ghost btn-sm" onclick="logout()" id="logoutBtn" style="display:none; color:var(--red); border-color:rgba(255,87,87,0.3);">Esci dall'account</button>
       </div>
     </div>
 
@@ -879,8 +879,13 @@ nav {
   <div class="profile-content">
     <section>
       <h3 class="dash-section-title" style="color:var(--accent);">🔔 Richieste di Collaborazione</h3>
-      <div class="proposal-list" id="proposalList" style="margin-bottom: 32px;">
+      <div class="proposal-list" id="proposalList" style="margin-bottom: 24px;">
         <div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">Nessuna proposta in attesa al momento.</div>
+      </div>
+
+      <h3 class="dash-section-title">Le mie Candidature Inviate</h3>
+      <div class="proposal-list" id="sentProposalList" style="margin-bottom: 32px;">
+        <div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">Non ti sei ancora candidato a nessun progetto.</div>
       </div>
 
       <h3 class="dash-section-title">I miei progetti pubblicati</h3>
@@ -1486,11 +1491,14 @@ async function submitProposal() {
   if (!role||!msg) { showToast('⚠️ Compila tutti i campi'); return; }
   
   if (currentProject.isReal) {
+      // Usa l'email se l'utente non ha impostato un nome
+      const appName = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
+      
       const { error } = await _supabase.from('proposals').insert({
           project_id: currentProject.id,
           owner_id: currentProject.author_id,
           applicant_id: currentUser.id,
-          applicant_name: currentUser.user_metadata.full_name,
+          applicant_name: appName,
           role: role,
           message: msg
       });
@@ -1501,6 +1509,7 @@ async function submitProposal() {
   }
   
   closeModal('projectModal');
+  if(document.getElementById('page-profile').classList.contains('active')) loadUserProfile();
 }
 
 async function toggleSaveProject(projectId) {
@@ -1590,7 +1599,7 @@ function showPage(page) {
   const navEl = document.getElementById('nav-'+page);
   if (navEl) navEl.classList.add('active');
   
-  if (page==='profile') loadUserProfile(); // Ora carica tutto qui dentro
+  if (page==='profile') loadUserProfile();
   
   if (page==='privacy') {
     document.getElementById('privacyIT').style.display = currentLang==='it' ? 'block' : 'none';
@@ -1599,19 +1608,10 @@ function showPage(page) {
   window.scrollTo(0,0);
 }
 
-// ── NUOVA FUNZIONE PROFILO + DASHBOARD FUSA ──────────────────────────────────────────
+// ── NUOVA FUNZIONE PROFILO FUSA ──────────────────────────────────────────
 async function loadUserProfile() {
-  if (!currentUser) {
-    document.getElementById('profileName').textContent = 'Accedi per vedere il tuo profilo';
-    document.getElementById('profileBio').textContent = '';
-    document.getElementById('profileAvatar').textContent = '?';
-    document.getElementById('dashTotalViews').textContent = '0';
-    document.getElementById('dashProposalsReceived').textContent = '0';
-    document.getElementById('dashProposalsSent').textContent = '0';
-    return;
-  }
+  if (!currentUser) return;
   
-  // 1. Info Utente Base
   const name = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
   const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   document.getElementById('profileName').textContent = name;
@@ -1619,11 +1619,10 @@ async function loadUserProfile() {
   document.getElementById('editProfileBtn').style.display = 'inline-flex';
   document.getElementById('logoutBtn').style.display = 'inline-flex';
 
-  // 2. Dati Profilo da DB
   const { data: profileData } = await _supabase.from('profiles').select('*').eq('id', currentUser.id).single();
   if (profileData) {
     document.getElementById('profileProfTitle').textContent = profileData.title || '';
-    document.getElementById('profileBio').textContent = profileData.bio || '';
+    document.getElementById('profileBio').textContent = profileData.bio || 'Aggiungi una bio per farti conoscere...';
     const skillsWrap = document.getElementById('profileSkillsWrap');
     if (profileData.skills && profileData.skills.length > 0) {
       skillsWrap.style.display = 'flex';
@@ -1634,11 +1633,11 @@ async function loadUserProfile() {
     const banner = document.getElementById('profileCompleteBanner');
     if (!profileData.bio) { banner.style.display = 'flex'; } else { banner.style.display = 'none'; }
   } else {
-    document.getElementById('profileBio').textContent = '';
+    document.getElementById('profileProfTitle').textContent = '';
+    document.getElementById('profileBio').textContent = 'Aggiungi una bio per farti conoscere...';
     document.getElementById('profileCompleteBanner').style.display = 'flex';
   }
 
-  // 3. Statistiche KPI
   const { count: countSent } = await _supabase.from('proposals').select('*', {count:'exact', head:true}).eq('applicant_id', currentUser.id);
   const { count: countRecv } = await _supabase.from('proposals').select('*', {count:'exact', head:true}).eq('owner_id', currentUser.id).eq('status', 'pending');
   const { count: countProj } = await _supabase.from('projects').select('*', {count:'exact', head:true}).eq('author_id', currentUser.id);
@@ -1647,7 +1646,6 @@ async function loadUserProfile() {
   document.getElementById('dashProposalsReceived').textContent = countRecv || 0;
   document.getElementById('dashProposalsSent').textContent = countSent || 0;
 
-  // 4. Proposte Ricevute (Notifiche)
   const { data: props } = await _supabase.from('proposals').select('*, projects(title)').eq('owner_id', currentUser.id).eq('status', 'pending');
   const propList = document.getElementById('proposalList');
   if(props && props.length > 0) {
@@ -1655,7 +1653,7 @@ async function loadUserProfile() {
           <div class="prop-item">
               <div class="prop-avatar" style="background:${COLORS[Math.floor(Math.random()*COLORS.length)]}">${pr.applicant_name ? pr.applicant_name.slice(0,2).toUpperCase() : 'AN'}</div>
               <div style="flex:1">
-                  <div class="prop-name">${pr.applicant_name}</div>
+                  <div class="prop-name">${pr.applicant_name || 'Utente'}</div>
                   <div class="prop-role">${pr.role} · per <strong>${pr.projects?.title || 'Progetto'}</strong></div>
                   <div class="prop-msg">"${pr.message}"</div>
                   <div class="prop-actions">
@@ -1666,20 +1664,32 @@ async function loadUserProfile() {
           </div>
       `).join('');
   } else {
-      propList.innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">Nessuna proposta in attesa.</div>`;
+      propList.innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">Nessuna proposta in attesa al momento.</div>`;
   }
 
-  // 5. I Tuoi Progetti
+  const { data: sentProps } = await _supabase.from('proposals').select('*, projects(title)').eq('applicant_id', currentUser.id);
+  const sentPropList = document.getElementById('sentProposalList');
+  if(sentProps && sentProps.length > 0) {
+      sentPropList.innerHTML = sentProps.map(pr => {
+          const statusColors = { pending: 'var(--orange)', accepted: '#57ff85', declined: 'var(--red)' };
+          const statusLabels = { pending: 'In attesa', accepted: 'Accettata', declined: 'Rifiutata' };
+          return `
+          <div class="prop-item" style="align-items:center;">
+              <div style="flex:1">
+                  <div class="prop-role" style="font-size:13px;">Ti sei proposto come <strong>${pr.role}</strong> per <strong>${pr.projects?.title || 'Progetto eliminato'}</strong></div>
+                  <div style="font-size:11px; font-weight:600; color:${statusColors[pr.status]}; margin-top:6px;">Stato: ${statusLabels[pr.status]}</div>
+              </div>
+          </div>`;
+      }).join('');
+  } else {
+      sentPropList.innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">Non ti sei ancora candidato a nessun progetto.</div>`;
+  }
+
   const { data } = await _supabase.from('projects').select('*').eq('author_id', currentUser.id).order('created_at', {ascending: false});
   const userProjects = (data||[]).map(p => ({
-    id: p.id, featured: false,
-    title: p.title, author: p.author_name || name,
-    initials, color: COLORS[Math.floor(Math.random()*COLORS.length)],
-    date: new Date(p.created_at).toLocaleDateString('it-IT', {day:'numeric',month:'short',year:'numeric'}),
-    category: p.category, status: p.status,
-    desc: p.description || '', tags: p.tags || [],
-    views: p.views||0, proposals: p.proposals||0, likes: p.likes||0, collabs: [],
-    isReal: true, author_id: p.author_id
+    id: p.id, featured: false, title: p.title, author: p.author_name || name, initials, color: COLORS[Math.floor(Math.random()*COLORS.length)],
+    date: new Date(p.created_at).toLocaleDateString('it-IT'), category: p.category, status: p.status, desc: p.description || '', tags: p.tags || [],
+    views: p.views||0, proposals: p.proposals||0, likes: p.likes||0, collabs: [], isReal: true, author_id: p.author_id
   }));
   
   if (userProjects.length === 0) {
@@ -1690,7 +1700,6 @@ async function loadUserProfile() {
     renderProjects(userProjects, 'profileProjectsList');
   }
 
-  // 6. Progetti Salvati (Interessi)
   if(savedProjectIds.length > 0) {
       const { data: savedProjs } = await _supabase.from('projects').select('*').in('id', savedProjectIds);
       if(savedProjs) {
@@ -1711,7 +1720,7 @@ async function respondProposal(proposalId, newStatus, name) {
   if(error) return showToast('Errore durante la risposta');
   showToast(newStatus === 'accepted' ? `✅ ${name} accettato!` : `❌ Proposta rifiutata.`);
   fetchNotifications(); 
-  loadUserProfile(); // Ricarica tutto
+  loadUserProfile(); 
 }
 
 function openEditProject(id) {
@@ -2017,12 +2026,10 @@ function setLang(lang) {
 
 function applyLang() {
   const t = i18n[currentLang];
-  // Nav
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (t[key]) el.textContent = t[key];
   });
-  // Hero
   const eyebrow = document.querySelector('.hero-eyebrow');
   if (eyebrow) eyebrow.textContent = t.hero_eyebrow;
   const h1lines = document.querySelectorAll('.hero h1 .line1, .hero h1 .line2, .hero h1 .highlight');
@@ -2034,31 +2041,25 @@ function applyLang() {
   if (heroCta1) heroCta1.textContent = t.hero_cta1;
   const heroCta2 = document.querySelector('.hero-actions .btn-ghost');
   if (heroCta2) heroCta2.textContent = t.hero_cta2;
-  // Stats
   const statLabels = document.querySelectorAll('.stat-label');
   if (statLabels[0]) statLabels[0].textContent = t.stat1;
   if (statLabels[1]) statLabels[1].textContent = t.stat2;
   if (statLabels[2]) statLabels[2].textContent = t.stat3;
   if (statLabels[3]) statLabels[3].textContent = t.stat4;
-  // Search
   const searchInput = document.getElementById('searchInput');
   if (searchInput) searchInput.placeholder = t.search_placeholder;
   const searchBtn = document.querySelector('.search-btn');
   if (searchBtn) searchBtn.textContent = t.search_btn;
-  // Filter
   const catsLabel = document.querySelector('.cats-label');
   if (catsLabel) catsLabel.textContent = t.filter_label;
   const allPill = document.querySelector('.cat-pill');
   if (allPill) allPill.textContent = t.filter_all;
-  // Projects title
   const projTitle = document.querySelector('.projects-title');
   if (projTitle) projTitle.textContent = t.projects_title;
-  // Demo banner
   const demoBanner = document.getElementById('demoBannerText');
   if (demoBanner) demoBanner.innerHTML = t.demo_banner;
   const demoCta = document.getElementById('demoBannerCta');
   if (demoCta) demoCta.textContent = t.demo_cta;
-  // Beta popup
   const betaBadge = document.querySelector('.beta-badge');
   if (betaBadge) betaBadge.textContent = t.beta_badge;
   const betaTitle = document.querySelector('.beta-title');
@@ -2067,7 +2068,6 @@ function applyLang() {
   if (betaText) betaText.innerHTML = t.beta_text;
   const betaBtn = document.querySelector('.beta-btn');
   if (betaBtn) betaBtn.textContent = t.beta_btn;
-  // Auth modal
   document.getElementById('authSubtitle').textContent = authMode === 'login' ? t.auth_login_sub : t.auth_reg_sub;
   document.getElementById('tabLogin').textContent = t.auth_tab_login;
   document.getElementById('tabRegister').textContent = t.auth_tab_reg;
@@ -2076,31 +2076,23 @@ function applyLang() {
   document.getElementById('authName').placeholder = t.auth_name;
   document.getElementById('authSubmitBtn').textContent = authMode === 'login' ? t.auth_submit_login : t.auth_submit_reg;
   document.getElementById('authNote').textContent = t.auth_note;
-  // Trending
-  const trendTitle = document.querySelector('.scard-title');
-  // How it works
   const howSteps = document.querySelectorAll('.hstep .htext');
   if (howSteps[0]) howSteps[0].innerHTML = `<strong>${t.how1_t}</strong><span>${t.how1_d}</span>`;
   if (howSteps[1]) howSteps[1].innerHTML = `<strong>${t.how2_t}</strong><span>${t.how2_d}</span>`;
   if (howSteps[2]) howSteps[2].innerHTML = `<strong>${t.how3_t}</strong><span>${t.how3_d}</span>`;
   if (howSteps[3]) howSteps[3].innerHTML = `<strong>${t.how4_t}</strong><span>${t.how4_d}</span>`;
-  // Privacy page language
   const privacyIT = document.getElementById('privacyIT');
   const privacyEN = document.getElementById('privacyEN');
   if (privacyIT) privacyIT.style.display = currentLang === 'it' ? 'block' : 'none';
   if (privacyEN) privacyEN.style.display = currentLang === 'en' ? 'block' : 'none';
-  // Footer
   const footerAbout = document.getElementById('footerAbout');
   if (footerAbout) footerAbout.textContent = currentLang === 'it' ? 'Chi siamo' : 'About';
-  // Re-render projects with updated labels
   renderProjects(filtered, 'projectsList');
   if(realProjects.length > 0) renderProjects(realProjects, 'realProjectsList');
 }
 
-// Apply on load
 applyLang();
 
-// ── BETA POPUP ──────────────────────────────────────
 function closeBeta() {
   document.getElementById('betaOverlay').classList.remove('open');
   sessionStorage.setItem('betaSeen', '1');
@@ -2108,9 +2100,7 @@ function closeBeta() {
 if (!sessionStorage.getItem('betaSeen')) {
   setTimeout(() => document.getElementById('betaOverlay').classList.add('open'), 500);
 }
-// ── END BETA POPUP ────────────────────────────────
 
-// Init Demos
 renderProjects(projects, 'projectsList');
 </script>
 </body>
