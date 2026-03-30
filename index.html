@@ -7,13 +7,11 @@
 <title>Crewtiv — Condividi la tua visione. Costruisci il tuo team.</title>
 <meta name="description" content="Crewtiv è la piattaforma per i creativi. Condividi progetti, trova collaboratori e costruisci il tuo team per videogiochi, app, arte, musica e molto altro.">
 <link rel="canonical" href="https://crewtiv.com/">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✦</text></svg>">
-
 <meta property="og:title" content="Crewtiv — Condividi la tua visione.">
 <meta property="og:description" content="Trova i creativi giusti per il tuo progetto. Unisciti alla piattaforma in beta.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://crewtiv.com/">
-<meta property="og:image" content="https://crewtiv.com/og-image.jpg"> <script async src="https://www.googletagmanager.com/gtag/js?id=G-K8WGWDESEM"></script>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-K8WGWDESEM"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -35,11 +33,8 @@
     y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
   })(window, document, "clarity", "script", "w3e5hsa0gv");
 </script>
-
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-
 <style>
-/* IL TUO CSS ORIGINALE INTONSO */
 :root {
   --bg: #0a0a0f;
   --surface: #111118;
@@ -70,6 +65,7 @@ body {
   overflow-x: hidden;
 }
 
+/* NOISE OVERLAY */
 body::before {
   content: '';
   position: fixed; inset: 0; z-index: 0;
@@ -77,6 +73,7 @@ body::before {
   pointer-events: none; opacity: .4;
 }
 
+/* NAV */
 nav {
   position: sticky; top: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
@@ -104,6 +101,17 @@ nav {
 .nav-link:hover { color: var(--text); background: var(--surface2); }
 .nav-link.active { color: var(--text); background: var(--surface3); }
 .nav-right { display: flex; align-items: center; gap: 10px; }
+
+/* BADGE NOTIFICHE */
+.nav-badge {
+  position: absolute; top: -4px; right: -4px;
+  background: var(--red); color: white;
+  border-radius: 50%; width: 14px; height: 14px;
+  font-size: 9px; font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--surface);
+}
+
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 8px 18px; border-radius: 8px;
@@ -124,6 +132,12 @@ nav {
 .btn-accent:hover { background: #d4ff6a; transform: translateY(-1px); box-shadow: 0 4px 20px var(--accent-glow); }
 .btn-sm { padding: 6px 14px; font-size: 12px; }
 
+/* Pulsante Salva Interessi */
+.btn-save { background: transparent; border: 1px solid var(--border2); color: var(--text2); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; transition: 0.2s; font-family: 'Instrument Sans', sans-serif;}
+.btn-save:hover { border-color: var(--accent); color: var(--text); }
+.btn-save.saved { background: rgba(255,157,87,0.1); border-color: rgba(255,157,87,0.3); color: var(--orange); }
+
+/* HERO */
 .hero {
   position: relative; z-index: 1;
   padding: 90px 32px 80px;
@@ -171,6 +185,7 @@ nav {
   pointer-events: none;
 }
 
+/* STATS */
 .stats-bar {
   position: relative; z-index: 1;
   display: flex; justify-content: center; gap: 0;
@@ -193,6 +208,7 @@ nav {
 .stat-num span { color: var(--accent); }
 .stat-label { font-size: 12px; color: var(--text3); margin-top: 4px; letter-spacing: .3px; }
 
+/* SEARCH */
 .search-wrap {
   position: relative; z-index: 1;
   padding: 40px 32px 0;
@@ -228,6 +244,7 @@ nav {
 }
 .search-btn:hover { background: #d4ff6a; }
 
+/* CATEGORIES */
 .cats-wrap {
   position: relative; z-index: 1;
   padding: 24px 32px 0;
@@ -248,6 +265,7 @@ nav {
   color: var(--accent);
 }
 
+/* MAIN LAYOUT */
 .main {
   position: relative; z-index: 1;
   max-width: 1100px; margin: 0 auto;
@@ -255,6 +273,7 @@ nav {
   display: grid; grid-template-columns: 1fr 300px; gap: 32px;
 }
 
+/* PROJECTS */
 .projects-header {
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 20px;
@@ -273,6 +292,7 @@ nav {
 
 .projects-list { display: flex; flex-direction: column; gap: 16px; }
 
+/* PROJECT CARD */
 .pcard {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -355,6 +375,7 @@ nav {
 .pstat { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 4px; }
 .pcard-action .btn-accent { padding: 7px 14px; font-size: 12px; border-radius: 7px; }
 
+/* SIDEBAR */
 .sidebar { display: flex; flex-direction: column; gap: 20px; }
 .scard {
   background: var(--surface); border: 1px solid var(--border);
@@ -746,7 +767,7 @@ nav {
   </div>
 </nav>
 
-<main id="page-home" class="page active">
+<div id="page-home" class="page active">
 
   <section class="hero">
     <div class="hero-glow"></div>
@@ -771,7 +792,7 @@ nav {
     </div>
   </div>
 
-  <section class="search-wrap">
+  <div class="search-wrap">
     <div class="search-row">
       <div class="search-box">
         <span class="search-icon">⌕</span>
@@ -779,9 +800,9 @@ nav {
       </div>
       <button class="search-btn" onclick="applyFilters()">Cerca</button>
     </div>
-  </section>
+  </div>
 
-  <section class="cats-wrap">
+  <div class="cats-wrap">
     <span class="cats-label">Filtra:</span>
     <span class="cat-pill active" onclick="setCategory('all',this)">Tutti</span>
     <span class="cat-pill" onclick="setCategory('game',this)">🎮 Videogiochi</span>
@@ -793,13 +814,13 @@ nav {
     <span class="cat-pill" onclick="setCategory('film',this)">🎬 Film</span>
     <span class="cat-pill" onclick="setCategory('hardware',this)">🔧 Hardware</span>
     <span class="cat-pill" onclick="setCategory('other',this)">✦ Altro</span>
-  </section>
+  </div>
 
   <div class="main">
-    <section>
+    <div>
       <div class="projects-header">
         <div>
-          <h2 class="projects-title">Ultimi progetti</h2>
+          <div class="projects-title">Ultimi progetti</div>
           <div class="projects-meta" id="pMeta"></div>
         </div>
         <select class="sort-select" onchange="sortProjects(this.value)">
@@ -819,11 +840,11 @@ nav {
         </div>
         <div class="projects-list" id="projectsList"></div>
       </div>
-    </section>
+    </div>
 
     <aside class="sidebar">
       <div class="scard">
-        <h3 class="scard-title">🔥 In tendenza</h3>
+        <div class="scard-title">🔥 In tendenza</div>
         <div class="trending-list">
           <div class="titem" onclick="openProjectById(0)">
             <div class="trank">01</div>
@@ -845,7 +866,7 @@ nav {
       </div>
 
       <div class="scard">
-        <h3 class="scard-title">💡 Come funziona</h3>
+        <div class="scard-title">💡 Come funziona</div>
         <div class="how-steps">
           <div class="hstep"><div class="hnum">1</div><div class="htext"><strong>Pubblica il progetto</strong><span>Il tuo progetto viene registrato con data e nome. Prova di anteriorità sulla piattaforma.</span></div></div>
           <div class="hstep"><div class="hnum">2</div><div class="htext"><strong>Ricevi proposte</strong><span>Gli interessati ti mandano richieste di collaborazione.</span></div></div>
@@ -857,20 +878,20 @@ nav {
 
     </aside>
   </div>
-</main>
+</div>
 
-<main id="page-profile" class="page">
+<div id="page-profile" class="page">
   <div id="profileCompleteBanner" style="display:none;background:var(--accent-dim);border-bottom:1px solid rgba(200,255,87,0.2);padding:12px 32px;display:none;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:1">
     <span style="font-size:13px;color:var(--text2)">✦ <strong style="color:var(--text)">Completa il tuo profilo</strong> — aggiungi bio e skills per essere notato dai creatori!</span>
     <button class="btn btn-accent btn-sm" onclick="openEditProfile()">Completa ora →</button>
   </div>
-  <section class="profile-hero">
+  <div class="profile-hero">
     <div class="profile-inner">
       <div class="profile-avatar" id="profileAvatar" style="background:#c8ff57">?</div>
       <div style="flex:1">
-        <h2 class="profile-name" id="profileName">—</h2>
+        <div class="profile-name" id="profileName">—</div>
         <div id="profileProfTitle" style="font-size:13px;color:var(--accent);margin-top:4px;font-weight:500"></div>
-        <p class="profile-bio" id="profileBio" style="margin-top:8px">Accedi per vedere il tuo profilo.</p>
+        <div class="profile-bio" id="profileBio" style="margin-top:8px">Accedi per vedere il tuo profilo.</div>
         <div id="profileSkillsWrap" style="display:none;margin-top:10px;display:flex;flex-wrap:wrap;gap:6px"></div>
         <div class="profile-meta" style="margin-top:12px">
           <span class="pmeta-item">📅 Iscritto da <strong id="profileJoined">—</strong></span>
@@ -882,20 +903,20 @@ nav {
         <button class="btn btn-ghost btn-sm" onclick="openEditProfile()" id="editProfileBtn" style="display:none">Modifica profilo</button>
       </div>
     </div>
-  </section>
+  </div>
   <div class="profile-content">
-    <section>
+    <div>
       <div class="profile-projects">
-        <h3 class="section-head" id="profileProjectsTitle">I miei progetti</h3>
+        <div class="section-head" id="profileProjectsTitle">I miei progetti</div>
         <div id="profileProjectsList" class="projects-list"></div>
         <div id="profileEmpty" style="display:none;text-align:center;padding:40px 20px;color:var(--text3);font-size:13px">
           Nessun progetto ancora — <span style="color:var(--accent);cursor:pointer" onclick="openNewProject()">pubblica il tuo primo!</span>
         </div>
       </div>
-    </section>
-    <aside>
+    </div>
+    <div>
       <div class="scard" style="margin-bottom:16px">
-        <h3 class="scard-title">📊 Stats</h3>
+        <div class="scard-title">📊 Stats</div>
         <div style="display:flex;flex-direction:column;gap:10px">
           <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
             <span style="font-size:12px;color:var(--text3)">Progetti pubblicati</span>
@@ -908,18 +929,18 @@ nav {
         </div>
       </div>
       <div class="scard">
-        <h3 class="scard-title">⚙️ Account</h3>
+        <div class="scard-title">⚙️ Account</div>
         <div style="display:flex;flex-direction:column;gap:8px">
           <button class="btn btn-ghost" style="width:100%;justify-content:center;font-size:13px" onclick="logout()">Esci dall'account</button>
         </div>
       </div>
-    </aside>
+    </div>
   </div>
-</main>
+</div>
 
-<main id="page-messages" class="page">
+<div id="page-messages" class="page">
   <div class="messages-wrap">
-    <aside class="msg-list">
+    <div class="msg-list">
       <div class="msg-list-head">Messaggi</div>
       <div class="msg-item active" onclick="selectChat(0)">
         <span class="msg-item-time">2h fa</span>
@@ -942,12 +963,12 @@ nav {
         <div class="msg-item-name">Pietro Mori</div>
         <div class="msg-item-preview">Ti ho inviato i risultati del modello ML</div>
       </div>
-    </aside>
-    <section class="chat-area">
+    </div>
+    <div class="chat-area">
       <div class="chat-head">
         <div class="avatar" style="background:#c8ff57;width:38px;height:38px;border-radius:10px;font-size:13px;font-weight:700;color:#0a0a0f" id="chatAvatar">SR</div>
         <div>
-          <h2 class="chat-head-name" id="chatName">Sofia Russo</h2>
+          <div class="chat-head-name" id="chatName">Sofia Russo</div>
           <div class="chat-head-project" id="chatProject">Re: EchoVerse RPG — Narrative Designer</div>
         </div>
       </div>
@@ -977,31 +998,28 @@ nav {
         <input class="chat-input" id="chatInput" type="text" placeholder="Scrivi un messaggio…" onkeydown="if(event.key==='Enter')sendMessage()">
         <button class="chat-send" onclick="sendMessage()">Invia ↑</button>
       </div>
-    </section>
+    </div>
   </div>
-</main>
+</div>
 
-<main id="page-dashboard" class="page">
+<div id="page-dashboard" class="page">
   <div class="dash-wrap">
-    <header class="dash-head">
-      <h2 class="dash-greeting">Bentornato, Marco 👋</h2>
-      <p class="dash-sub">Ecco cosa sta succedendo con i tuoi progetti oggi.</p>
-    </header>
+    <div class="dash-head">
+      <div class="dash-greeting">Bentornato, <span id="dashName">Creativo</span> 👋</div>
+      <div class="dash-sub">Ecco il riepilogo delle tue attività e dei progetti che segui.</div>
+    </div>
     <div class="dash-kpis">
       <div class="kpi">
-        <div class="kpi-val">3<span>41</span></div>
-        <div class="kpi-label">Viste totali progetti</div>
-        <div class="kpi-delta">↑ +28 questa settimana</div>
+        <div class="kpi-val" id="dashTotalViews">0</div>
+        <div class="kpi-label">Progetti Creati</div>
       </div>
       <div class="kpi">
-        <div class="kpi-val">1<span>1</span></div>
-        <div class="kpi-label">Proposte ricevute</div>
-        <div class="kpi-delta">↑ +3 nuove</div>
+        <div class="kpi-val" id="dashProposalsReceived">0</div>
+        <div class="kpi-label">Proposte Ricevute (Da gestire)</div>
       </div>
       <div class="kpi">
-        <div class="kpi-val">4</div>
-        <div class="kpi-label">Collaboratori attivi</div>
-        <div class="kpi-delta" style="color:var(--orange)">2 in attesa</div>
+        <div class="kpi-val" id="dashProposalsSent">0</div>
+        <div class="kpi-label">Le tue Candidature</div>
       </div>
       <div class="kpi">
         <div class="kpi-val">2</div>
@@ -1010,65 +1028,23 @@ nav {
       </div>
     </div>
     <div class="dash-grid">
-      <section>
-        <h3 class="dash-section-title">Proposte in attesa</h3>
+      <div>
+        <div class="dash-section-title">Richieste di Collaborazione in Entrata</div>
         <div class="proposal-list" id="proposalList">
-          <div class="prop-item">
-            <div class="prop-avatar" style="background:#57b4ff">LV</div>
-            <div style="flex:1">
-              <div class="prop-name">Luca Verdi</div>
-              <div class="prop-role">Sound Designer · per EchoVerse RPG</div>
-              <div class="prop-msg">"Compongo per videogiochi indie da 4 anni. Ecco un link alla mia ultima OST — penso si adatti perfettamente al tuo mondo."</div>
-              <div class="prop-actions">
-                <button class="btn-accept" onclick="acceptProposal(this,'Luca Verdi')">✓ Accetta</button>
-                <button class="btn-decline" onclick="declineProposal(this,'Luca Verdi')">✕ Rifiuta</button>
-              </div>
-            </div>
-          </div>
-          <div class="prop-item">
-            <div class="prop-avatar" style="background:#b057ff">KM</div>
-            <div style="flex:1">
-              <div class="prop-name">Kenji Matsuda</div>
-              <div class="prop-role">3D Artist · per EchoVerse RPG</div>
-              <div class="prop-msg">"Sono specializzato in ambienti stilizzati. Adoro l'estetica che stai cercando e mi piacerebbe progettare i visual del mondo parallelo."</div>
-              <div class="prop-actions">
-                <button class="btn-accept" onclick="acceptProposal(this,'Kenji Matsuda')">✓ Accetta</button>
-                <button class="btn-decline" onclick="declineProposal(this,'Kenji Matsuda')">✕ Rifiuta</button>
-              </div>
-            </div>
+          <div style="color:var(--text3); font-size:13px;">Nessuna proposta in attesa al momento.</div>
+        </div>
+      </div>
+      <div>
+        <div class="dash-section-title">⭐ Interessi (Progetti Salvati)</div>
+        <div class="scard" style="padding:16px;">
+          <div class="projects-list" id="dashSavedProjectsList" style="gap:10px;">
+             <div style="color:var(--text3); font-size:13px;">Non hai ancora salvato nessun progetto.</div>
           </div>
         </div>
-      </section>
-      <aside>
-        <h3 class="dash-section-title">Attività recente</h3>
-        <div class="scard">
-          <div class="activity-list">
-            <div class="act-item">
-              <div class="act-dot" style="background:#57ff85"></div>
-              <div><div class="act-text"><strong>Sofia Russo</strong> accettata come Narrative Designer su EchoVerse</div><div class="act-time">2 ore fa</div></div>
-            </div>
-            <div class="act-item">
-              <div class="act-dot" style="background:var(--accent)"></div>
-              <div><div class="act-text"><strong>EchoVerse RPG</strong> ha raggiunto 128 viste</div><div class="act-time">5 ore fa</div></div>
-            </div>
-            <div class="act-item">
-              <div class="act-dot" style="background:var(--blue)"></div>
-              <div><div class="act-text"><strong>Kenji Matsuda</strong> ha inviato una proposta di collaborazione</div><div class="act-time">1 giorno fa</div></div>
-            </div>
-            <div class="act-item">
-              <div class="act-dot" style="background:var(--orange)"></div>
-              <div><div class="act-text"><strong>Luca Verdi</strong> ha inviato una proposta di collaborazione</div><div class="act-time">2 giorni fa</div></div>
-            </div>
-            <div class="act-item">
-              <div class="act-dot" style="background:var(--purple)"></div>
-              <div><div class="act-text">Nuovo progetto <strong>EchoVerse RPG</strong> pubblicato e registrato</div><div class="act-time">3 giorni fa</div></div>
-            </div>
-          </div>
-        </div>
-      </aside>
+      </div>
     </div>
   </div>
-</main>
+</div>
 
 <div class="overlay" id="projectModal" onclick="closeIfBg(event,'projectModal')">
   <div class="modal">
@@ -1277,7 +1253,7 @@ nav {
 
 <div class="toast" id="toast"></div>
 
-<main id="page-about" class="page">
+<div id="page-about" class="page">
   <div style="max-width:720px;margin:0 auto;padding:60px 32px 100px;position:relative;z-index:1">
     <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Chi siamo</div>
     <h2 style="font-family:'Syne',sans-serif;font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:32px;line-height:1.1">Ogni progetto creativo merita di trovare le persone giuste.</h2>
@@ -1292,9 +1268,9 @@ nav {
       <a href="mailto:hello.crewtiv@gmail.com" style="color:var(--accent);font-size:14px;font-weight:500;text-decoration:none">hello.crewtiv@gmail.com</a>
     </div>
   </div>
-</main>
+</div>
 
-<main id="page-privacy" class="page">
+<div id="page-privacy" class="page">
   <div style="max-width:720px;margin:0 auto;padding:60px 32px 100px;position:relative;z-index:1">
     <div id="privacyIT">
       <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Privacy Policy</div>
@@ -1325,7 +1301,7 @@ nav {
       </div>
     </div>
   </div>
-</main>
+</div>
 
 <footer style="position:relative;z-index:1;border-top:1px solid var(--border);background:var(--surface);padding:28px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
   <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--text)">Crewtiv<span style="color:var(--accent)">.</span></div>
@@ -1338,30 +1314,29 @@ nav {
 </footer>
 
 <script>
-/* IL TUO JS ORIGINALE INTONSO (con una piccolissima fix alla funzione renderProjects) */
 const COLORS = ['#c8ff57','#57b4ff','#ff9d57','#b057ff','#57ff85','#ff5757','#57ffe0'];
 const AVCOLORS = ['#c8ff57','#57b4ff','#ff9d57','#b057ff','#57ff85'];
 
 const projects = [
-  { id:0, featured:true, title:"EchoVerse — RPG Open World", author:"Marco Ferretti", initials:"MF", color:"#c8ff57", date:"Oggi, 09:41", category:"game", status:"open",
+  { id:'0', featured:true, title:"EchoVerse — RPG Open World", author:"Marco Ferretti", initials:"MF", color:"#c8ff57", date:"Oggi, 09:41", category:"game", status:"open",
     desc:"Un RPG open-world post-quantistico dove la realtà si frammenta in echi paralleli. I giocatori navigano linee temporali ramificate con conseguenze permanenti sul mondo di gioco. Sviluppato in Unity. Cerco narrative designer, sound designer e 3D artist.",
     tags:["Unity","C#","Open World","RPG","Narrativa"], views:128, proposals:4, likes:31,
     collabs:[{n:"Sofia R.",r:"Narrative Designer",s:"accepted"},{n:"Luca V.",r:"Sound Designer",s:"pending"}] },
-  { id:1, featured:false, title:"NeuroScan AI — Diagnosi Precoce Alzheimer", author:"Dr. Elena Conti", initials:"EC", color:"#57b4ff", date:"Ieri, 14:23", category:"science", status:"open",
+  { id:'1', featured:false, title:"NeuroScan AI — Diagnosi Precoce Alzheimer", author:"Dr. Elena Conti", initials:"EC", color:"#57b4ff", date:"Ieri, 14:23", category:"science", status:"open",
     desc:"Modello ML che analizza immagini MRI per rilevare segnali precoci di Alzheimer con 3-5 anni di anticipo rispetto ai metodi attuali. Ricerca ad accesso aperto. Cerco neurologi, data scientist e sviluppatori Python.",
     tags:["Machine Learning","Python","MRI","Healthcare","Open Source"], views:71, proposals:2, likes:44,
     collabs:[{n:"Pietro M.",r:"Data Scientist",s:"pending"}] },
-  { id:2, featured:false, title:"Palazzo a Vouta Verde — Residenza Sostenibile", author:"Arch. Giulia Mancini", initials:"GM", color:"#57ff85", date:"26 Mar 2026", category:"arch", status:"progress",
+  { id:'2', featured:false, title:"Palazzo a Vouta Verde — Residenza Sostenibile", author:"Arch. Giulia Mancini", initials:"GM", color:"#57ff85", date:"26 Mar 2026", category:"arch", status:"progress",
     desc:"Residenza privata di 400mq con struttura a volta ribassata in legno lamellare e copertura verde. L'edificio produce più energia di quanta ne consuma. In fase esecutiva — cerco ingegnere strutturista e paesaggista.",
     tags:["Legno Lamellare","Green Roof","Sostenibilità","Residenziale","AutoCAD"], views:95, proposals:3, likes:27,
     collabs:[{n:"Franco B.",r:"Ingegnere Strutturista",s:"accepted"},{n:"Anna P.",r:"Paesaggista",s:"pending"},{n:"Matteo L.",r:"BIM Specialist",s:"accepted"}] },
-  { id:3, featured:false, title:"SynthWave Composer — Generatore di Colonne Sonore", author:"Diego Riva", initials:"DR", color:"#b057ff", date:"25 Mar 2026", category:"music", status:"open",
+  { id:'3', featured:false, title:"SynthWave Composer — Generatore di Colonne Sonore", author:"Diego Riva", initials:"DR", color:"#b057ff", date:"25 Mar 2026", category:"music", status:"open",
     desc:"Strumento web che genera colonne sonore synthwave in tempo reale in base ai parametri visivi dell'utente (immagini, palette, mood). Modello MIDI addestrato su 10.000 tracce anni '80. Cerco web developer e musicisti.",
     tags:["Web Audio API","JavaScript","MIDI","Synthwave","IA Generativa"], views:84, proposals:5, likes:38, collabs:[] },
-  { id:4, featured:false, title:"FoldBot — Micro-robot Chirurgico Origami", author:"Sara Kim", initials:"SK", color:"#ff9d57", date:"24 Mar 2026", category:"hardware", status:"open",
+  { id:'4', featured:false, title:"FoldBot — Micro-robot Chirurgico Origami", author:"Sara Kim", initials:"SK", color:"#ff9d57", date:"24 Mar 2026", category:"hardware", status:"open",
     desc:"Micro-robot in lega a memoria di forma ispirato all'origami, progettato per procedure chirurgiche mininvasive. Il robot si piega per passare attraverso piccole incisioni e si dispiega internamente. Cerco ingegneri biomedici e robotici.",
     tags:["Robotica","Biomedico","SMA","Origami Engineering","CAD"], views:62, proposals:1, likes:19, collabs:[] },
-  { id:5, featured:false, title:"Cartoline dall'Assente — Cortometraggio", author:"Valentina Greco", initials:"VG", color:"#ff5757", date:"23 Mar 2026", category:"film", status:"closed",
+  { id:'5', featured:false, title:"Cartoline dall'Assente — Cortometraggio", author:"Valentina Greco", initials:"VG", color:"#ff5757", date:"23 Mar 2026", category:"film", status:"closed",
     desc:"Cortometraggio di 18 minuti sul lutto raccontato attraverso oggetti lasciati indietro. Girato in super-8 digitale, estetica anni '70. Il team è al completo — progetto in post-produzione. Non accetta più proposte.",
     tags:["Super-8","Cortometraggio","Post-produzione","Indie","Drama"], views:56, proposals:7, likes:52,
     collabs:[{n:"Carlo F.",r:"Colorist",s:"accepted"},{n:"Irene T.",r:"Sound Mix",s:"accepted"}] }
@@ -1378,27 +1353,46 @@ const chatData = [
   { name:"Pietro Mori", initials:"PM", color:"#b057ff", project:"NeuroScan AI — Data Scientist" }
 ];
 
-// FIX SEMANTICA: Usa tag <article> invece di <div> per le singole card di progetto (più SEO friendly)
+// VARIABILI GLOBALI AGGIUNTE PER LE NUOVE FUNZIONI
+let realProjects = [];
+let savedProjectIds = []; 
+let currentUser = null;
+let editingProjectId = null;
+let authMode = 'login';
+
+// RENDER DEI PROGETTI
 function renderProjects(list, containerId='projectsList') {
   const el = document.getElementById(containerId);
   if (!el) return;
   const meta = document.getElementById('pMeta');
   if (meta && containerId==='projectsList') meta.textContent = `${projects.length} progetti di esempio`;
   el.innerHTML = '';
+  
   if (!list.length) {
-    if (containerId === 'projectsList') {
+    if (containerId === 'projectsList' || containerId === 'realProjectsList') {
       el.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--text3)">Nessun progetto trovato.</div>`;
+    } else {
+      el.innerHTML = `<div style="color:var(--text3); font-size:13px;">Nessun progetto da mostrare.</div>`;
     }
     return;
   }
+  
   list.forEach((p,i) => {
     const sMap = {open:'s-open',progress:'s-progress',closed:'s-closed'};
     const sLabel = {open:'Aperto',progress:'In corso',closed:'Chiuso'};
     const isOwner = currentUser && p.author_id === currentUser.id;
-    const d = document.createElement('article'); // Modificato da 'div' a 'article'
+    
+    // Logica salvataggio Interessi (Task 4)
+    const isSaved = savedProjectIds.includes(p.id);
+    const isReal = p.isReal === true;
+    const saveBtnHtml = currentUser && !isOwner && isReal ? 
+        `<button class="btn-save ${isSaved?'saved':''}" onclick="event.stopPropagation(); toggleSaveProject('${p.id}')">${isSaved ? '★ Salvato' : '☆ Salva'}</button>` : '';
+
+    const d = document.createElement('div');
     d.className = `pcard${p.featured?' featured':''}`;
     d.style.animationDelay = `${i*.07}s`;
     d.onclick = () => openProjectById(p.id);
+    
     d.innerHTML = `
       ${p.featured?'<div class="featured-label">✦ In evidenza</div>':''}
       <div class="pcard-top">
@@ -1407,6 +1401,7 @@ function renderProjects(list, containerId='projectsList') {
           <div><div class="author-name">${p.author}</div><div class="author-date">📅 ${p.date}</div></div>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
+          ${saveBtnHtml}
           <span class="status-badge ${sMap[p.status]}">${sLabel[p.status]}</span>
           ${isOwner ? `
             <button style="background:rgba(200,255,87,0.1);border:1px solid rgba(200,255,87,0.2);color:var(--accent);font-size:11px;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:'Instrument Sans',sans-serif" onclick="event.stopPropagation();openEditProject('${p.id}')">Modifica</button>
@@ -1420,7 +1415,7 @@ function renderProjects(list, containerId='projectsList') {
       <div class="pcard-footer">
         <div class="pcard-stats">
           <span class="pstat">👁 ${p.views}</span>
-          <span class="pstat">❤️ ${p.likes}</span>
+          <span class="pstat">❤️ ${p.likes || 0}</span>
           <span class="pstat">💬 ${p.proposals}</span>
         </div>
         <div class="pcard-action">
@@ -1430,6 +1425,39 @@ function renderProjects(list, containerId='projectsList') {
     el.appendChild(d);
   });
 }
+
+// RECUPERO PROGETTI E DATI SALVATI DAL DB
+async function fetchSavedProjects() {
+  if(!currentUser) return;
+  const { data } = await _supabase.from('saved_projects').select('project_id').eq('user_id', currentUser.id);
+  if(data) savedProjectIds = data.map(d => d.project_id);
+}
+
+async function loadRealProjects() {
+  const { data, error } = await _supabase.from('projects').select('*').order('created_at', { ascending: false });
+  if (error || !data || data.length === 0) return;
+  
+  realProjects = data.map(p => ({
+    id: p.id, featured: false,
+    title: p.title, author: p.author_name || 'Anonimo',
+    initials: (p.author_name||'AN').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),
+    color: COLORS[Math.floor(Math.random()*COLORS.length)],
+    date: new Date(p.created_at).toLocaleDateString('it-IT', {day:'numeric',month:'short',year:'numeric'}),
+    category: p.category, status: p.status,
+    desc: p.description || '', tags: p.tags || [],
+    views: p.views||0, proposals: p.proposals||0, likes: p.likes||0, collabs: [],
+    isReal: true, author_id: p.author_id
+  }));
+  
+  const section = document.getElementById('realProjectsSection');
+  if (section && realProjects.length > 0) {
+    section.style.display = 'block';
+    renderProjects(realProjects, 'realProjectsList');
+  }
+}
+
+// Esegui al caricamento
+loadRealProjects();
 
 async function deleteProject(id) {
   if (!confirm('Sei sicuro di voler eliminare questo progetto?')) return;
@@ -1454,18 +1482,27 @@ function applyFilters() {
     const mq = !q || p.title.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q) || p.tags.some(t=>t.toLowerCase().includes(q)) || p.author.toLowerCase().includes(q);
     return mc && mq;
   });
-  renderProjects(filtered);
+  renderProjects(filtered, 'projectsList');
+  
+  if (realProjects.length > 0) {
+      const filteredReal = realProjects.filter(p => {
+        const mc = activeCategory==='all' || p.category===activeCategory;
+        const mq = !q || p.title.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q) || p.tags.some(t=>t.toLowerCase().includes(q)) || p.author.toLowerCase().includes(q);
+        return mc && mq;
+      });
+      renderProjects(filteredReal, 'realProjectsList');
+  }
 }
 
 function sortProjects(val) {
   if (val==='popular') filtered.sort((a,b)=>b.likes-a.likes);
-  else if (val==='recent') filtered.sort((a,b)=>a.id-b.id);
+  else if (val==='recent') filtered.sort((a,b)=> String(b.id).localeCompare(String(a.id))); // Fix sort per id finti e veri
   else if (val==='open') filtered.sort((a,b)=>(b.status==='open'?1:0)-(a.status==='open'?1:0));
-  renderProjects(filtered);
+  renderProjects(filtered, 'projectsList');
 }
 
 function openProjectById(id) {
-  currentProject = realProjects.find(p=>p.id===id) || projects.find(p=>p.id===id);
+  currentProject = realProjects.find(p=> String(p.id) === String(id)) || projects.find(p=> String(p.id) === String(id));
   if (!currentProject) return;
   const p = currentProject;
   const sMap = {open:'s-open',progress:'s-progress',closed:'s-closed'};
@@ -1492,14 +1529,37 @@ function openProjectById(id) {
   const demoNotice = document.getElementById('proposeDemoNotice');
   const proposeForm = document.getElementById('proposeForm');
   const t = i18n[currentLang];
+  
   if (p.status==='closed') {
     demoNotice.style.display = 'none';
     proposeForm.style.display = 'none';
     document.getElementById('mProposeSection').innerHTML = `<div style="padding:14px;background:var(--surface2);border-radius:8px;font-size:13px;color:var(--text3);text-align:center">${currentLang==='it'?'Questo progetto non accetta più proposte.':'This project is no longer accepting proposals.'}</div>`;
   } else if (p.isReal) {
     demoNotice.style.display = 'none';
-    proposeForm.style.display = 'block';
+    
+    if(!currentUser) {
+        proposeForm.innerHTML = `<button class="btn btn-accent" onclick="closeModal('projectModal');openAuth('login')" style="margin-top:10px;">Accedi per proporti →</button>`;
+        proposeForm.style.display = 'block';
+    } else if (p.author_id === currentUser.id) {
+        proposeForm.innerHTML = `<div style="color:var(--text3); font-size:12px; margin-top:10px;">Questo è un tuo progetto.</div>`;
+        proposeForm.style.display = 'block';
+    } else {
+        // Ripristino il form base per progetti veri
+        proposeForm.innerHTML = `
+          <div class="form-group">
+            <label class="form-label" data-i18n="propose_role">Il tuo ruolo</label>
+            <input class="form-input" id="propRole" placeholder="es. Dev backend, 3D artist, compositore…">
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="propose_msg">Messaggio per il creatore</label>
+            <textarea class="form-textarea" id="propMsg" placeholder="Racconta cosa puoi portare al progetto…"></textarea>
+          </div>
+          <button class="btn btn-accent" onclick="submitProposal()" data-i18n="propose_btn">Invia proposta →</button>
+        `;
+        proposeForm.style.display = 'block';
+    }
   } else {
+    // Progetto di esempio
     demoNotice.style.display = 'block';
     proposeForm.style.display = 'none';
     document.getElementById('proposeDemoText').textContent = t.propose_demo;
@@ -1508,13 +1568,47 @@ function openProjectById(id) {
   document.getElementById('projectModal').classList.add('open');
 }
 
-function submitProposal() {
+// INVIO VERA PROPOSTA (Task 5)
+async function submitProposal() {
   const role = document.getElementById('propRole')?.value;
   const msg = document.getElementById('propMsg')?.value;
   if (!role||!msg) { showToast('⚠️ Compila tutti i campi'); return; }
+  
+  if (currentProject.isReal) {
+      const { error } = await _supabase.from('proposals').insert({
+          project_id: currentProject.id,
+          owner_id: currentProject.author_id,
+          applicant_id: currentUser.id,
+          applicant_name: currentUser.user_metadata.full_name,
+          role: role,
+          message: msg
+      });
+      if(error) return showToast('❌ Errore invio proposta');
+      showToast('✅ Proposta inviata con successo!');
+  } else {
+      showToast(`✅ Proposta inviata a ${currentProject.author} (Demo)!`);
+  }
+  
   closeModal('projectModal');
-  showToast(`✅ Proposta inviata a ${currentProject.author}!`);
-  currentProject.proposals++;
+}
+
+// SALVATAGGIO PROGETTI (Task 4)
+async function toggleSaveProject(projectId) {
+  if(!currentUser) return openAuth('login');
+  const isSaved = savedProjectIds.includes(projectId);
+  
+  if (isSaved) {
+    await _supabase.from('saved_projects').delete().match({ user_id: currentUser.id, project_id: projectId });
+    savedProjectIds = savedProjectIds.filter(id => id !== projectId);
+    showToast('Progetto rimosso dagli interessi');
+  } else {
+    await _supabase.from('saved_projects').insert({ user_id: currentUser.id, project_id: projectId });
+    savedProjectIds.push(projectId);
+    showToast('Progetto salvato! ⭐');
+  }
+  
+  if(document.getElementById('page-dashboard').classList.contains('active')) loadDashboardData();
+  else loadRealProjects();
 }
 
 function openNewProject() {
@@ -1548,32 +1642,6 @@ async function submitNewProject() {
   await loadRealProjects();
 }
 
-let realProjects = [];
-
-async function loadRealProjects() {
-  const { data, error } = await _supabase.from('projects').select('*').order('created_at', { ascending: false });
-  if (error || !data || data.length === 0) return;
-  realProjects = data.map(p => ({
-    id: p.id, featured: false,
-    title: p.title, author: p.author_name || 'Anonimo',
-    initials: (p.author_name||'AN').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),
-    color: COLORS[Math.abs(p.id.charCodeAt(0))%COLORS.length],
-    date: new Date(p.created_at).toLocaleDateString('it-IT', {day:'numeric',month:'short',year:'numeric'}),
-    category: p.category, status: p.status,
-    desc: p.description || '', tags: p.tags || [],
-    views: p.views||0, proposals: p.proposals||0, likes: p.likes||0, collabs: [],
-    isReal: true, author_id: p.author_id
-  }));
-  const section = document.getElementById('realProjectsSection');
-  if (section && realProjects.length > 0) {
-    section.style.display = 'block';
-    renderProjects(realProjects, 'realProjectsList');
-  }
-}
-
-// Load real projects on start
-loadRealProjects();
-
 function selectChat(i) {
   document.querySelectorAll('.msg-item').forEach((el,idx)=>el.classList.toggle('active',idx===i));
   const c = chatData[i];
@@ -1604,17 +1672,6 @@ function sendMessage() {
   }, 1200);
 }
 
-function acceptProposal(btn, name) {
-  btn.closest('.prop-item').style.opacity = '.5';
-  btn.closest('.prop-item').style.pointerEvents = 'none';
-  showToast(`✅ ${name} accettato come collaboratore!`);
-}
-
-function declineProposal(btn, name) {
-  btn.closest('.prop-item').remove();
-  showToast(`Proposta di ${name} rifiutata.`);
-}
-
 function showPage(page) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const pageEl = document.getElementById('page-'+page);
@@ -1623,6 +1680,7 @@ function showPage(page) {
   const navEl = document.getElementById('nav-'+page);
   if (navEl) navEl.classList.add('active');
   if (page==='profile') loadUserProfile();
+  if (page==='dashboard') loadDashboardData(); // Aggiunto per Task 3
   if (page==='privacy') {
     document.getElementById('privacyIT').style.display = currentLang==='it' ? 'block' : 'none';
     document.getElementById('privacyEN').style.display = currentLang==='en' ? 'block' : 'none';
@@ -1668,7 +1726,7 @@ async function loadUserProfile() {
   const userProjects = (data||[]).map(p => ({
     id: p.id, featured: false,
     title: p.title, author: p.author_name || name,
-    initials, color: COLORS[Math.abs(p.id.charCodeAt(0))%COLORS.length],
+    initials, color: COLORS[Math.floor(Math.random()*COLORS.length)],
     date: new Date(p.created_at).toLocaleDateString('it-IT', {day:'numeric',month:'short',year:'numeric'}),
     category: p.category, status: p.status,
     desc: p.description || '', tags: p.tags || [],
@@ -1686,10 +1744,9 @@ async function loadUserProfile() {
   }
 }
 
-let editingProjectId = null;
-
+// FIX MODIFICA STATO (Task 1)
 function openEditProject(id) {
-  const p = realProjects.find(p=>p.id===id);
+  const p = realProjects.find(p=> String(p.id) === String(id));
   if (!p) return;
   editingProjectId = id;
   document.getElementById('editProjectTitle').textContent = p.title;
@@ -1706,13 +1763,29 @@ async function submitEditProject() {
   const tags = document.getElementById('eTags').value.split(',').map(t=>t.trim()).filter(Boolean);
   const btn = document.querySelector('#editProjectModal .btn-accent');
   btn.disabled = true; btn.textContent = 'Salvataggio…';
+  
   const { error } = await _supabase.from('projects').update({ status, description: desc, tags }).eq('id', editingProjectId);
+  
   btn.disabled = false; btn.textContent = 'Salva modifiche ✦';
   if (error) { showToast('❌ Errore: ' + error.message); return; }
+  
   closeModal('editProjectModal');
   showToast('✅ Progetto aggiornato!');
-  await loadRealProjects();
-  await loadUserProfile();
+  
+  // Aggiorna l'array locale immediatamente senza aspettare il ricaricamento completo dal DB
+  const idx = realProjects.findIndex(x => String(x.id) === String(editingProjectId));
+  if (idx !== -1) {
+    realProjects[idx].status = status;
+    realProjects[idx].desc = desc;
+    realProjects[idx].tags = tags;
+  }
+  
+  // Re-render UI
+  if(document.getElementById('page-profile').classList.contains('active')) {
+      loadUserProfile();
+  } else {
+      renderProjects(realProjects, 'realProjectsList');
+  }
 }
 
 function openEditProfile() {
@@ -1751,8 +1824,7 @@ function showToast(msg) {
   setTimeout(()=>t.classList.remove('show'), 3000);
 }
 
-let currentUser = null;
-let authMode = 'login';
+// ── AUTH & NOTIFICHE (Task 2 & 5) ──────────────────────────────────────────
 
 function openAuth(mode) {
   authMode = mode || 'login';
@@ -1810,6 +1882,7 @@ async function submitAuth() {
 function onLogin(user) {
   currentUser = user;
   closeAuth();
+  fetchSavedProjects(); // Carica salvati
   updateNavForUser(user);
   showToast('✅ Benvenuto su Crewtiv!');
 }
@@ -1821,11 +1894,13 @@ function updateNavForUser(user) {
     const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     navRight.innerHTML = `
       <button class="btn btn-accent btn-sm" onclick="openNewProject()">+ Nuovo Progetto</button>
-      <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="showPage('profile')">
+      <div style="position:relative; cursor:pointer;" onclick="showPage('dashboard')">
         <div class="avatar" style="width:32px;height:32px;border-radius:9px;font-size:12px;background:var(--accent);color:#0a0a0f">${initials}</div>
+        <div id="navBadge" class="nav-badge" style="display:none;">0</div>
       </div>
       <button class="btn btn-ghost btn-sm" onclick="logout()">Esci</button>
     `;
+    fetchNotifications();
   } else {
     navRight.innerHTML = `
       <button class="btn btn-ghost btn-sm" onclick="openAuth('login')">Accedi</button>
@@ -1834,11 +1909,28 @@ function updateNavForUser(user) {
   }
 }
 
+async function fetchNotifications() {
+  if(!currentUser) return;
+  const { count, error } = await _supabase.from('proposals')
+      .select('*', { count: 'exact', head: true })
+      .eq('owner_id', currentUser.id)
+      .eq('status', 'pending');
+      
+  const badge = document.getElementById('navBadge');
+  if(badge) {
+      if(count > 0) { badge.textContent = count; badge.style.display = 'flex'; } 
+      else { badge.style.display = 'none'; }
+  }
+}
+
 async function logout() {
   await _supabase.auth.signOut();
   currentUser = null;
+  savedProjectIds = [];
   updateNavForUser(null);
   showToast('Hai effettuato il logout.');
+  showPage('home');
+  loadRealProjects();
 }
 
 const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -1856,6 +1948,72 @@ _supabase.auth.getSession().then(({ data: { session } }) => {
   if (session?.user) onLogin(session.user);
 });
 
+// ── DASHBOARD REAL DATA (Task 3) ──────────────────────────────────────────
+async function loadDashboardData() {
+  if(!currentUser) {
+      document.getElementById('dashName').textContent = 'Creativo';
+      return;
+  }
+  
+  // 1. Popola Dati Utente e KPI
+  document.getElementById('dashName').textContent = currentUser.user_metadata?.full_name || 'Creativo';
+
+  const { count: countSent } = await _supabase.from('proposals').select('*', {count:'exact', head:true}).eq('applicant_id', currentUser.id);
+  const { count: countRecv } = await _supabase.from('proposals').select('*', {count:'exact', head:true}).eq('owner_id', currentUser.id).eq('status', 'pending');
+  const { count: countProj } = await _supabase.from('projects').select('*', {count:'exact', head:true}).eq('author_id', currentUser.id);
+
+  document.querySelectorAll('.kpi-val')[0].innerHTML = `${countProj || 0}`; 
+  document.querySelectorAll('.kpi-val')[1].innerHTML = `${countRecv || 0}`; 
+  document.querySelectorAll('.kpi-val')[2].innerHTML = `${countSent || 0}`; 
+
+  // 2. Popola Proposte Ricevute
+  const { data: props } = await _supabase.from('proposals').select('*, projects(title)').eq('owner_id', currentUser.id).eq('status', 'pending');
+  const propList = document.getElementById('proposalList');
+  if(props && props.length > 0) {
+      propList.innerHTML = props.map(pr => `
+          <div class="prop-item">
+              <div class="prop-avatar" style="background:${COLORS[Math.floor(Math.random()*COLORS.length)]}">${pr.applicant_name ? pr.applicant_name.slice(0,2).toUpperCase() : 'AN'}</div>
+              <div style="flex:1">
+                  <div class="prop-name">${pr.applicant_name}</div>
+                  <div class="prop-role">${pr.role} · per <strong>${pr.projects?.title || 'Progetto'}</strong></div>
+                  <div class="prop-msg">"${pr.message}"</div>
+                  <div class="prop-actions">
+                      <button class="btn-accept" onclick="respondProposal('${pr.id}', 'accepted', '${pr.applicant_name}')">✓ Accetta</button>
+                      <button class="btn-decline" onclick="respondProposal('${pr.id}', 'declined', '${pr.applicant_name}')">✕ Rifiuta</button>
+                  </div>
+              </div>
+          </div>
+      `).join('');
+  } else {
+      propList.innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px;">Nessuna proposta in attesa.</div>`;
+  }
+
+  // 3. Popola Interessi (Progetti Salvati)
+  if(savedProjectIds.length > 0) {
+      const { data: savedProjs } = await _supabase.from('projects').select('*').in('id', savedProjectIds);
+      if(savedProjs) {
+          const formatted = savedProjs.map(p => ({
+              id: p.id, title: p.title, author: p.author_name || 'Anonimo', author_id: p.author_id,
+              initials: (p.author_name||'AN').slice(0,2).toUpperCase(), color: COLORS[Math.floor(Math.random()*COLORS.length)],
+              date: new Date(p.created_at).toLocaleDateString('it-IT'), status: p.status, desc: p.description || '', views: p.views||0, tags: p.tags||[]
+          }));
+          renderProjects(formatted, 'dashSavedProjectsList');
+      }
+  } else {
+      document.getElementById('dashSavedProjectsList').innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px;">Non hai ancora salvato nessun progetto.</div>`;
+  }
+}
+
+async function respondProposal(proposalId, newStatus, name) {
+  const { error } = await _supabase.from('proposals').update({ status: newStatus }).eq('id', proposalId);
+  if(error) return showToast('Errore durante la risposta');
+  showToast(newStatus === 'accepted' ? `✅ ${name} accettato!` : `❌ Proposta rifiutata.`);
+  
+  fetchNotifications(); 
+  loadDashboardData(); 
+}
+
+// ── I18N ──────────────────────────────────────────
 let currentLang = localStorage.getItem('lang') || 'it';
 
 const i18n = {
@@ -1958,12 +2116,15 @@ function setLang(lang) {
 
 function applyLang() {
   const t = i18n[currentLang];
+  // Nav
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (t[key]) el.textContent = t[key];
   });
+  // Hero
   const eyebrow = document.querySelector('.hero-eyebrow');
   if (eyebrow) eyebrow.textContent = t.hero_eyebrow;
+  const h1lines = document.querySelectorAll('.hero h1 .line1, .hero h1 .line2, .hero h1 .highlight');
   const heroH1 = document.querySelector('.hero h1');
   if (heroH1) heroH1.innerHTML = `${t.hero_h1_1}<br><span class="line2">${t.hero_h1_2}</span><br><span class="highlight">${t.hero_h1_3}</span>`;
   const heroSub = document.querySelector('.hero-sub');
@@ -1972,25 +2133,31 @@ function applyLang() {
   if (heroCta1) heroCta1.textContent = t.hero_cta1;
   const heroCta2 = document.querySelector('.hero-actions .btn-ghost');
   if (heroCta2) heroCta2.textContent = t.hero_cta2;
+  // Stats
   const statLabels = document.querySelectorAll('.stat-label');
   if (statLabels[0]) statLabels[0].textContent = t.stat1;
   if (statLabels[1]) statLabels[1].textContent = t.stat2;
   if (statLabels[2]) statLabels[2].textContent = t.stat3;
   if (statLabels[3]) statLabels[3].textContent = t.stat4;
+  // Search
   const searchInput = document.getElementById('searchInput');
   if (searchInput) searchInput.placeholder = t.search_placeholder;
   const searchBtn = document.querySelector('.search-btn');
   if (searchBtn) searchBtn.textContent = t.search_btn;
+  // Filter
   const catsLabel = document.querySelector('.cats-label');
   if (catsLabel) catsLabel.textContent = t.filter_label;
   const allPill = document.querySelector('.cat-pill');
   if (allPill) allPill.textContent = t.filter_all;
+  // Projects title
   const projTitle = document.querySelector('.projects-title');
   if (projTitle) projTitle.textContent = t.projects_title;
+  // Demo banner
   const demoBanner = document.getElementById('demoBannerText');
   if (demoBanner) demoBanner.innerHTML = t.demo_banner;
   const demoCta = document.getElementById('demoBannerCta');
   if (demoCta) demoCta.textContent = t.demo_cta;
+  // Beta popup
   const betaBadge = document.querySelector('.beta-badge');
   if (betaBadge) betaBadge.textContent = t.beta_badge;
   const betaTitle = document.querySelector('.beta-title');
@@ -1999,6 +2166,7 @@ function applyLang() {
   if (betaText) betaText.innerHTML = t.beta_text;
   const betaBtn = document.querySelector('.beta-btn');
   if (betaBtn) betaBtn.textContent = t.beta_btn;
+  // Auth modal
   document.getElementById('authSubtitle').textContent = authMode === 'login' ? t.auth_login_sub : t.auth_reg_sub;
   document.getElementById('tabLogin').textContent = t.auth_tab_login;
   document.getElementById('tabRegister').textContent = t.auth_tab_reg;
@@ -2007,22 +2175,31 @@ function applyLang() {
   document.getElementById('authName').placeholder = t.auth_name;
   document.getElementById('authSubmitBtn').textContent = authMode === 'login' ? t.auth_submit_login : t.auth_submit_reg;
   document.getElementById('authNote').textContent = t.auth_note;
+  // Trending
+  const trendTitle = document.querySelector('.scard-title');
+  // How it works
   const howSteps = document.querySelectorAll('.hstep .htext');
   if (howSteps[0]) howSteps[0].innerHTML = `<strong>${t.how1_t}</strong><span>${t.how1_d}</span>`;
   if (howSteps[1]) howSteps[1].innerHTML = `<strong>${t.how2_t}</strong><span>${t.how2_d}</span>`;
   if (howSteps[2]) howSteps[2].innerHTML = `<strong>${t.how3_t}</strong><span>${t.how3_d}</span>`;
   if (howSteps[3]) howSteps[3].innerHTML = `<strong>${t.how4_t}</strong><span>${t.how4_d}</span>`;
+  // Privacy page language
   const privacyIT = document.getElementById('privacyIT');
   const privacyEN = document.getElementById('privacyEN');
   if (privacyIT) privacyIT.style.display = currentLang === 'it' ? 'block' : 'none';
   if (privacyEN) privacyEN.style.display = currentLang === 'en' ? 'block' : 'none';
+  // Footer
   const footerAbout = document.getElementById('footerAbout');
   if (footerAbout) footerAbout.textContent = currentLang === 'it' ? 'Chi siamo' : 'About';
-  renderProjects(filtered);
+  // Re-render projects with updated labels
+  renderProjects(filtered, 'projectsList');
+  if(realProjects.length > 0) renderProjects(realProjects, 'realProjectsList');
 }
 
+// Apply on load
 applyLang();
 
+// ── BETA POPUP ──────────────────────────────────────
 function closeBeta() {
   document.getElementById('betaOverlay').classList.remove('open');
   sessionStorage.setItem('betaSeen', '1');
@@ -2030,8 +2207,10 @@ function closeBeta() {
 if (!sessionStorage.getItem('betaSeen')) {
   setTimeout(() => document.getElementById('betaOverlay').classList.add('open'), 500);
 }
+// ── END BETA POPUP ────────────────────────────────
 
-renderProjects(projects);
+// Init Demos
+renderProjects(projects, 'projectsList');
 </script>
 </body>
 </html>
