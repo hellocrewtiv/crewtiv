@@ -1490,22 +1490,38 @@ async function submitProposal() {
   if(document.getElementById('page-profile').classList.contains('active')) loadUserProfile();
 }
 
-async function toggleSaveProject(projectId) {
+async function toggleLikeProject(projectId) {
   if(!currentUser) return openAuth('login');
-  const isSaved = savedProjectIds.includes(projectId);
+  const isLiked = likedProjectIds.includes(projectId);
   
-  if (isSaved) {
+  // Troviamo il progetto per aggiornare il numero di like in tempo reale nell'interfaccia
+  const project = realProjects.find(p => String(p.id) === String(projectId));
+  
+  if (isLiked) {
     await _supabase.from('saved_projects').delete().match({ user_id: currentUser.id, project_id: projectId });
-    savedProjectIds = savedProjectIds.filter(id => id !== projectId);
-    showToast('Progetto rimosso dagli interessi');
+    likedProjectIds = likedProjectIds.filter(id => id !== projectId);
+    
+    if(project) {
+        project.likes = Math.max(0, (project.likes || 1) - 1);
+        await _supabase.from('projects').update({ likes: project.likes }).eq('id', projectId);
+    }
+    showToast('Like rimosso');
   } else {
     await _supabase.from('saved_projects').insert({ user_id: currentUser.id, project_id: projectId });
-    savedProjectIds.push(projectId);
-    showToast('Progetto salvato! ⭐');
+    likedProjectIds.push(projectId);
+    
+    if(project) {
+        project.likes = (project.likes || 0) + 1;
+        await _supabase.from('projects').update({ likes: project.likes }).eq('id', projectId);
+    }
+    showToast('Hai messo Like! ♥️');
   }
   
-  if(document.getElementById('page-profile').classList.contains('active')) loadUserProfile();
-  else loadRealProjects();
+  if(document.getElementById('page-profile').classList.contains('active')) {
+      loadUserProfile();
+  } else {
+      applyFilters(); // Ridisegna i progetti con i numeri aggiornati
+  }
 }
 
 function openNewProject() {
