@@ -1646,7 +1646,7 @@ async function loadUserProfile() {
   document.getElementById('dashProposalsReceived').textContent = countRecv || 0;
   document.getElementById('dashProposalsSent').textContent = countSent || 0;
 
-  const { data: props } = await _supabase.from('proposals').select('*, projects(title)').eq('owner_id', currentUser.id).eq('status', 'pending');
+const { data: props } = await _supabase.from('proposals').select('*, projects(title)').eq('owner_id', currentUser.id).in('status', ['pending', 'accepted']);
   const propList = document.getElementById('proposalList');
   if(props && props.length > 0) {
       propList.innerHTML = props.map(pr => `
@@ -1655,16 +1655,21 @@ async function loadUserProfile() {
               <div style="flex:1">
                   <div class="prop-name">${pr.applicant_name || 'Utente'}</div>
                   <div class="prop-role">${pr.role} · per <strong>${pr.projects?.title || 'Progetto'}</strong></div>
+                  ${pr.status === 'pending' ? `
                   <div class="prop-msg">"${pr.message}"</div>
                   <div class="prop-actions">
                       <button class="btn-accept" onclick="respondProposal('${pr.id}', 'accepted', '${pr.applicant_name}')">✓ Accetta</button>
                       <button class="btn-decline" onclick="respondProposal('${pr.id}', 'declined', '${pr.applicant_name}')">✕ Rifiuta</button>
-                  </div>
+                  </div>` : `
+                  <div style="margin-top:10px; display:flex; align-items:center; gap:12px;">
+                      <span style="font-size:11px; font-weight:600; color:#57ff85;">✓ Nel team</span>
+                      <button class="btn btn-accent btn-sm" onclick="openChat('${pr.applicant_id}', '${pr.applicant_name}', '${pr.projects?.id}')">💬 Apri Chat</button>
+                  </div>`}
               </div>
           </div>
       `).join('');
   } else {
-      propList.innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">Nessuna proposta in attesa al momento.</div>`;
+      propList.innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">Nessuna notifica al momento.</div>`;
   }
 
 // Modificato per chiedere anche l'ID del progetto e renderlo cliccabile
