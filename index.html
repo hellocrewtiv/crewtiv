@@ -1312,10 +1312,10 @@ function renderProjects(list, containerId='projectsList') {
   });
 }
 
-async function fetchSavedProjects() {
+async function fetchLikedProjects() {
   if(!currentUser) return;
   const { data } = await _supabase.from('saved_projects').select('project_id').eq('user_id', currentUser.id);
-  if(data) savedProjectIds = data.map(d => d.project_id);
+  if(data) likedProjectIds = data.map(d => d.project_id);
 }
 
 async function loadRealProjects() {
