@@ -1768,25 +1768,32 @@ const { data: sentProps } = await _supabase.from('proposals').select('*, project
   const sentPropList = document.getElementById('sentProposalList');
   if(sentProps && sentProps.length > 0) {
       sentPropList.innerHTML = sentProps.map(pr => {
-          const statusColors = { pending: 'var(--orange)', accepted: '#57ff85', declined: 'var(--red)' };
-          const statusLabels = { pending: 'In attesa', accepted: 'Accettata', declined: 'Rifiutata' };
+          const statusColors = { pending: 'var(--orange)', accepted: '#57ff85', declined: 'var(--red)', withdrawn: 'var(--text3)', terminated: 'var(--text3)' };
+          const statusLabels = { pending: 'In attesa', accepted: 'Accettata', declined: 'Rifiutata', withdrawn: 'Ritirata', terminated: 'Interrotta' };
           const projId = pr.projects?.id;
           const ownerId = pr.projects?.author_id;
           const ownerName = pr.projects?.author_name || 'Autore';
           
           const onClickAttr = projId ? `onclick="openProjectById('${projId}')" style="cursor:pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'"` : '';
           
-          const chatBtn = (pr.status === 'accepted' && ownerId) ? 
-            `<button class="btn btn-accent btn-sm" style="margin-top:8px;" onclick="event.stopPropagation(); openChat('${ownerId}', '${ownerName}', '${projId}')">💬 Apri Chat</button>` : '';
+          let actionBtns = '';
+          if (pr.status === 'pending') {
+              actionBtns = `<button class="btn btn-ghost btn-sm" style="margin-top:8px; color:var(--red); border-color:rgba(255,87,87,0.3);" onclick="event.stopPropagation(); updateProposalStatus('${pr.id}', 'withdrawn', 'Candidatura ritirata')">Ritira</button>`;
+          } else if (pr.status === 'accepted' && ownerId) {
+              actionBtns = `
+                <button class="btn btn-accent btn-sm" style="margin-top:8px;" onclick="event.stopPropagation(); openChat('${ownerId}', '${ownerName}', '${projId}')">💬 Apri Chat</button>
+                <button class="btn btn-ghost btn-sm" style="margin-top:8px; color:var(--red); border-color:rgba(255,87,87,0.3);" onclick="event.stopPropagation(); updateProposalStatus('${pr.id}', 'terminated', 'Collaborazione interrotta')">Interrompi</button>
+              `;
+          }
 
           return `
           <div class="prop-item" ${onClickAttr}>
               <div style="flex:1">
                   <div class="prop-role" style="font-size:13px; color:var(--text);">Ruolo: <strong>${pr.role}</strong></div>
                   <div style="font-size:11px; color:var(--text3); margin-top:2px;">per il progetto <strong style="color:var(--text2); text-decoration:underline;">${pr.projects?.title || 'Progetto eliminato'}</strong></div>
-                  <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
-                      <div style="font-size:11px; font-weight:600; color:${statusColors[pr.status]}; display:inline-block; padding:3px 8px; background:rgba(255,255,255,0.05); border-radius:4px;">Stato: ${statusLabels[pr.status]}</div>
-                      ${chatBtn}
+                  <div style="display:flex; align-items:center; gap:10px; margin-top:8px; flex-wrap:wrap;">
+                      <div style="font-size:11px; font-weight:600; color:${statusColors[pr.status] || 'var(--text3)'}; display:inline-block; padding:3px 8px; background:rgba(255,255,255,0.05); border-radius:4px;">Stato: ${statusLabels[pr.status] || pr.status}</div>
+                      ${actionBtns}
                   </div>
               </div>
               ${projId ? `<div style="font-size:18px; color:var(--text3); align-self:center; padding-left:10px;">→</div>` : ''}
