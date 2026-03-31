@@ -909,63 +909,28 @@ nav {
 <main id="page-messages" class="page">
   <div class="messages-wrap">
     <div class="msg-list">
-      <div class="msg-list-head">Messaggi</div>
-      <div class="msg-item active" onclick="selectChat(0)">
-        <span class="msg-item-time">2h fa</span>
-        <span class="msg-unread">2</span>
-        <div class="msg-item-name">Sofia Russo</div>
-        <div class="msg-item-preview">Posso aiutarti con il sistema narrativo!</div>
-      </div>
-      <div class="msg-item" onclick="selectChat(1)">
-        <span class="msg-item-time">1g fa</span>
-        <div class="msg-item-name">Luca Verdi</div>
-        <div class="msg-item-preview">Ecco i miei sample di sound design…</div>
-      </div>
-      <div class="msg-item" onclick="selectChat(2)">
-        <span class="msg-item-time">2g fa</span>
-        <div class="msg-item-name">Anna Pellegrini</div>
-        <div class="msg-item-preview">Il progetto paesaggistico è pronto</div>
-      </div>
-      <div class="msg-item" onclick="selectChat(3)">
-        <span class="msg-item-time">3g fa</span>
-        <div class="msg-item-name">Pietro Mori</div>
-        <div class="msg-item-preview">Ti ho inviato i risultati del modello ML</div>
+      <div class="msg-list-head">Conversazioni</div>
+      <div id="contactsList">
+        <div style="padding:20px; color:var(--text3); font-size:13px;">Caricamento conversazioni...</div>
       </div>
     </div>
-    <div class="chat-area">
+    <div class="chat-area" id="activeChatArea" style="display:none;">
       <div class="chat-head">
-        <div class="avatar" style="background:#c8ff57;width:38px;height:38px;border-radius:10px;font-size:13px;font-weight:700;color:#0a0a0f" id="chatAvatar">SR</div>
+        <div class="avatar" style="background:var(--accent); width:38px; height:38px; border-radius:10px; font-size:13px; font-weight:700; color:#0a0a0f" id="chatAvatar">?</div>
         <div>
-          <div class="chat-head-name" id="chatName">Sofia Russo</div>
-          <div class="chat-head-project" id="chatProject">Re: EchoVerse RPG — Narrative Designer</div>
+          <div class="chat-head-name" id="chatName">Seleziona una chat</div>
+          <div class="chat-head-project" id="chatProject">—</div>
         </div>
       </div>
       <div class="chat-messages" id="chatMessages">
-        <div class="cmsg them">
-          <div class="cmsg-bubble">Ciao! Ho visto il tuo progetto EchoVerse — il concetto delle linee temporali parallele è brillante. Sono una narrative designer con 3 anni di esperienza negli RPG.</div>
-          <div class="cmsg-time">Ieri, 10:23</div>
         </div>
-        <div class="cmsg me">
-          <div class="cmsg-bubble">Grazie Sofia! Il tuo portfolio è ottimo. Hai già lavorato con sistemi di dialogo ramificati?</div>
-          <div class="cmsg-time">Ieri, 11:05</div>
-        </div>
-        <div class="cmsg them">
-          <div class="cmsg-bubble">Sì! Ho lavorato su due RPG indie usando l'integrazione Ink + Unity. Posso condividere i progetti se vuoi vederli.</div>
-          <div class="cmsg-time">Ieri, 11:18</div>
-        </div>
-        <div class="cmsg me">
-          <div class="cmsg-bubble">Mandali pure! È esattamente lo stack che uso per EchoVerse.</div>
-          <div class="cmsg-time">Ieri, 11:42</div>
-        </div>
-        <div class="cmsg them">
-          <div class="cmsg-bubble">Posso aiutarti con il sistema narrativo! Ti mando un breve design doc con idee per la meccanica delle linee temporali 🎮</div>
-          <div class="cmsg-time">2h fa</div>
-        </div>
-      </div>
       <div class="chat-input-row">
         <input class="chat-input" id="chatInput" type="text" placeholder="Scrivi un messaggio…" onkeydown="if(event.key==='Enter')sendMessage()">
         <button class="chat-send" onclick="sendMessage()">Invia ↑</button>
       </div>
+    </div>
+    <div id="noChatSelected" style="flex:1; display:flex; align-items:center; justify-content:center; color:var(--text3); font-size:14px;">
+      Seleziona una conversazione per iniziare a messaggiare
     </div>
   </div>
 </main>
