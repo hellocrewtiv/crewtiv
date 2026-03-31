@@ -1390,12 +1390,18 @@ function openProjectById(id) {
   if (!currentProject) return;
 const p = currentProject;
 
-// Incrementa views reali se il progetto è DB e non sei l'autore
-if (p.isReal && currentUser && p.author_id !== currentUser.id) {
-  _supabase.rpc('increment_views', { project_id: p.id }).then(() => {
-    p.views++; // Aggiorna localmente per feedback immediato
-  });
+// Incrementa views reali in modo sicuro
+if (p && p.isReal && currentUser && p.author_id !== currentUser.id) {
+  try {
+    _supabase.rpc('increment_views', { project_id: p.id });
+    p.views++; 
+  } catch (e) { console.error("Errore incremento views:", e); }
 }
+
+// Assicuriamoci che l'overlay sia pulito prima di aprirlo
+const modalOverlay = document.getElementById('projectModal');
+modalOverlay.classList.remove('open'); 
+setTimeout(() => modalOverlay.classList.add('open'), 10);
   const sMap = {open:'s-open',progress:'s-progress',closed:'s-closed'};
   const sLabel = {open:'Aperto a collaborazioni',progress:'In corso',closed:'Chiuso'};
   document.getElementById('mStatus').className = `status-badge ${sMap[p.status]}`;
