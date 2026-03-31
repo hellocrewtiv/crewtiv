@@ -1966,7 +1966,7 @@ async function submitAuth() {
 function onLogin(user) {
   currentUser = user;
   closeAuth();
-  fetchSavedProjects(); 
+  fetchLikedProjects(); 
   updateNavForUser(user);
   showToast('✅ Benvenuto su Crewtiv!');
 }
