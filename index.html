@@ -1791,8 +1791,8 @@ const { data: sentProps } = await _supabase.from('proposals').select('*, project
     renderProjects(userProjects, 'profileProjectsList');
   }
 
-  if(savedProjectIds.length > 0) {
-      const { data: savedProjs } = await _supabase.from('projects').select('*').in('id', savedProjectIds);
+  if(likedProjectIds.length > 0) {
+      const { data: savedProjs } = await _supabase.from('projects').select('*').in('id', likedProjectIds);
       if(savedProjs) {
           const formatted = savedProjs.map(p => ({
               id: p.id, title: p.title, author: p.author_name || 'Anonimo', author_id: p.author_id,
