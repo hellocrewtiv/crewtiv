@@ -1703,6 +1703,73 @@ async function sendMessage() {
   selectRealChat(activeChatId, document.getElementById('chatName').textContent, document.getElementById('chatProject').textContent, currentChatProjectId);
 }
 
+let allTalents = [];
+
+async function loadTalents() {
+  const container = document.getElementById('talentsList');
+  container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text3);">Caricamento talenti...</div>';
+  
+  const { data, error } = await _supabase.from('profiles').select('*').order('full_name', { ascending: true });
+  if (error || !data || data.length === 0) {
+    container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text3);">Nessun talento trovato.</div>';
+    return;
+  }
+  
+  allTalents = data;
+  renderTalents(allTalents);
+}
+
+function renderTalents(list) {
+  const container = document.getElementById('talentsList');
+  container.innerHTML = '';
+  
+  if (!list.length) {
+    container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text3);">Nessun talento corrisponde alla ricerca.</div>';
+    return;
+  }
+  
+  list.forEach((t, i) => {
+    // Nascondiamo i profili completamente vuoti per tenere la vetrina pulita
+    if(!t.title && !t.bio && (!t.skills || t.skills.length === 0)) return;
+    
+    const name = t.full_name || 'Creativo Anonimo';
+    const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const color = COLORS[Math.floor(Math.random()*COLORS.length)];
+    
+    const d = document.createElement('div');
+    d.className = 'pcard';
+    d.style.animationDelay = `${i * 0.05}s`;
+    d.innerHTML = `
+      <div style="display:flex; gap:14px; align-items:center; margin-bottom:16px;">
+        <div class="avatar" style="width:48px; height:48px; border-radius:14px; font-size:16px; background:${color}; color:#0a0a0f;">${initials}</div>
+        <div>
+          <div style="font-family:'Syne',sans-serif; font-size:18px; font-weight:700; color:var(--text);">${name}</div>
+          <div style="font-size:13px; color:var(--accent); font-weight:500;">${t.title || 'Collaboratore'}</div>
+        </div>
+      </div>
+      <div style="font-size:13px; color:var(--text2); line-height:1.6; margin-bottom:16px; font-weight:300;">
+        ${t.bio ? (t.bio.length > 120 ? t.bio.slice(0, 120) + '...' : t.bio) : 'Nessuna bio inserita.'}
+      </div>
+      <div class="pcard-tags" style="margin-bottom:0;">
+        ${(t.skills || []).map(s => `<span class="tag">${s}</span>`).join('')}
+      </div>
+    `;
+    container.appendChild(d);
+  });
+}
+
+function applyTalentFilters() {
+  const q = (document.getElementById('searchTalentInput')?.value || '').toLowerCase();
+  const filtered = allTalents.filter(t => {
+    const name = (t.full_name || '').toLowerCase();
+    const title = (t.title || '').toLowerCase();
+    const bio = (t.bio || '').toLowerCase();
+    const skills = (t.skills || []).join(' ').toLowerCase();
+    return name.includes(q) || title.includes(q) || bio.includes(q) || skills.includes(q);
+  });
+  renderTalents(filtered);
+}
+
 function showPage(page) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const pageEl = document.getElementById('page-'+page);
@@ -1713,6 +1780,7 @@ function showPage(page) {
   
   if (page==='profile') loadUserProfile();
   if (page==='messages') loadMessages();
+  if (page==='talents') loadTalents();
   
   if (page==='privacy') {
     document.getElementById('privacyIT').style.display = currentLang==='it' ? 'block' : 'none';
