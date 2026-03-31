@@ -2009,7 +2009,7 @@ async function fetchNotifications() {
 async function logout() {
   await _supabase.auth.signOut();
   currentUser = null;
-  savedProjectIds = [];
+  likedProjectIds = [];
   updateNavForUser(null);
   showToast('Hai effettuato il logout.');
   showPage('home');
