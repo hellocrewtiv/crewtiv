@@ -1536,24 +1536,101 @@ function selectChat(i) {
   document.getElementById('chatMessages').innerHTML = `<div class="cmsg them"><div class="cmsg-bubble">Ciao! Sono molto interessato al tuo progetto e mi piacerebbe collaborare.</div><div class="cmsg-time">2 giorni fa</div></div><div class="cmsg me"><div class="cmsg-bubble">Grazie per esserti fatto vivo! Raccontami della tua esperienza.</div><div class="cmsg-time">2 giorni fa</div></div>`;
 }
 
-function sendMessage() {
+// ── MOTORE MESSAGGI REALI ──────────────────────────────────────────
+let activeChatId = null; // ID dell'altro utente
+
+async function loadMessages() {
+  if (!currentUser) return;
+  const contactsContainer = document.getElementById('contactsList');
+  
+  // 1. Carichiamo le proposte ACCETTATE (i nostri contatti)
+  // Cerchiamo sia dove io sono il proprietario, sia dove io sono il candidato
+  const { data: matches, error } = await _supabase.from('proposals')
+    .select('*, projects(id, title, author_id, author_name)')
+    .eq('status', 'accepted')
+    .or(`owner_id.eq.${currentUser.id},applicant_id.eq.${currentUser.id}`);
+
+  if (error || !matches || matches.length === 0) {
+    contactsContainer.innerHTML = `<div style="padding:20px; color:var(--text3); font-size:12px;">Nessuna chat attiva. Le chat appaiono quando una proposta viene accettata.</div>`;
+    return;
+  }
+
+  // Creiamo la lista contatti a sinistra
+  contactsContainer.innerHTML = matches.map(m => {
+    // Capiamo chi è "l'altro" nella conversazione
+    const isOwner = m.owner_id === currentUser.id;
+    const otherId = isOwner ? m.applicant_id : m.owner_id;
+    const otherName = isOwner ? m.applicant_name : m.projects.author_name;
+    const projectTitle = m.projects.title;
+    const initials = otherName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    
+    return `
+      <div class="msg-item ${activeChatId === otherId ? 'active' : ''}" onclick="selectRealChat('${otherId}', '${otherName}', '${projectTitle}', '${m.project_id}')">
+        <div class="msg-item-name">${otherName}</div>
+        <div class="msg-item-preview">Progetto: ${projectTitle}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Se abbiamo una chat attiva (veniamo dal profilo), carichiamo i messaggi
+  if (currentChatUserId) {
+    selectRealChat(currentChatUserId, currentChatUserName, "Progetto", currentChatProjectId);
+    currentChatUserId = null; // Puliamo per la prossima volta
+  }
+}
+
+async function selectRealChat(otherId, otherName, projectTitle, projectId) {
+  activeChatId = otherId;
+  currentChatProjectId = projectId;
+  
+  document.getElementById('noChatSelected').style.display = 'none';
+  document.getElementById('activeChatArea').style.display = 'flex';
+  document.getElementById('chatName').textContent = otherName;
+  document.getElementById('chatProject').textContent = projectTitle;
+  document.getElementById('chatAvatar').textContent = otherName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  
+  // Evidenziamo il contatto attivo nella lista
+  document.querySelectorAll('.msg-item').forEach(el => el.classList.remove('active'));
+  loadUserProfile(); // Aggiorna la lista contatti per mostrare l'active
+
+  // Carichiamo i messaggi dal DB
+  const { data: msgs, error } = await _supabase.from('messages')
+    .select('*')
+    .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${currentUser.id})`)
+    .eq('project_id', projectId)
+    .order('created_at', { ascending: true });
+
+  const msgContainer = document.getElementById('chatMessages');
+  msgContainer.innerHTML = (msgs && msgs.length > 0) ? msgs.map(m => `
+    <div class="cmsg ${m.sender_id === currentUser.id ? 'me' : 'them'}">
+      <div class="cmsg-bubble">${m.content}</div>
+      <div class="cmsg-time">${new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+    </div>
+  `).join('') : `<div style="text-align:center; padding:20px; color:var(--text3); font-size:12px;">Inizia la conversazione!</div>`;
+  
+  msgContainer.scrollTop = msgContainer.scrollHeight;
+}
+
+async function sendMessage() {
   const input = document.getElementById('chatInput');
-  const msg = input.value.trim();
-  if (!msg) return;
-  const container = document.getElementById('chatMessages');
-  const d = document.createElement('div');
-  d.className = 'cmsg me';
-  d.innerHTML = `<div class="cmsg-bubble">${msg}</div><div class="cmsg-time">Just now</div>`;
-  container.appendChild(d);
+  const content = input.value.trim();
+  if (!content || !activeChatId || !currentChatProjectId) return;
+
+  const { error } = await _supabase.from('messages').insert({
+    sender_id: currentUser.id,
+    receiver_id: activeChatId,
+    project_id: currentChatProjectId,
+    content: content
+  });
+
+  if (error) {
+    showToast('❌ Errore invio messaggio');
+    return;
+  }
+
   input.value = '';
-  container.scrollTop = container.scrollHeight;
-  setTimeout(() => {
-    const r = document.createElement('div');
-    r.className = 'cmsg them';
-    r.innerHTML = `<div class="cmsg-bubble">Grazie per il messaggio! Ti rispondo presto 🙌</div><div class="cmsg-time">Adesso</div>`;
-    container.appendChild(r);
-    container.scrollTop = container.scrollHeight;
-  }, 1200);
+  // Ricarichiamo la chat per vedere il messaggio inviato
+  selectRealChat(activeChatId, document.getElementById('chatName').textContent, document.getElementById('chatProject').textContent, currentChatProjectId);
 }
 
 function showPage(page) {
