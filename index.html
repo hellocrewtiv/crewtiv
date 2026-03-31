@@ -1812,6 +1812,23 @@ async function submitEditProfile() {
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 function closeIfBg(e,id) { if(e.target===document.getElementById(id)) closeModal(id); }
 
+  // ── FUNZIONE PONTE PER LA CHAT ──────────────────────────────────────────
+let currentChatUserId = null;
+let currentChatProjectId = null;
+let currentChatUserName = null;
+
+function openChat(otherUserId, otherUserName, projectId) {
+  currentChatUserId = otherUserId;
+  currentChatUserName = otherUserName;
+  currentChatProjectId = projectId;
+  
+  // Cambia pagina per andare ai messaggi
+  showPage('messages');
+  showToast('Caricamento chat con ' + otherUserName + '...');
+  
+  // Nello Step 3 scriveremo la funzione loadMessages() che caricherà davvero i testi!
+  // loadMessages(); 
+}
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
