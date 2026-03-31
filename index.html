@@ -1842,6 +1842,14 @@ async function respondProposal(proposalId, newStatus, name) {
   loadUserProfile(); 
 }
 
+async function updateProposalStatus(proposalId, newStatus, successMsg) {
+  if(!confirm('Sei sicuro di voler procedere con questa azione?')) return;
+  const { error } = await _supabase.from('proposals').update({ status: newStatus }).eq('id', proposalId);
+  if(error) return showToast('❌ Errore durante l\'aggiornamento');
+  showToast(`✅ ${successMsg}`);
+  loadUserProfile();
+}
+
 function openEditProject(id) {
   const p = realProjects.find(p=> String(p.id) === String(id));
   if (!p) return;
