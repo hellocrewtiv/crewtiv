@@ -1270,10 +1270,10 @@ function renderProjects(list, containerId='projectsList') {
     const sLabel = {open:'Aperto',progress:'In corso',closed:'Chiuso'};
     const isOwner = currentUser && p.author_id === currentUser.id;
     
-    const isSaved = savedProjectIds.includes(p.id);
+    const isLiked = likedProjectIds.includes(p.id);
     const isReal = p.isReal === true;
-    const saveBtnHtml = currentUser && !isOwner && isReal ? 
-        `<button class="btn-save ${isSaved?'saved':''}" onclick="event.stopPropagation(); toggleSaveProject('${p.id}')">${isSaved ? '★ Salvato' : '☆ Salva'}</button>` : '';
+    const likeBtnHtml = currentUser && !isOwner && isReal ? 
+        `<button class="btn-save ${isLiked?'saved':''}" style="${isLiked ? 'color: var(--red); border-color: rgba(255,87,87,0.3); background: rgba(255,87,87,0.1);' : ''}" onclick="event.stopPropagation(); toggleLikeProject('${p.id}')">${isLiked ? '♥️ Piace' : '♡ Mi piace'}</button>` : '';
 
     const d = document.createElement('div');
     d.className = `pcard${p.featured?' featured':''}`;
