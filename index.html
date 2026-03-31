@@ -1753,9 +1753,10 @@ const { data: props } = await _supabase.from('proposals').select('*, projects(ti
                       <button class="btn-accept" onclick="respondProposal('${pr.id}', 'accepted', '${pr.applicant_name}')">✓ Accetta</button>
                       <button class="btn-decline" onclick="respondProposal('${pr.id}', 'declined', '${pr.applicant_name}')">✕ Rifiuta</button>
                   </div>` : `
-                  <div style="margin-top:10px; display:flex; align-items:center; gap:12px;">
+                  <div style="margin-top:10px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                       <span style="font-size:11px; font-weight:600; color:#57ff85;">✓ Nel team</span>
                       <button class="btn btn-accent btn-sm" onclick="openChat('${pr.applicant_id}', '${pr.applicant_name}', '${pr.projects?.id}')">💬 Apri Chat</button>
+                      <button class="btn btn-ghost btn-sm" style="color:var(--red); border-color:rgba(255,87,87,0.3);" onclick="updateProposalStatus('${pr.id}', 'terminated', 'Collaboratore rimosso')">Rimuovi</button>
                   </div>`}
               </div>
           </div>
