@@ -1302,8 +1302,7 @@ function renderProjects(list, containerId='projectsList') {
       <div class="pcard-footer">
         <div class="pcard-stats">
           <span class="pstat">👁 ${p.views}</span>
-          <span class="pstat">❤️ ${p.likes || 0}</span>
-          <span class="pstat">🤝 ${p.proposals}</span>
+          <span class="pstat">♥️ ${p.likes || 0}</span>
         </div>
         <div class="pcard-action">
           ${p.status!=='closed'?`<button class="btn btn-accent btn-sm" onclick="event.stopPropagation();openProjectById('${p.id}')">Proponi →</button>`:'<span style="font-size:11px;color:var(--text3)">Team al completo</span>'}
