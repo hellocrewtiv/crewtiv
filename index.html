@@ -2121,13 +2121,17 @@ const { data: sentProps } = await _supabase.from('proposals').select('*, project
   }
 
   if(likedProjectIds.length > 0) {
-      const { data: savedProjs } = await _supabase.from('projects').select('*').in('id', likedProjectIds);
+      const { data: savedProjs } = await _supabase.from('projects').select('*, profiles(primary_role)').in('id', likedProjectIds);
       if(savedProjs) {
-          const formatted = savedProjs.map(p => ({
-              id: p.id, title: p.title, author: p.author_name || 'Anonimo', author_id: p.author_id,
-              initials: (p.author_name||'AN').slice(0,2).toUpperCase(), color: getColorForString(p.author_name||'AN'),
-              date: new Date(p.created_at).toLocaleDateString('it-IT'), status: p.status, desc: p.description || '', views: p.views||0, tags: p.tags||[]
-          }));
+          const formatted = savedProjs.map(p => {
+              const rKey = Array.isArray(p.profiles) ? p.profiles[0]?.primary_role : p.profiles?.primary_role;
+              return {
+                  id: p.id, title: p.title, author: p.author_name || 'Anonimo', author_id: p.author_id,
+                  initials: (p.author_name||'AN').slice(0,2).toUpperCase(), 
+                  color: getRoleColor(rKey) || getColorForString(p.author_name||'AN'),
+                  date: new Date(p.created_at).toLocaleDateString('it-IT'), status: p.status, desc: p.description || '', views: p.views||0, tags: p.tags||[]
+              };
+          });
           renderProjects(formatted, 'dashSavedProjectsList');
       }
   } else {
