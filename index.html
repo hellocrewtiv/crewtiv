@@ -1357,10 +1357,14 @@ async function loadRealProjects() {
     isReal: true, author_id: p.author_id
   }));
   
-  const section = document.getElementById('realProjectsSection');
+const section = document.getElementById('realProjectsSection');
   if (section && realProjects.length > 0) {
     section.style.display = 'block';
     renderProjects(realProjects, 'realProjectsList');
+    
+    // Nascondiamo i progetti demo se ci sono progetti reali per evitare confusione
+    const demoWrapper = document.getElementById('demoBannerWrapper');
+    if (demoWrapper) demoWrapper.style.display = 'none';
   }
 }
 
