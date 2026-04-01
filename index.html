@@ -1743,18 +1743,33 @@ async function sendMessage() {
 
 let allTalents = [];
 
+const demoTalents = [
+  { full_name: "Sofia Russo", title: "Narrative Designer", bio: "Scrivo mondi e dialoghi ramificati. Appassionata di RPG e sci-fi.", skills: ["Twine", "Scrittura Creativa", "Lore"] },
+  { full_name: "Luca Verdi", title: "Sound Designer", bio: "Creo atmosfere sonore immersive per videogiochi e cortometraggi.", skills: ["FMOD", "Ableton", "Foley"] },
+  { full_name: "Anna Pellegrini", title: "Paesaggista", bio: "Progettazione di spazi verdi sostenibili e integrazione architettonica.", skills: ["AutoCAD", "Botanica", "Sostenibilità"] }
+];
+
 async function loadTalents() {
   const container = document.getElementById('talentsList');
   container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text3);">Caricamento talenti...</div>';
   
   const { data, error } = await _supabase.from('profiles').select('*').order('full_name', { ascending: true });
   if (error || !data || data.length === 0) {
-    container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text3);">Nessun talento trovato.</div>';
+    allTalents = demoTalents;
+    container.innerHTML = `
+      <div style="grid-column: 1/-1; background:var(--accent-dim);border:1px solid rgba(200,255,87,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:16px">✦</span>
+        <span style="font-size:13px;color:var(--text2)">Questi sono <strong style="color:var(--text)">profili di esempio</strong>. <span style="color:var(--accent);cursor:pointer;font-weight:500" onclick="openAuth('register')">Registrati per creare il tuo →</span></span>
+      </div>
+      <div id="talentsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; width: 100%; grid-column: 1/-1;"></div>
+    `;
+    renderTalents(allTalents, 'talentsGrid');
     return;
   }
   
   allTalents = data;
-  renderTalents(allTalents);
+  container.innerHTML = `<div id="talentsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; width: 100%; grid-column: 1/-1;"></div>`;
+  renderTalents(allTalents, 'talentsGrid');
 }
 
 function renderTalents(list, targetId = 'talentsList') {
