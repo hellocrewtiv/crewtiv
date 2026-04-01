@@ -2336,7 +2336,7 @@ function applyLang() {
   document.getElementById('authPassword').placeholder = t.auth_password;
   document.getElementById('authName').placeholder = t.auth_name;
   document.getElementById('authSubmitBtn').textContent = authMode === 'login' ? t.auth_submit_login : t.auth_submit_reg;
-  document.getElementById('authNote').textContent = t.auth_note;
+  document.getElementById('authNote').innerHTML = t.auth_note;
   const howSteps = document.querySelectorAll('.hstep .htext');
   if (howSteps[0]) howSteps[0].innerHTML = `<strong>${t.how1_t}</strong><span>${t.how1_d}</span>`;
   if (howSteps[1]) howSteps[1].innerHTML = `<strong>${t.how2_t}</strong><span>${t.how2_d}</span>`;
