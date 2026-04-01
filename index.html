@@ -2163,6 +2163,8 @@ async function submitEditProfile() {
   const title = document.getElementById('epTitle').value.trim();
   const bio = document.getElementById('epBio').value.trim();
   const skills = document.getElementById('epSkills').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const primary_role = document.getElementById('epPrimaryRole').value || null;
+  const secondary_roles = Array.from(document.querySelectorAll('.ep-sec-role:checked')).map(cb => cb.value);
   
   // Peschiamo il nome dall'account di registrazione
   const fullName = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
