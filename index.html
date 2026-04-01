@@ -1992,7 +1992,9 @@ async function loadUserProfile() {
   document.getElementById('editProfileBtn').style.display = 'inline-flex';
   document.getElementById('logoutBtn').style.display = 'inline-flex';
 
-  const { data: profileData } = await _supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+  let profileData = null;
+  const { data: profileDataResult } = await _supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+  profileData = profileDataResult;
   if (profileData) {
     // FASE 10e: DNA Visivo Ruolo Primario
     if (profileData.primary_role) {
