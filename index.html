@@ -1366,6 +1366,21 @@ const section = document.getElementById('realProjectsSection');
     const demoWrapper = document.getElementById('demoBannerWrapper');
     if (demoWrapper) demoWrapper.style.display = 'none';
   }
+  
+  updateTrending();
+}
+
+function updateTrending() {
+  const tl = document.getElementById('trendingList');
+  if (!tl) return;
+  let source = realProjects.length >= 4 ? realProjects : projects;
+  let top4 = [...source].sort((a,b) => (b.views||0) - (a.views||0)).slice(0,4);
+  tl.innerHTML = top4.map((p, i) => `
+    <div class="titem" onclick="openProjectById('${p.id}')">
+      <div class="trank">0${i+1}</div>
+      <div><div class="ttitle">${p.title}</div><div class="tmeta">${p.category} · ${p.views||0} viste</div></div>
+    </div>
+  `).join('');
 }
 
 loadRealProjects();
