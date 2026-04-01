@@ -2268,10 +2268,13 @@ async function logout() {
   loadRealProjects();
 }
 
+let sessionInitialized = false;
+
 const hashParams = new URLSearchParams(window.location.hash.substring(1));
 if (hashParams.get('type') === 'signup' || hashParams.get('access_token')) {
   _supabase.auth.getSession().then(({ data: { session } }) => {
     if (session?.user) {
+      sessionInitialized = true;
       onLogin(session.user);
       showToast('✅ Email confermata!');
       window.history.replaceState(null, '', window.location.pathname);
