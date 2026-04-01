@@ -1496,16 +1496,15 @@ async function fetchLikedProjects() {
 }
 
 async function loadRealProjects() {
-  const { data, error } = await _supabase.from('projects').select('*, profiles(primary_role)').order('created_at', { ascending: false });
+  const { data, error } = await _supabase.from('projects').select('*').order('created_at', { ascending: false });
   if (error || !data || data.length === 0) return;
   
   realProjects = data.map(p => {
-    const roleKey = Array.isArray(p.profiles) ? p.profiles[0]?.primary_role : p.profiles?.primary_role;
     return {
       id: p.id, featured: false,
       title: p.title, author: p.author_name || 'Anonimo',
       initials: (p.author_name||'AN').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),
-      color: getRoleColor(roleKey) || getColorForString(p.author_name||'AN'),
+      color: getColorForString(p.author_name||'AN'),
       date: new Date(p.created_at).toLocaleDateString('it-IT', {day:'numeric',month:'short',year:'numeric'}),
       category: p.category, status: p.status,
       desc: p.description || '', tags: p.tags || [],
