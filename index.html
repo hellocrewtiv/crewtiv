@@ -749,7 +749,14 @@ nav {
       <button class="btn btn-accent btn-lg" onclick="openNewProject()">Pubblica un progetto ✦</button>
       <button class="btn btn-ghost btn-lg" onclick="document.querySelector('.search-wrap').scrollIntoView({behavior:'smooth'})">Esplora i progetti</button>
     </div>
+    
+    <div style="margin-top: 60px; animation: bounce 2s infinite; cursor: pointer;" onclick="document.querySelector('.stats-bar').scrollIntoView({behavior:'smooth'})">
+      <span style="color: var(--text3); font-size: 20px;">↓</span>
+    </div>
   </section>
+  <style>
+    @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-8px);} 60% {transform: translateY(-4px);} }
+  </style>
 
   <div class="stats-bar">
     <div style="width:100%;text-align:center;padding:28px 20px">
