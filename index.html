@@ -1237,6 +1237,13 @@ nav {
 const COLORS = ['#c8ff57','#57b4ff','#ff9d57','#b057ff','#57ff85','#ff5757','#57ffe0'];
 const AVCOLORS = ['#c8ff57','#57b4ff','#ff9d57','#b057ff','#57ff85'];
 
+function getColorForString(str) {
+  if (!str) return COLORS[0];
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  return COLORS[Math.abs(hash) % COLORS.length];
+}
+
 const projects = [
   { id:'0', featured:true, title:"EchoVerse — RPG Open World", author:"Marco Ferretti", initials:"MF", color:"#c8ff57", date:"Oggi, 09:41", category:"game", status:"open",
     desc:"Un RPG open-world post-quantistico dove la realtà si frammenta in echi paralleli. I giocatori navigano linee temporali ramificate con conseguenze permanenti sul mondo di gioco. Sviluppato in Unity. Cerco narrative designer, sound designer e 3D artist.",
