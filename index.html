@@ -1835,7 +1835,7 @@ async function selectRealChat(otherId, otherName, projectTitle, projectId) {
   
   // Evidenziamo il contatto attivo nella lista
   document.querySelectorAll('.msg-item').forEach(el => el.classList.remove('active'));
-  loadUserProfile(); // Aggiorna la lista contatti per mostrare l'active
+  loadMessages(); // Aggiorna la lista contatti per mostrare l'active
 
   // Carichiamo i messaggi dal DB
   const { data: msgs, error } = await _supabase.from('messages')
