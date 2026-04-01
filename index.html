@@ -1985,20 +1985,40 @@ async function loadUserProfile() {
   const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   document.getElementById('profileName').textContent = name;
   document.getElementById('profileAvatar').textContent = initials;
+  document.getElementById('profileAvatar').style.background = getColorForString(name); // Colore base se non c'è ruolo
   document.getElementById('editProfileBtn').style.display = 'inline-flex';
   document.getElementById('logoutBtn').style.display = 'inline-flex';
 
   const { data: profileData } = await _supabase.from('profiles').select('*').eq('id', currentUser.id).single();
   if (profileData) {
+    // FASE 10e: DNA Visivo Ruolo Primario
+    if (profileData.primary_role) {
+      document.getElementById('profileAvatar').style.background = getRoleColor(profileData.primary_role) || getColorForString(name);
+      document.getElementById('profileName').innerHTML = `${sanitize(name)} ${getRolePrimaryBadge(profileData.primary_role)}`;
+    }
+    
     document.getElementById('profileProfTitle').textContent = profileData.title || '';
     document.getElementById('profileBio').textContent = profileData.bio || 'Aggiungi una bio per farti conoscere...';
+    
     const skillsWrap = document.getElementById('profileSkillsWrap');
+    let tagsHtml = '';
+    
+    // FASE 10e: DNA Visivo Ruoli Secondari
+    if (profileData.secondary_roles && profileData.secondary_roles.length > 0) {
+      tagsHtml += profileData.secondary_roles.map(r => getRoleTag(r)).join('');
+    }
+    // Aggiunta skills classiche di seguito
     if (profileData.skills && profileData.skills.length > 0) {
+      tagsHtml += profileData.skills.map(s => `<span class="tag">${sanitize(s)}</span>`).join('');
+    }
+    
+    if (tagsHtml !== '') {
       skillsWrap.style.display = 'flex';
-      skillsWrap.innerHTML = profileData.skills.map(s=>`<span class="tag">${s}</span>`).join('');
+      skillsWrap.innerHTML = tagsHtml;
     } else {
       skillsWrap.style.display = 'none';
     }
+    
     const banner = document.getElementById('profileCompleteBanner');
     if (!profileData.bio) { banner.style.display = 'flex'; } else { banner.style.display = 'none'; }
   } else {
