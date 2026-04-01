@@ -2173,7 +2173,11 @@ async function submitEditProfile() {
   btn.disabled = true; btn.textContent = 'Salvataggio…';
   
   // Salviamo anche il nome nella bacheca pubblica
-  const { error } = await _supabase.from('profiles').upsert({ id: currentUser.id, title, bio, skills, full_name: fullName });
+  const { error } = await _supabase.from('profiles').upsert({
+    id: currentUser.id,
+    full_name: fullName,
+    title, bio, skills,
+    primary_role, secondary_roles, id: currentUser.id, title, bio, skills, full_name: fullName });
   btn.disabled = false; btn.textContent = 'Salva profilo ✦';
   if (error) { showToast('❌ Errore: ' + error.message); return; }
   closeModal('editProfileModal');
