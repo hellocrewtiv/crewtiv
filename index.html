@@ -1476,7 +1476,7 @@ function applyFilters() {
 
 function sortProjects(val) {
   if (val==='popular') filtered.sort((a,b)=>b.likes-a.likes);
-  else if (val==='recent') filtered.sort((a,b)=> String(b.id).localeCompare(String(a.id))); 
+  else if (val==='recent') filtered.sort((a,b)=> String(b.id).localeCompare(String(a.id)));
   else if (val==='open') filtered.sort((a,b)=>(b.status==='open'?1:0)-(a.status==='open'?1:0));
   renderProjects(filtered, 'projectsList');
   
@@ -1491,7 +1491,7 @@ function sortProjects(val) {
     });
 
     if (val==='popular') realFiltered.sort((a,b)=>b.likes-a.likes);
-    else if (val==='recent') realFiltered.sort((a,b)=> String(b.id).localeCompare(String(a.id))); 
+    else if (val==='recent') realFiltered.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
     else if (val==='open') realFiltered.sort((a,b)=>(b.status==='open'?1:0)-(a.status==='open'?1:0));
     
     renderProjects(realFiltered, 'realProjectsList');
