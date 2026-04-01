@@ -749,13 +749,51 @@ nav {
       <button class="btn btn-accent btn-lg" onclick="openNewProject()">Pubblica un progetto ✦</button>
       <button class="btn btn-ghost btn-lg" onclick="document.querySelector('.search-wrap').scrollIntoView({behavior:'smooth'})">Esplora i progetti</button>
     </div>
-    
-    <div style="margin-top: 60px; animation: bounce 2s infinite; cursor: pointer;" onclick="document.querySelector('.stats-bar').scrollIntoView({behavior:'smooth'})">
-      <span style="color: var(--text3); font-size: 20px;">↓</span>
+
+    <div class="scroll-down-wrapper" onclick="document.querySelector('.stats-bar').scrollIntoView({behavior:'smooth'})" role="button" aria-label="Scorri verso il basso">
+      <div class="scroll-down-dot">
+        <span class="scroll-down-arrow">&darr;</span>
+      </div>
     </div>
   </section>
   <style>
-    @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-8px);} 60% {transform: translateY(-4px);} }
+    .scroll-down-wrapper {
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      cursor: pointer;
+      animation: bounce 2s infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    .scroll-down-dot {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--accent); /* Nostro verde */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .scroll-down-arrow {
+      color: #000; /* Freccia nera */
+      font-size: 24px;
+      font-weight: bold;
+      user-select: none;
+    }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+      40% {transform: translateY(-10px);}
+      60% {transform: translateY(-5px);}
+    }
+    @media (max-width: 768px) {
+      .scroll-down-wrapper { bottom: 20px; right: 20px; }
+      .scroll-down-dot { width: 40px; height: 40px; }
+      .scroll-down-arrow { font-size: 20px; }
+    }
   </style>
 
   <div class="stats-bar">
