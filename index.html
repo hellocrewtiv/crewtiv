@@ -1302,6 +1302,36 @@ nav {
 <script>
 const COLORS = ['#c8ff57','#57b4ff','#ff9d57','#b057ff','#57ff85','#ff5757','#57ffe0'];
 
+const ROLES = {
+  developer:  { label: 'Developer',         icon: '💻', color: '#b057ff' },
+  designer:   { label: 'Designer',           icon: '🎨', color: '#ff5757' },
+  musician:   { label: 'Musician',           icon: '🎵', color: '#ff9d57' },
+  visual:     { label: 'Visual / 3D',        icon: '🖼️', color: '#c8ff57' },
+  writer:     { label: 'Writer',             icon: '✍️', color: '#57b4ff' },
+  strategist: { label: 'Strategist',         icon: '📊', color: '#e0e0e0' },
+  director:   { label: 'Director',           icon: '🎬', color: '#57ffe0' },
+  scientist:  { label: 'Scientist',          icon: '🔬', color: '#ff57b4' },
+  finance:    { label: 'Finance / Business', icon: '📈', color: '#57ffb4' },
+  architect:  { label: 'Architect / Engineer', icon: '🏛️', color: '#ffd557' },
+  other:      { label: 'Altro',              icon: '✦',  color: '#9896a0' },
+};
+
+function getRoleColor(roleKey) {
+  return ROLES[roleKey]?.color || null;
+}
+
+function getRoleTag(roleKey) {
+  const r = ROLES[roleKey];
+  if (!r) return '';
+  return `<span class="role-tag" style="color:${r.color};border-color:${r.color}33;">${r.icon} ${r.label}</span>`;
+}
+
+function getRolePrimaryBadge(roleKey) {
+  const r = ROLES[roleKey];
+  if (!r) return '';
+  return `<span class="role-primary-name" style="color:${r.color};">${r.icon} ${r.label}</span>`;
+}
+
 function sanitize(str) {
   if (str === null || str === undefined) return '';
   return String(str)
