@@ -1880,7 +1880,7 @@ function applyTalentFilters() {
     const skills = (t.skills || []).join(' ').toLowerCase();
     return name.includes(q) || title.includes(q) || bio.includes(q) || skills.includes(q);
   });
-  renderTalents(filtered);
+  renderTalents(filtered, 'talentsGrid');
 }
 
 function showPage(page) {
