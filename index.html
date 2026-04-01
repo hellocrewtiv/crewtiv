@@ -2148,6 +2148,11 @@ async function openEditProfile() {
     document.getElementById('epTitle').value = data.title || '';
     document.getElementById('epBio').value = data.bio || '';
     document.getElementById('epSkills').value = (data.skills||[]).join(', ');
+    document.getElementById('epPrimaryRole').value = data.primary_role || '';
+    const secRoles = data.secondary_roles || [];
+    document.querySelectorAll('.ep-sec-role').forEach(cb => {
+      cb.checked = secRoles.includes(cb.value);
+    });
   }
   if (btn) { btn.disabled = false; btn.textContent = '✏️ Modifica Profilo'; }
   document.getElementById('editProfileModal').classList.add('open');
