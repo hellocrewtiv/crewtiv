@@ -1280,6 +1280,16 @@ nav {
 
 <script>
 const COLORS = ['#c8ff57','#57b4ff','#ff9d57','#b057ff','#57ff85','#ff5757','#57ffe0'];
+
+function sanitize(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
 const AVCOLORS = ['#c8ff57','#57b4ff','#ff9d57','#b057ff','#57ff85'];
 
 function getColorForString(str) {
