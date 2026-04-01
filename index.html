@@ -2133,9 +2133,12 @@ async function submitAuth() {
       const { data, error } = await _supabase.auth.signUp({ email, password, options: { data: { full_name: name } } });
       if (error) throw error;
       if (data.user && !data.session) {
-        errEl.style.color = 'var(--accent)';
-        errEl.textContent = '✅ Controlla la tua email per confermare!';
-        btn.disabled = false; btn.textContent = 'Crea account'; return;
+        document.getElementById('authSubtitle').innerHTML = '<span style="color:var(--accent)">✅ Registrazione completata!</span>';
+        errEl.innerHTML = '<div style="background:rgba(200,255,87,0.1); border:1px solid rgba(200,255,87,0.3); color:var(--text); padding:16px; border-radius:10px; font-size:13px; margin-top:8px; line-height:1.6;">Ti abbiamo inviato un link di conferma.<br><strong>Controlla la tua email (anche nello spam)</strong> per attivare l\'account.</div>';
+        btn.style.display = 'none'; 
+        document.querySelectorAll('.auth-input').forEach(el => el.style.display = 'none');
+        document.getElementById('authNote').style.display = 'none';
+        return;
       }
       onLogin(data.user);
     }
