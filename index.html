@@ -2250,7 +2250,7 @@ async function submitEditProfile() {
     full_name: fullName,
     primary_role: primaryRole,
     secondary_roles: secondaryRoles
-  });
+  }, { onConflict: 'id' });
   btn.disabled = false; btn.textContent = 'Salva profilo ✦';
   if (error) { showToast('❌ Errore: ' + error.message); return; }
   closeModal('editProfileModal');
