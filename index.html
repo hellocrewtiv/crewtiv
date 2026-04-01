@@ -2106,7 +2106,8 @@ const { data: sentProps } = await _supabase.from('proposals').select('*, project
 
   const { data } = await _supabase.from('projects').select('*').eq('author_id', currentUser.id).order('created_at', {ascending: false});
   const userProjects = (data||[]).map(p => ({
-    id: p.id, featured: false, title: p.title, author: p.author_name || name, initials, color: getColorForString(p.author_name || name),
+    id: p.id, featured: false, title: p.title, author: p.author_name || name, initials, 
+    color: getRoleColor(profileData?.primary_role) || getColorForString(p.author_name || name),
     date: new Date(p.created_at).toLocaleDateString('it-IT'), category: p.category, status: p.status, desc: p.description || '', tags: p.tags || [],
     views: p.views||0, proposals: p.proposals||0, likes: p.likes||0, collabs: [], isReal: true, author_id: p.author_id
   }));
