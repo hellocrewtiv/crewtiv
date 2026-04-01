@@ -1376,28 +1376,28 @@ function renderProjects(list, containerId='projectsList') {
       ${p.featured?'<div class="featured-label">✦ In evidenza</div>':''}
       <div class="pcard-top">
         <div class="pcard-author">
-          <div class="avatar" style="background:${p.color}">${p.initials}</div>
-          <div><div class="author-name">${p.author}</div><div class="author-date">📅 ${p.date}</div></div>
+          <div class="avatar" style="background:${p.color}">${sanitize(p.initials)}</div>
+          <div><div class="author-name">${sanitize(p.author)}</div><div class="author-date">📅 ${sanitize(p.date)}</div></div>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           ${likeBtnHtml}
           <span class="status-badge ${sMap[p.status]}">${sLabel[p.status]}</span>
           ${isOwner ? `
-            <button style="background:rgba(200,255,87,0.1);border:1px solid rgba(200,255,87,0.2);color:var(--accent);font-size:11px;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:'Instrument Sans',sans-serif" onclick="event.stopPropagation();openEditProject('${p.id}')">Modifica</button>
-            <button style="background:rgba(255,87,87,0.1);border:1px solid rgba(255,87,87,0.2);color:var(--red);font-size:11px;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:'Instrument Sans',sans-serif" onclick="event.stopPropagation();deleteProject('${p.id}')">Elimina</button>
+            <button style="background:rgba(200,255,87,0.1);border:1px solid rgba(200,255,87,0.2);color:var(--accent);font-size:11px;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:'Instrument Sans',sans-serif" onclick="event.stopPropagation();openEditProject('${sanitize(p.id)}')">Modifica</button>
+            <button style="background:rgba(255,87,87,0.1);border:1px solid rgba(255,87,87,0.2);color:var(--red);font-size:11px;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:'Instrument Sans',sans-serif" onclick="event.stopPropagation();deleteProject('${sanitize(p.id)}')">Elimina</button>
           ` : ''}
         </div>
       </div>
-      <div class="pcard-title">${p.title}</div>
-      <div class="pcard-desc">${p.desc.slice(0,185)}${p.desc.length>185?'…':''}</div>
-      <div class="pcard-tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <div class="pcard-title">${sanitize(p.title)}</div>
+      <div class="pcard-desc">${sanitize(p.desc.slice(0,185))}${p.desc.length>185?'…':''}</div>
+      <div class="pcard-tags">${p.tags.map(t=>`<span class="tag">${sanitize(t)}</span>`).join('')}</div>
       <div class="pcard-footer">
         <div class="pcard-stats">
           <span class="pstat">👁 ${p.views}</span>
           <span class="pstat">♥️ ${p.likes || 0}</span>
         </div>
         <div class="pcard-action">
-          ${p.status!=='closed'?`<button class="btn btn-accent btn-sm" onclick="event.stopPropagation();openProjectById('${p.id}')">Proponi →</button>`:'<span style="font-size:11px;color:var(--text3)">Team al completo</span>'}
+          ${p.status!=='closed'?`<button class="btn btn-accent btn-sm" onclick="event.stopPropagation();openProjectById('${sanitize(p.id)}')">Proponi →</button>`:'<span style="font-size:11px;color:var(--text3)">Team al completo</span>'}
         </div>
       </div>`;
     el.appendChild(d);
