@@ -2066,6 +2066,9 @@ function openEditProject(id) {
 
 async function submitEditProject() {
   if (!editingProjectId) return;
+  if (!currentUser) { showToast('❌ Devi essere loggato.'); return; }
+  const projectToEdit = realProjects.find(p => String(p.id) === String(editingProjectId));
+  if (!projectToEdit || projectToEdit.author_id !== currentUser.id) { showToast('❌ Non sei il proprietario di questo progetto.'); return; }
   const title = document.getElementById('eTitle').value.trim();
   const status = document.getElementById('eStatus').value;
   const desc = document.getElementById('eDesc').value;
