@@ -1528,6 +1528,8 @@ async function deleteProject(id) {
   const project = realProjects.find(p => String(p.id) === String(id));
   if (project && project.author_id !== currentUser.id) { showToast('❌ Non sei il proprietario di questo progetto.'); return; }
   if (!confirm('Sei sicuro di voler eliminare questo progetto?')) return;
+  await _supabase.from('proposals').delete().eq('project_id', id);
+  await _supabase.from('saved_projects').delete().eq('project_id', id);
   const { error } = await _supabase.from('projects').delete().eq('id', id);
   if (error) { showToast('❌ Errore durante l\'eliminazione'); return; }
   showToast('✅ Progetto eliminato');
