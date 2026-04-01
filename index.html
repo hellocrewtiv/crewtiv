@@ -1363,7 +1363,7 @@ async function loadRealProjects() {
     id: p.id, featured: false,
     title: p.title, author: p.author_name || 'Anonimo',
     initials: (p.author_name||'AN').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),
-    color: COLORS[Math.floor(Math.random()*COLORS.length)],
+    color: getColorForString(p.author_name||'AN'),
     date: new Date(p.created_at).toLocaleDateString('it-IT', {day:'numeric',month:'short',year:'numeric'}),
     category: p.category, status: p.status,
     desc: p.description || '', tags: p.tags || [],
