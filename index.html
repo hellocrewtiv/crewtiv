@@ -1437,6 +1437,9 @@ const section = document.getElementById('realProjectsSection');
 loadRealProjects();
 
 async function deleteProject(id) {
+  if (!currentUser) { showToast('❌ Devi essere loggato.'); return; }
+  const project = realProjects.find(p => String(p.id) === String(id));
+  if (!project || project.author_id !== currentUser.id) { showToast('❌ Non sei il proprietario di questo progetto.'); return; }
   if (!confirm('Sei sicuro di voler eliminare questo progetto?')) return;
   const { error } = await _supabase.from('projects').delete().eq('id', id);
   if (error) { showToast('❌ Errore durante l\'eliminazione'); return; }
