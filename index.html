@@ -1648,7 +1648,12 @@ async function loadMessages() {
     .or(`owner_id.eq.${currentUser.id},applicant_id.eq.${currentUser.id}`);
 
   if (error || !matches || matches.length === 0) {
-    contactsContainer.innerHTML = `<div style="padding:20px; color:var(--text3); font-size:12px;">Nessuna chat attiva. Le chat appaiono quando una proposta viene accettata.</div>`;
+    contactsContainer.innerHTML = `
+      <div style="padding:40px 20px; text-align:center; color:var(--text3);">
+        <div style="font-size:32px; margin-bottom:12px; opacity:0.5;">💬</div>
+        <div style="font-size:14px; font-weight:500; color:var(--text); margin-bottom:6px;">Nessuna chat attiva</div>
+        <div style="font-size:12px; line-height:1.5;">Le conversazioni appariranno qui quando una tua proposta verrà accettata o quando accetterai un collaboratore.</div>
+      </div>`;
     return;
   }
 
