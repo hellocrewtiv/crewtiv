@@ -1443,6 +1443,15 @@ async function deleteProject(id) {
   if(document.getElementById('page-profile').classList.contains('active')) loadUserProfile();
 }
 
+function getFilteredProjects(list) {
+  const q = (document.getElementById('searchInput')?.value||'').toLowerCase();
+  return list.filter(p => {
+    const mc = activeCategory==='all' || p.category===activeCategory;
+    const mq = !q || p.title.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q) || p.tags.some(t=>t.toLowerCase().includes(q)) || p.author.toLowerCase().includes(q);
+    return mc && mq;
+  });
+}
+
 function setCategory(cat, el) {
   activeCategory = cat;
   document.querySelectorAll('.cat-pill').forEach(c => c.classList.remove('active'));
