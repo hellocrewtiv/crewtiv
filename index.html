@@ -1996,13 +1996,14 @@ function openEditProject(id) {
 
 async function submitEditProject() {
   if (!editingProjectId) return;
+  const title = document.getElementById('eTitle').value.trim();
   const status = document.getElementById('eStatus').value;
   const desc = document.getElementById('eDesc').value;
   const tags = document.getElementById('eTags').value.split(',').map(t=>t.trim()).filter(Boolean);
   const btn = document.querySelector('#editProjectModal .btn-accent');
   btn.disabled = true; btn.textContent = 'Salvataggio…';
   
-  const { error } = await _supabase.from('projects').update({ status, description: desc, tags }).eq('id', editingProjectId);
+  const { error } = await _supabase.from('projects').update({ title, status, description: desc, tags }).eq('id', editingProjectId);
   
   btn.disabled = false; btn.textContent = 'Salva modifiche ✦';
   if (error) { showToast('❌ Errore: ' + error.message); return; }
