@@ -1757,8 +1757,9 @@ async function loadTalents() {
   renderTalents(allTalents);
 }
 
-function renderTalents(list) {
-  const container = document.getElementById('talentsList');
+function renderTalents(list, targetId = 'talentsList') {
+  const container = document.getElementById(targetId);
+  if (!container) return;
   container.innerHTML = '';
   
   if (!list.length) {
