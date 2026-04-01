@@ -2013,6 +2013,7 @@ async function submitEditProject() {
   
   const idx = realProjects.findIndex(x => String(x.id) === String(editingProjectId));
   if (idx !== -1) {
+    if(title) realProjects[idx].title = title;
     realProjects[idx].status = status;
     realProjects[idx].desc = desc;
     realProjects[idx].tags = tags;
