@@ -2283,7 +2283,10 @@ if (hashParams.get('type') === 'signup' || hashParams.get('access_token')) {
 }
 
 _supabase.auth.getSession().then(({ data: { session } }) => {
-  if (session?.user) onLogin(session.user);
+  if (session?.user && !sessionInitialized) {
+    sessionInitialized = true;
+    onLogin(session.user);
+  }
 });
 
 // ── I18N ──────────────────────────────────────────
