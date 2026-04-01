@@ -1945,7 +1945,7 @@ const { data: props } = await _supabase.from('proposals').select('*, projects(ti
   if(props && props.length > 0) {
       propList.innerHTML = props.map(pr => `
           <div class="prop-item">
-              <div class="prop-avatar" style="background:${COLORS[Math.floor(Math.random()*COLORS.length)]}">${pr.applicant_name ? pr.applicant_name.slice(0,2).toUpperCase() : 'AN'}</div>
+              <div class="prop-avatar" style="background:${getColorForString(pr.applicant_name)}">${pr.applicant_name ? pr.applicant_name.slice(0,2).toUpperCase() : 'AN'}</div>
               <div style="flex:1">
                   <div class="prop-name">${pr.applicant_name || 'Utente'}</div>
                   <div class="prop-role">${pr.role} · per <strong>${pr.projects?.title || 'Progetto'}</strong></div>
