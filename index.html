@@ -1423,7 +1423,7 @@ async function loadRealProjects() {
     category: p.category, status: p.status,
     desc: p.description || '', tags: p.tags || [],
     views: p.views||0, proposals: p.proposals||0, likes: p.likes||0, collabs: [],
-    isReal: true, author_id: p.author_id
+    isReal: true, author_id: p.author_id, created_at: p.created_at
   }));
   
 const section = document.getElementById('realProjectsSection');
