@@ -2099,15 +2099,18 @@ async function submitEditProject() {
   }
 }
 
-function openEditProfile() {
+async function openEditProfile() {
+  if (!currentUser) return;
+  const btn = document.getElementById('editProfileBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Caricamento…'; }
+  const { data } = await _supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+  if (data) {
+    document.getElementById('epTitle').value = data.title || '';
+    document.getElementById('epBio').value = data.bio || '';
+    document.getElementById('epSkills').value = (data.skills||[]).join(', ');
+  }
+  if (btn) { btn.disabled = false; btn.textContent = '✏️ Modifica Profilo'; }
   document.getElementById('editProfileModal').classList.add('open');
-  _supabase.from('profiles').select('*').eq('id', currentUser.id).single().then(({data}) => {
-    if (data) {
-      document.getElementById('epTitle').value = data.title || '';
-      document.getElementById('epBio').value = data.bio || '';
-      document.getElementById('epSkills').value = (data.skills||[]).join(', ');
-    }
-  });
 }
 
 async function submitEditProfile() {
