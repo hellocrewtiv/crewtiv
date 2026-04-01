@@ -1851,17 +1851,17 @@ function renderTalents(list, targetId = 'talentsList') {
     d.style.animationDelay = `${i * 0.05}s`;
     d.innerHTML = `
       <div style="display:flex; gap:14px; align-items:center; margin-bottom:16px;">
-        <div class="avatar" style="width:48px; height:48px; border-radius:14px; font-size:16px; background:${color}; color:#0a0a0f;">${initials}</div>
+        <div class="avatar" style="width:48px; height:48px; border-radius:14px; font-size:16px; background:${color}; color:#0a0a0f;">${sanitize(initials)}</div>
         <div>
-          <div style="font-family:'Syne',sans-serif; font-size:18px; font-weight:700; color:var(--text);">${name}</div>
-          <div style="font-size:13px; color:var(--accent); font-weight:500;">${t.title || 'Collaboratore'}</div>
+          <div style="font-family:'Syne',sans-serif; font-size:18px; font-weight:700; color:var(--text);">${sanitize(name)}</div>
+          <div style="font-size:13px; color:var(--accent); font-weight:500;">${sanitize(t.title || 'Collaboratore')}</div>
         </div>
       </div>
       <div style="font-size:13px; color:var(--text2); line-height:1.6; margin-bottom:16px; font-weight:300;">
-        ${t.bio ? (t.bio.length > 120 ? t.bio.slice(0, 120) + '...' : t.bio) : 'Nessuna bio inserita.'}
+        ${t.bio ? sanitize(t.bio.length > 120 ? t.bio.slice(0, 120) + '...' : t.bio) : 'Nessuna bio inserita.'}
       </div>
       <div class="pcard-tags" style="margin-bottom:0;">
-        ${(t.skills || []).map(s => `<span class="tag">${s}</span>`).join('')}
+        ${(t.skills || []).map(s => `<span class="tag">${sanitize(s)}</span>`).join('')}
       </div>
     `;
     container.appendChild(d);
