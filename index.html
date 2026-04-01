@@ -1460,21 +1460,10 @@ function setCategory(cat, el) {
 }
 
 function applyFilters() {
-  const q = (document.getElementById('searchInput')?.value||'').toLowerCase();
-  filtered = projects.filter(p => {
-    const mc = activeCategory==='all' || p.category===activeCategory;
-    const mq = !q || p.title.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q) || p.tags.some(t=>t.toLowerCase().includes(q)) || p.author.toLowerCase().includes(q);
-    return mc && mq;
-  });
+  filtered = getFilteredProjects(projects);
   renderProjects(filtered, 'projectsList');
-  
   if (realProjects.length > 0) {
-      const filteredReal = realProjects.filter(p => {
-        const mc = activeCategory==='all' || p.category===activeCategory;
-        const mq = !q || p.title.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q) || p.tags.some(t=>t.toLowerCase().includes(q)) || p.author.toLowerCase().includes(q);
-        return mc && mq;
-      });
-      renderProjects(filteredReal, 'realProjectsList');
+    renderProjects(getFilteredProjects(realProjects), 'realProjectsList');
   }
 }
 
