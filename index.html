@@ -2029,8 +2029,7 @@ function openChat(otherUserId, otherUserName, projectId) {
   showPage('messages');
   showToast('Caricamento chat con ' + otherUserName + '...');
   
-  // Nello Step 3 scriveremo la funzione loadMessages() che caricherà davvero i testi!
-  // loadMessages(); 
+  loadMessages(); 
 }
 function showToast(msg) {
   const t = document.getElementById('toast');
