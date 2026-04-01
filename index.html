@@ -1987,6 +1987,7 @@ function openEditProject(id) {
   if (!p) return;
   editingProjectId = id;
   document.getElementById('editProjectTitle').textContent = p.title;
+  document.getElementById('eTitle').value = p.title;
   document.getElementById('eStatus').value = p.status;
   document.getElementById('eDesc').value = p.desc;
   document.getElementById('eTags').value = p.tags.join(', ');
