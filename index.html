@@ -2199,14 +2199,28 @@ async function submitEditProfile() {
   const bio = document.getElementById('epBio').value.trim();
   const skills = document.getElementById('epSkills').value.split(',').map(s=>s.trim()).filter(Boolean);
   
+  const primaryRole = document.getElementById('epPrimaryRole').value;
+  if (!primaryRole) { showToast('⚠️ Seleziona un ruolo primario'); return; }
+  
+  const secondaryRoles = Array.from(document.querySelectorAll('.ep-sec-role:checked')).map(cb => cb.value);
+  if (secondaryRoles.length > 3) { showToast('⚠️ Puoi selezionare massimo 3 ruoli secondari'); return; }
+  
   // Peschiamo il nome dall'account di registrazione
   const fullName = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
   
   const btn = document.querySelector('#editProfileModal .btn-accent');
   btn.disabled = true; btn.textContent = 'Salvataggio…';
   
-  // Salviamo anche il nome nella bacheca pubblica
-  const { error } = await _supabase.from('profiles').upsert({ id: currentUser.id, title, bio, skills, full_name: fullName });
+  // Salviamo anche il nome nella bacheca pubblica e i ruoli per il DNA visivo
+  const { error } = await _supabase.from('profiles').upsert({ 
+    id: currentUser.id, 
+    title, 
+    bio, 
+    skills, 
+    full_name: fullName,
+    primary_role: primaryRole,
+    secondary_roles: secondaryRoles
+  });
   btn.disabled = false; btn.textContent = 'Salva profilo ✦';
   if (error) { showToast('❌ Errore: ' + error.message); return; }
   closeModal('editProfileModal');
