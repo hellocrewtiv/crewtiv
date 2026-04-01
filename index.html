@@ -1170,6 +1170,41 @@ nav {
       <button class="modal-close" onclick="closeModal('editProfileModal')">✕</button>
     </div>
     <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Ruolo Primario *</label>
+          <select class="form-select" id="epPrimaryRole">
+            <option value="">Seleziona ruolo...</option>
+            <option value="developer">💻 Developer</option>
+            <option value="designer">🎨 Designer</option>
+            <option value="musician">🎵 Musician</option>
+            <option value="visual">🖼️ Visual / 3D</option>
+            <option value="writer">✍️ Writer</option>
+            <option value="strategist">📊 Strategist</option>
+            <option value="director">🎬 Director</option>
+            <option value="scientist">🔬 Scientist</option>
+            <option value="finance">📈 Finance / Business</option>
+            <option value="architect">🏛️ Architect / Engineer</option>
+            <option value="other">✦ Altro</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label class="form-label">Ruoli Secondari <span style="color:var(--text3);font-weight:300">(max 3)</span></label>
+        <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:6px;">
+          <label style="font-size:12px; display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" class="ep-sec-role" value="developer"> 💻 Dev</label>
+          <label style="font-size:12px; display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" class="ep-sec-role" value="designer"> 🎨 Des</label>
+          <label style="font-size:12px; display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" class="ep-sec-role" value="musician"> 🎵 Mus</label>
+          <label style="font-size:12px; display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" class="ep-sec-role" value="visual"> 🖼️ Vis</label>
+          <label style="font-size:12px; display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" class="ep-sec-role" value="writer"> ✍️ Wri</label>
+          <label style="font-size:12px; display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" class="ep-sec-role" value="strategist"> 📊 Str</label>
+          <label style="font-size:12px; display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" class="ep-sec-role" value="director"> 🎬 Dir</label>
+          <label style="font-size:12px; display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" class="ep-sec-role" value="scientist"> 🔬 Sci</label>
+          <label style="font-size:12px; display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" class="ep-sec-role" value="finance"> 📈 Fin</label>
+          <label style="font-size:12px; display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" class="ep-sec-role" value="architect"> 🏛️ Arch</label>
+          <label style="font-size:12px; display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" class="ep-sec-role" value="other"> ✦ Altro</label>
+        </div>
+      </div>
       <div class="form-group">
         <label class="form-label">Titolo professionale</label>
         <input class="form-input" id="epTitle" placeholder="es. Graphic Designer, Sviluppatore iOS, Architetto…">
