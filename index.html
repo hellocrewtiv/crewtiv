@@ -26,6 +26,8 @@
 <script>
   const SUPABASE_URL = 'https://efshwliprayimvtapcsk.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_g0ZEpEB_6YBD0BFfDzaM9g_GLe0JSEz';
+  // NOTA SICUREZZA (Punto 11): La anon key esposta qui è corretta per app frontend. 
+  // La sicurezza reale dei dati si gestisce impostando le policy RLS nel pannello Supabase.
   const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 </script>
 
