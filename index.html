@@ -1182,6 +1182,39 @@ nav {
         <label class="form-label">Skills <span style="color:var(--text3);font-weight:300">(separate da virgola)</span></label>
         <input class="form-input" id="epSkills" placeholder="es. Figma, Unity, C#, Fotografia…">
       </div>
+      <div class="form-group">
+        <label class="form-label">Ruolo Primario <span style="color:var(--red)">*</span></label>
+        <select class="form-select" id="epPrimaryRole">
+          <option value="">— Seleziona il tuo ruolo principale —</option>
+          <option value="developer">💻 Developer</option>
+          <option value="designer">🎨 Designer</option>
+          <option value="musician">🎵 Musician</option>
+          <option value="visual">🖼️ Visual / 3D</option>
+          <option value="writer">✍️ Writer</option>
+          <option value="strategist">📊 Strategist</option>
+          <option value="director">🎬 Director</option>
+          <option value="scientist">🔬 Scientist</option>
+          <option value="finance">📈 Finance / Business</option>
+          <option value="architect">🏛️ Architect / Engineer</option>
+          <option value="other">✦ Altro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ruoli Secondari <span style="color:var(--text3);font-weight:300">(max 3)</span></label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px" id="epSecondaryRoles">
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);cursor:pointer"><input type="checkbox" value="developer" style="accent-color:var(--role-developer)"> 💻 Developer</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);cursor:pointer"><input type="checkbox" value="designer" style="accent-color:var(--role-designer)"> 🎨 Designer</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);cursor:pointer"><input type="checkbox" value="musician" style="accent-color:var(--role-musician)"> 🎵 Musician</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);cursor:pointer"><input type="checkbox" value="visual" style="accent-color:var(--role-visual)"> 🖼️ Visual / 3D</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);cursor:pointer"><input type="checkbox" value="writer" style="accent-color:var(--role-writer)"> ✍️ Writer</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);cursor:pointer"><input type="checkbox" value="strategist" style="accent-color:var(--role-strategist)"> 📊 Strategist</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);cursor:pointer"><input type="checkbox" value="director" style="accent-color:var(--role-director)"> 🎬 Director</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);cursor:pointer"><input type="checkbox" value="scientist" style="accent-color:var(--role-scientist)"> 🔬 Scientist</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);cursor:pointer"><input type="checkbox" value="finance" style="accent-color:var(--role-finance)"> 📈 Finance / Business</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);cursor:pointer"><input type="checkbox" value="architect" style="accent-color:var(--role-architect)"> 🏛️ Architect / Engineer</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);cursor:pointer"><input type="checkbox" value="other" style="accent-color:var(--role-other)"> ✦ Altro</label>
+        </div>
+      </div>
       <button class="btn btn-accent" style="margin-top:4px" onclick="submitEditProfile()">Salva profilo ✦</button>
     </div>
   </div>
