@@ -2295,8 +2295,8 @@ const { data: sentProps } = await _supabase.from('proposals').select('*, project
           return `
           <div class="prop-item" ${onClickAttr}>
               <div style="flex:1">
-                  <div class="prop-role" style="font-size:13px; color:var(--text);">Ruolo: <strong>${pr.role}</strong></div>
-                  <div style="font-size:11px; color:var(--text3); margin-top:2px;">per il progetto <strong style="color:var(--text2); text-decoration:underline;">${pr.projects?.title || 'Progetto eliminato'}</strong></div>
+                  <div class="prop-role" style="font-size:13px; color:var(--text);">Ruolo: <strong>${sanitize(pr.role)}</strong></div>
+                  <div style="font-size:11px; color:var(--text3); margin-top:2px;">per il progetto <strong style="color:var(--text2); text-decoration:underline;">${sanitize(pr.projects?.title || 'Progetto eliminato')}</strong></div>
                   <div style="display:flex; align-items:center; gap:10px; margin-top:8px; flex-wrap:wrap;">
                       <div style="font-size:11px; font-weight:600; color:${statusColors[pr.status] || 'var(--text3)'}; display:inline-block; padding:3px 8px; background:rgba(255,255,255,0.05); border-radius:4px;">Stato: ${statusLabels[pr.status] || pr.status}</div>
                       ${actionBtns}
