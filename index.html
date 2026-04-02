@@ -1930,6 +1930,7 @@ async function loadMessages() {
 async function selectRealChat(otherId, otherName, projectTitle, projectId) {
   activeChatId = otherId;
   currentChatProjectId = projectId;
+  if (currentUser) subscribeToMessages(currentUser.id, otherId, projectId);
   
   document.getElementById('noChatSelected').style.display = 'none';
   document.getElementById('activeChatArea').style.display = 'flex';
