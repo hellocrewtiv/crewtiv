@@ -2182,8 +2182,13 @@ async function loadUserProfile() {
   if (profileData) {
     // FASE 10e: DNA Visivo Ruolo Primario
     if (profileData.primary_role) {
-      document.getElementById('profileAvatar').style.background = getRoleColor(profileData.primary_role) || getColorForString(name);
+      const roleColor = getRoleColor(profileData.primary_role) || getColorForString(name);
+      document.getElementById('profileAvatar').style.background = roleColor;
       document.getElementById('profileName').innerHTML = `${sanitize(name)} ${getRolePrimaryBadge(profileData.primary_role)}`;
+      
+      // Sincronizza anche l'avatar della navbar in tempo reale
+      const navAv = document.getElementById('navAvatar');
+      if (navAv) navAv.style.background = roleColor;
     }
     
     document.getElementById('profileProfTitle').textContent = profileData.title || '';
