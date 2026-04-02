@@ -2523,12 +2523,15 @@ async function submitAuth() {
   }
 }
 
-function onLogin(user) {
+function onLogin(user, isNewLogin = false) {
   currentUser = user;
   closeAuth();
-  fetchLikedProjects(); 
+  fetchLikedProjects().then(() => {
+    // Dopo aver caricato i dati essenziali, ricarica l'ultima pagina visitata
+    showPage(localStorage.getItem('crewtiv_lastPage') || 'home');
+  });
   updateNavForUser(user);
-  showToast('✅ Benvenuto su Crewtiv!');
+  if (isNewLogin) showToast('✅ Benvenuto su Crewtiv!');
 }
 
 function updateNavForUser(user) {
