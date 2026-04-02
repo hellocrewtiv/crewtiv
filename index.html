@@ -2080,7 +2080,9 @@ function renderTalents(list, targetId = 'talentsList') {
     
     const name = t.full_name || 'Creativo Anonimo';
     const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const color = getColorForString(name);
+    
+    // Controlliamo se ha un ruolo, altrimenti usiamo il colore generato dal nome
+    const color = t.primary_role ? getRoleColor(t.primary_role) : getColorForString(name);
     
     const d = document.createElement('div');
     d.className = 'pcard';
