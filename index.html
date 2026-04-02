@@ -2771,6 +2771,10 @@ function applyLang() {
   if(realProjects.length > 0) renderProjects(realProjects, 'realProjectsList');
 }
 
+// Inizializza immediatamente la pagina corretta prima che il browser disegni lo schermo
+const initialPage = localStorage.getItem('crewtiv_lastPage') || 'home';
+showPage(initialPage);
+
 applyLang();
 
 function closeBeta() {
