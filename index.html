@@ -1532,14 +1532,31 @@ async function checkHash() {
   }
 }
 
-async function loadRealProjects() {
-  const { data, error } = await _supabase.from('projects').select('*').order('created_at', { ascending: false });
+async function loadRealProjects(isAppend = false) {
+  if (!isAppend) {
+    currentProjPage = 0;
+    realProjects = [];
+    hasMoreProjects = true;
+  }
+  
+  const from = currentProjPage * PROJ_PER_PAGE;
+  const to = from + PROJ_PER_PAGE - 1;
+
+  const { data, error } = await _supabase.from('projects')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .range(from, to);
+
   if (error || !data || data.length === 0) {
-    checkHash(); // Eseguiamo l'hash anche se ci sono solo demo projects
+    hasMoreProjects = false;
+    updateLoadMoreBtn();
+    if (!isAppend) checkHash(); 
     return;
   }
   
-  realProjects = data.map(p => {
+  if (data.length < PROJ_PER_PAGE) hasMoreProjects = false;
+  
+  const formatted = data.map(p => {
     return {
       id: p.id, featured: false,
       title: p.title, author: p.author_name || 'Anonimo',
@@ -1552,13 +1569,67 @@ async function loadRealProjects() {
       isReal: true, author_id: p.author_id, created_at: p.created_at
     };
   });
+
+  realProjects = isAppend ? [...realProjects, ...formatted] : formatted;
   
   const section = document.getElementById('realProjectsSection');
   if (section && realProjects.length > 0) {
     section.style.display = 'block';
-    renderProjects(realProjects, 'realProjectsList');
+    if (isAppend) {
+      applyFilters(); // Ridisegna mantenendo attivi eventuali filtri
+    } else {
+      renderProjects(realProjects, 'realProjectsList');
+    }
   }
-  checkHash(); // FASE 6
+  
+  updateLoadMoreBtn();
+  if (!isAppend) {
+      checkHash();
+      loadTrendingSidebar(); // FASE 4: Carica i top progetti nella sidebar
+  }
+}
+
+function updateLoadMoreBtn() {
+  const btn = document.getElementById('loadMoreBtn');
+  if (btn) btn.style.display = hasMoreProjects ? 'inline-flex' : 'none';
+}
+
+function loadMoreProjects() {
+  if (!hasMoreProjects) return;
+  currentProjPage++;
+  const btn = document.getElementById('loadMoreBtn');
+  if(btn) btn.textContent = 'Caricamento...';
+  loadRealProjects(true).then(() => {
+      if(btn) btn.textContent = 'Carica altri ↓';
+  });
+}
+
+async function loadTrendingSidebar() {
+  const listEl = document.getElementById('trendingList');
+  if (!listEl) return;
+  
+  // Prendi i 4 progetti più visti
+  const { data, error } = await _supabase.from('projects')
+    .select('id, title, category, views')
+    .order('views', { ascending: false })
+    .limit(4);
+    
+  if (error || !data || data.length === 0) {
+    listEl.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:8px">Nessuna tendenza al momento.</div>';
+    return;
+  }
+  
+  const catIcons = { game:'🎮', arch:'🏛', app:'📱', art:'🎨', music:'🎵', science:'🔬', film:'🎬', hardware:'🔧', other:'✦' };
+  
+  listEl.innerHTML = data.map((p, i) => `
+    <div class="titem" onclick="openProjectById('${p.id}')">
+      <div class="trank">0${i+1}</div>
+      <div>
+        <div class="ttitle">${sanitize(p.title)}</div>
+        <div class="tmeta">${catIcons[p.category] || '✦'} Categoria · ${p.views || 0} viste</div>
+      </div>
+    </div>
+  `).join('');
 }
 
 loadRealProjects();
