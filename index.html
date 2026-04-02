@@ -2016,6 +2016,8 @@ function renderTalents(list, targetId = 'talentsList') {
     const d = document.createElement('div');
     d.className = 'pcard';
     d.style.animationDelay = `${i * 0.05}s`;
+    d.style.cursor = 'pointer';
+    d.onclick = () => openTalentModal(t);
     d.innerHTML = `
       <div style="display:flex; gap:14px; align-items:center; margin-bottom:16px;">
         <div class="avatar" style="width:48px; height:48px; border-radius:14px; font-size:16px; background:${color}; color:#0a0a0f;">${sanitize(initials)}</div>
