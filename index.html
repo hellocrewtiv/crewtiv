@@ -2037,6 +2037,30 @@ function renderTalents(list, targetId = 'talentsList') {
   });
 }
 
+function openTalentModal(t) {
+  const name = t.full_name || 'Creativo Anonimo';
+  const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const color = getColorForString(name);
+  const isReal = !!t.id;
+
+  document.getElementById('talentModalAvatar').textContent = initials;
+  document.getElementById('talentModalAvatar').style.background = color;
+  document.getElementById('talentModalName').textContent = name;
+  document.getElementById('talentModalTitle').textContent = t.title || 'Collaboratore';
+  document.getElementById('talentModalBio').textContent = t.bio || 'Nessuna bio inserita.';
+  document.getElementById('talentModalSkills').innerHTML = (t.skills||[]).map(s=>`<span class="tag">${sanitize(s)}</span>`).join('');
+
+  const btn = document.getElementById('talentModalContactBtn');
+  if (isReal && currentUser && t.id !== currentUser.id) {
+    btn.style.display = 'inline-flex';
+    btn.onclick = () => { closeModal('talentModal'); showPage('messages'); openChat(t.id, name, null); };
+  } else {
+    btn.style.display = 'none';
+  }
+
+  document.getElementById('talentModal').classList.add('open');
+}
+
 function applyTalentFilters() {
   const q = (document.getElementById('searchTalentInput')?.value || '').toLowerCase();
   const filtered = allTalents.filter(t => {
