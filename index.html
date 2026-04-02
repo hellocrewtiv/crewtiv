@@ -2586,7 +2586,7 @@ if (hashParams.get('type') === 'signup' || hashParams.get('access_token')) {
   _supabase.auth.getSession().then(({ data: { session } }) => {
     if (session?.user) {
       sessionInitialized = true;
-      onLogin(session.user);
+      onLogin(session.user, true); // Accesso confermato
       showToast('✅ Email confermata!');
       window.history.replaceState(null, '', window.location.pathname);
     }
@@ -2596,7 +2596,10 @@ if (hashParams.get('type') === 'signup' || hashParams.get('access_token')) {
 _supabase.auth.getSession().then(({ data: { session } }) => {
   if (session?.user && !sessionInitialized) {
     sessionInitialized = true;
-    onLogin(session.user);
+    onLogin(session.user, false); // Niente toast "Benvenuto", è un refresh
+  } else if (!session?.user) {
+    // Se l'utente non è loggato ma aggiorna una pagina pubblica (es. Talenti, About)
+    showPage(localStorage.getItem('crewtiv_lastPage') || 'home');
   }
 });
 
