@@ -1837,9 +1837,13 @@ async function submitProposal() {
   if(document.getElementById('page-profile').classList.contains('active')) loadUserProfile();
 }
 
+let likeInFlight = false;
 async function toggleLikeProject(projectId) {
+  if (likeInFlight) return;
   if(!currentUser) return openAuth('login');
+  likeInFlight = true;
   const isLiked = likedProjectIds.includes(projectId);
+  try {
   
   // Troviamo il progetto per aggiornare il numero di like in tempo reale nell'interfaccia
   const project = realProjects.find(p => String(p.id) === String(projectId));
