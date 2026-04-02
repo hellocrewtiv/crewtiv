@@ -1498,9 +1498,17 @@ async function fetchLikedProjects() {
   if(data) likedProjectIds = data.map(d => d.project_id);
 }
 
-async function loadRealProjects() {
-  const { data, error } = await _supabase.from('projects').select('*').order('created_at', { ascending: false });
-  if (error || !data || data.length === 0) return;
+let realProjectsPage = 0;
+const PROJECTS_PER_PAGE = 6;
+let hasMoreProjects = true;
+
+async function loadRealProjects(append = false) {
+  if (!append) { realProjectsPage = 0; hasMoreProjects = true; }
+  const from = realProjectsPage * PROJECTS_PER_PAGE;
+  const to = from + PROJECTS_PER_PAGE - 1;
+  const { data, error } = await _supabase.from('projects').select('*').order('created_at', { ascending: false }).range(from, to);
+  if (error || !data || (data.length === 0 && !append)) return;
+  if (data.length < PROJECTS_PER_PAGE) hasMoreProjects = false;
   
   realProjects = data.map(p => {
     return {
