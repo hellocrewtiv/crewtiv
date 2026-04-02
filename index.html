@@ -2560,28 +2560,28 @@ async function updateNavForUser(user) {
     const name = user.user_metadata?.full_name || user.email.split('@')[0];
     const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     
+    // Partiamo dal colore base
+    let userColor = 'var(--accent)'; 
+
+    try {
+      // Peschiamo il ruolo primario PRIMA di disegnare la barra
+      const { data } = await _supabase.from('profiles').select('primary_role').eq('id', user.id).maybeSingle();
+      if (data && data.primary_role) {
+        userColor = getRoleColor(data.primary_role) || getColorForString(name);
+      }
+    } catch (e) {
+      // Se c'è un errore di connessione, usiamo comunque il colore base
+    }
+
+    // Disegniamo la barra iniettando direttamente il colore corretto nell'HTML
     navRight.innerHTML = `
       <button class="btn btn-accent btn-sm" onclick="openNewProject()">+ Nuovo Progetto</button>
       <div style="position:relative; cursor:pointer;" onclick="showPage('profile')">
-        <div id="navAvatar" class="avatar" style="width:32px;height:32px;border-radius:9px;font-size:12px;background:var(--accent);color:#0a0a0f">${initials}</div>
+        <div id="navAvatar" class="avatar" style="width:32px;height:32px;border-radius:9px;font-size:12px;background:${userColor};color:#0a0a0f">${initials}</div>
         <div id="navBadge" class="nav-badge" style="display:none;">0</div>
       </div>
     `;
     fetchNotifications();
-
-    try {
-      // maybeSingle() è molto più sicuro, non si rompe se il dato tarda ad arrivare
-      const { data, error } = await _supabase.from('profiles').select('primary_role').eq('id', user.id).maybeSingle();
-      
-      if (data && data.primary_role) {
-        const realColor = getRoleColor(data.primary_role) || getColorForString(name);
-        const navAv = document.getElementById('navAvatar');
-        // Usiamo setProperty per sparare un !important che scavalca qualsiasi altra regola CSS
-        if (navAv) navAv.style.setProperty('background', realColor, 'important');
-      }
-    } catch (err) {
-      console.error("Bug cacciato: Errore caricamento colore avatar ->", err);
-    }
   } else {
     navRight.innerHTML = `
       <button class="btn btn-ghost btn-sm" onclick="openAuth('login')">Accedi</button>
