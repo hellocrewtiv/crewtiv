@@ -2075,6 +2075,83 @@ function renderTalents(list, targetId = 'talentsList') {
   }
   
   list.forEach((t, i) => {
+    // Nascondiamo i profili completamente vuoti
+    if(!t.title && !t.bio && (!t.skills || t.skills.length === 0)) return;
+    
+    const name = t.full_name || 'Creativo Anonimo';
+    const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    
+    // LOGICA COLORE BLINDATA
+    let color = getColorForString(name); // Colore fallback
+    let roleKey = t.primary_role ? String(t.primary_role).trim().toLowerCase() : null;
+
+    if (roleKey && ROLES[roleKey]) {
+        color = ROLES[roleKey].color; // Prende il colore esatto (es. #b057ff)
+    }
+
+    // Costruiamo il badge del ruolo in modo sicuro
+    const roleLabel = (roleKey && ROLES[roleKey])
+         ? `<span style="color:${ROLES[roleKey].color}; font-weight:600; display:inline-flex; align-items:center; gap:5px;">${ROLES[roleKey].icon} ${ROLES[roleKey].label}</span>`
+         : `<span style="color:var(--accent); font-weight:500;">${sanitize(t.title || 'Collaboratore')}</span>`;
+    
+    const d = document.createElement('div');
+    d.className = 'pcard';
+    d.style.animationDelay = `${i * 0.05}s`;
+    d.style.cursor = 'pointer'; 
+    
+    // FASE 8: Talenti cliccabili
+    d.onclick = () => {
+      document.getElementById('tModName').textContent = name;
+      document.getElementById('tModRole').innerHTML = roleLabel;
+      document.getElementById('tModBio').textContent = t.bio || 'Nessuna bio inserita.';
+      document.getElementById('tModSkills').innerHTML = (t.skills || []).map(s => `<span class="tag">${sanitize(s)}</span>`).join('');
+      
+      const btn = document.getElementById('tModContactBtn');
+      if (currentUser && t.id && t.id !== currentUser.id) {
+         btn.style.display = 'flex';
+         btn.textContent = 'Invita in un progetto ✦';
+         btn.onclick = () => {
+             closeModal('talentModal');
+             showToast('Funzionalità in arrivo!');
+         };
+      } else if (!currentUser) {
+         btn.style.display = 'flex';
+         btn.textContent = 'Accedi per contattare';
+         btn.onclick = () => { closeModal('talentModal'); openAuth('login'); };
+      } else {
+         btn.style.display = 'none'; 
+      }
+      document.getElementById('talentModal').classList.add('open');
+    };
+
+    d.innerHTML = `
+      <div style="display:flex; gap:14px; align-items:center; margin-bottom:16px;">
+        <div class="avatar" style="width:48px; height:48px; border-radius:14px; font-size:16px; background:${color}; color:#0a0a0f;">${sanitize(initials)}</div>
+        <div>
+          <div style="font-family:'Syne',sans-serif; font-size:18px; font-weight:700; color:var(--text);">${sanitize(name)}</div>
+          <div style="font-size:13px; margin-top:2px;">${roleLabel}</div>
+        </div>
+      </div>
+      <div style="font-size:13px; color:var(--text2); line-height:1.6; margin-bottom:16px; font-weight:300;">
+        ${t.bio ? sanitize(t.bio.length > 120 ? t.bio.slice(0, 120) + '...' : t.bio) : 'Nessuna bio inserita.'}
+      </div>
+      <div class="pcard-tags" style="margin-bottom:0;">
+        ${(t.skills || []).map(s => `<span class="tag">${sanitize(s)}</span>`).join('')}
+      </div>
+    `;
+    container.appendChild(d);
+  });
+}
+  const container = document.getElementById(targetId);
+  if (!container) return;
+  container.innerHTML = '';
+  
+  if (!list.length) {
+    container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text3);">Nessun talento corrisponde alla ricerca.</div>';
+    return;
+  }
+  
+  list.forEach((t, i) => {
     // Nascondiamo i profili completamente vuoti per tenere la vetrina pulita
     if(!t.title && !t.bio && (!t.skills || t.skills.length === 0)) return;
     
