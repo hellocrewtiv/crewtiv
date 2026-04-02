@@ -1349,6 +1349,22 @@ nav {
   </div>
 </main>
 
+<div id="talentModal" class="auth-overlay" onclick="closeAuthIfBg(event,'talentModal')">
+  <div class="auth-box" style="max-width:480px;">
+    <button class="auth-close" onclick="closeModal('talentModal')">✕</button>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+      <div id="talentModalAvatar" class="avatar" style="width:56px;height:56px;border-radius:14px;font-size:18px;"></div>
+      <div>
+        <div id="talentModalName" style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);"></div>
+        <div id="talentModalTitle" style="font-size:13px;color:var(--accent);font-weight:500;margin-top:2px;"></div>
+      </div>
+    </div>
+    <div id="talentModalBio" style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:20px;font-weight:300;"></div>
+    <div id="talentModalSkills" class="pcard-tags" style="margin-bottom:24px;"></div>
+    <button id="talentModalContactBtn" class="btn btn-accent" style="width:100%;justify-content:center;">💬 Invia messaggio</button>
+  </div>
+</div>
+
 <footer style="position:relative;z-index:1;border-top:1px solid var(--border);background:var(--surface);padding:28px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
   <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--text)">Crewtiv<span style="color:var(--accent)">.</span></div>
   <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
