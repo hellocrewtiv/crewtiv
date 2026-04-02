@@ -1958,6 +1958,38 @@ async function selectRealChat(otherId, otherName, projectTitle, projectId) {
   msgContainer.scrollTop = msgContainer.scrollHeight;
 }
 
+let realtimeChannel = null;
+
+function subscribeToMessages(userId1, userId2, projectId) {
+  if (realtimeChannel) realtimeChannel.unsubscribe();
+  realtimeChannel = _supabase
+    .channel('messages-live')
+    .on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'messages'
+    }, payload => {
+      const m = payload.new;
+      const isRelevant =
+        m.project_id == projectId &&
+        ((m.sender_id === userId1 && m.receiver_id === userId2) ||
+         (m.sender_id === userId2 && m.receiver_id === userId1));
+      if (!isRelevant) return;
+      const msgContainer = document.getElementById('chatMessages');
+      if (!msgContainer) return;
+      const isMine = m.sender_id === currentUser.id;
+      const div = document.createElement('div');
+      div.className = `cmsg ${isMine ? 'cmsg-mine' : 'cmsg-theirs'}`;
+      div.innerHTML = `
+        <div class="cmsg-bubble">${m.content}</div>
+        <div class="cmsg-time">${new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
+      `;
+      msgContainer.appendChild(div);
+      msgContainer.scrollTop = msgContainer.scrollHeight;
+    })
+    .subscribe();
+}
+
 async function sendMessage() {
   const input = document.getElementById('chatInput');
   const content = input.value.trim();
