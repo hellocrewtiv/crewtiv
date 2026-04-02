@@ -1869,9 +1869,12 @@ async function toggleLikeProject(projectId) {
   }
   
   if(document.getElementById('page-profile').classList.contains('active')) {
-      loadUserProfile();
-  } else {
-      applyFilters(); // Ridisegna i progetti con i numeri aggiornati
+        loadUserProfile();
+    } else {
+        applyFilters();
+    }
+  } finally {
+    likeInFlight = false;
   }
 }
 
