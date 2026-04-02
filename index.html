@@ -1756,8 +1756,8 @@ async function openProjectById(id) {
   cl.innerHTML = p.collabs.length ? p.collabs.map(c=>`
     <div class="citem">
       <div class="citem-left">
-        <div class="avatar" style="width:30px;height:30px;border-radius:7px;font-size:10px;background:${getColorForString(c.n)}">${c.n.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase()}</div>
-        <div><div class="cname">${c.n}</div><div class="crole">${c.r}</div></div>
+        <div class="avatar" style="width:30px;height:30px;border-radius:7px;font-size:10px;background:${getColorForString(c.n)}">${sanitize(c.n.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase())}</div>
+        <div><div class="cname">${sanitize(c.n)}</div><div class="crole">${sanitize(c.r)}</div></div>
       </div>
       <span class="cstatus cs-accepted">✓ Ruolo Assegnato</span>
     </div>`).join('') : '<div style="font-size:12px;color:var(--text3);padding:8px 0">Nessun collaboratore ancora — sii il primo a proporti!</div>';
