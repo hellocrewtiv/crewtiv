@@ -1448,6 +1448,11 @@ let editingProjectId = null;
 let authMode = 'login';
 let messageSubscription = null; // FASE 9: Realtime subscription
 
+// Variabili per Paginazione (FASE 5)
+let currentProjPage = 0;
+const PROJ_PER_PAGE = 5; // Quanti progetti caricare alla volta
+let hasMoreProjects = true;
+
 function renderProjects(list, containerId='projectsList') {
   const el = document.getElementById(containerId);
   if (!el) return;
