@@ -2167,6 +2167,10 @@ function applyTalentFilters() {
 }
 
 function showPage(page) {
+  if (page !== 'messages' && messageSubscription) {
+    _supabase.removeChannel(messageSubscription);
+    messageSubscription = null;
+  }
   localStorage.setItem('crewtiv_lastPage', page);
   document.documentElement.setAttribute('data-current-page', page); // Cambio pagina istantaneo e anti-sfarfallio
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
