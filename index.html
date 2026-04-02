@@ -1577,7 +1577,6 @@ async function loadRealProjects(isAppend = false) {
   if (error || !data || data.length === 0) {
     hasMoreProjects = false;
     updateLoadMoreBtn();
-    if (!isAppend) checkHash(); 
     return;
   }
   
