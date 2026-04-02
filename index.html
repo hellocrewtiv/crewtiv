@@ -2021,12 +2021,13 @@ async function sendMessage() {
   // FASE 9: Optimistic UI (Aggiungiamo subito il messaggio per far sembrare l'app fulminea)
   input.value = '';
   const msgContainer = document.getElementById('chatMessages');
-  msgContainer.innerHTML += `
-    <div class="cmsg me">
-      <div class="cmsg-bubble">${sanitize(content)}</div>
-      <div class="cmsg-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-    </div>
+  const div = document.createElement('div');
+  div.className = 'cmsg me';
+  div.innerHTML = `
+    <div class="cmsg-bubble">${sanitize(content)}</div>
+    <div class="cmsg-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
   `;
+  msgContainer.appendChild(div);
   msgContainer.scrollTop = msgContainer.scrollHeight;
 
   const { error } = await _supabase.from('messages').insert({
