@@ -10,10 +10,20 @@
 <meta property="og:title" content="Crewtiv — Condividi la tua visione.">
 <meta property="og:description" content="Trova i creativi giusti per il tuo progetto. Unisciti alla piattaforma in beta.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://crewtiv.com/">
 <meta property="og:image" content="https://crewtiv.com/og-image.jpg">
+<meta property="og:url" content="https://crewtiv.com/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Crewtiv",
+  "url": "https://crewtiv.com/",
+  "description": "La piattaforma per i creativi. Condividi progetti, trova collaboratori e costruisci il tuo team per videogiochi, app, arte, musica e molto altro."
+}
+</script>
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-K8WGWDESEM"></script>
 <script>
@@ -39,9 +49,11 @@
     y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
   })(window, document, "clarity", "script", "w3e5hsa0gv");
 </script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
 <style>
 :root {
   --bg: #0a0a0f;
@@ -425,7 +437,6 @@ nav {
   padding: 20px; opacity: 0; visibility: hidden; pointer-events: none; transition: all .25s;
 }
 .overlay.open { opacity: 1; visibility: visible; pointer-events: all; }
-.overlay.open { opacity: 1; pointer-events: all; }
 .modal {
   background: var(--surface); border: 1px solid var(--border2);
   border-radius: 20px; width: 100%; max-width: 680px;
@@ -766,8 +777,8 @@ nav {
   .stats-bar { flex-wrap: wrap; }
   .stat-item { min-width: 50%; border-right: none; border-bottom: 1px solid var(--border); }
   .main { grid-template-columns: 1fr; padding: 24px 16px 60px; }
-  .sidebar { display: none; }
-  .sidebar-mobile { display: none; }
+  /* FASE 7: Sidebar mobile 🟡 (reso visibile su mobile) */
+  .sidebar { display: flex; order: 2; margin-top: 32px; }
   .search-wrap, .cats-wrap { padding-left: 16px; padding-right: 16px; }
   .profile-content { grid-template-columns: 1fr; }
   .messages-wrap { grid-template-columns: 1fr; }
@@ -776,19 +787,6 @@ nav {
   .dash-kpis { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .profile-inner { flex-direction: column; align-items: flex-start; }
-}
-@media (max-width: 768px) {
-  .sidebar-mobile {
-    display: block;
-    margin: 0 16px 24px 16px;
-  }
-  .sidebar-mobile .scard {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px;
-    margin-bottom: 16px;
-  }
 }
 </style>
 </head>
@@ -866,14 +864,7 @@ nav {
     <span class="cat-pill" onclick="setCategory('other',this)">✦ Altro</span>
   </div>
 
-  <div class="sidebar-mobile">
-  <div class="scard">
-    <div class="scard-title">🔥 In tendenza</div>
-    <div class="trending-list" id="trendingListMobile"></div>
-  </div>
-</div>
-
-<div class="main">
+  <div class="main">
     <div>
       <div class="projects-header">
         <div>
@@ -902,7 +893,7 @@ nav {
     <aside class="sidebar">
       <div class="scard">
         <div class="scard-title">🔥 In tendenza</div>
-        <div class="trending-list" id="trendingList">
+        <div class="trending-list">
           <div class="titem" onclick="openProjectById('0')">
             <div class="trank">01</div>
             <div><div class="ttitle">EchoVerse RPG</div><div class="tmeta">🎮 Videogiochi · 128 viste</div></div>
@@ -1275,6 +1266,24 @@ nav {
   </div>
 </div>
 
+<div class="overlay" id="talentModal" onclick="closeIfBg(event,'talentModal')">
+  <div class="modal" style="max-width: 480px;">
+    <div class="modal-head">
+      <div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Profilo Talento</div>
+        <div class="modal-title" id="tModName"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('talentModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:14px; color:var(--accent); font-weight:600; margin-bottom:14px;" id="tModRole"></div>
+      <p class="modal-desc" id="tModBio" style="margin-top:0;"></p>
+      <div class="pcard-tags" id="tModSkills" style="margin-bottom:24px"></div>
+      <button class="btn btn-accent" id="tModContactBtn" style="width:100%; justify-content:center;">Invita in un progetto ✦</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <main id="page-talents" class="page">
@@ -1346,22 +1355,6 @@ nav {
     </div>
   </div>
 </main>
-
-<div id="talentModal" class="auth-overlay" onclick="closeAuthIfBg(event,'talentModal')">
-  <div class="auth-box" style="max-width:480px;">
-    <button class="auth-close" onclick="closeModal('talentModal')">✕</button>
-    <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
-      <div id="talentModalAvatar" class="avatar" style="width:56px;height:56px;border-radius:14px;font-size:18px;"></div>
-      <div>
-        <div id="talentModalName" style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);"></div>
-        <div id="talentModalTitle" style="font-size:13px;color:var(--accent);font-weight:500;margin-top:2px;"></div>
-      </div>
-    </div>
-    <div id="talentModalBio" style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:20px;font-weight:300;"></div>
-    <div id="talentModalSkills" class="pcard-tags" style="margin-bottom:24px;"></div>
-    <button id="talentModalContactBtn" class="btn btn-accent" style="width:100%;justify-content:center;">💬 Invia messaggio</button>
-  </div>
-</div>
 
 <footer style="position:relative;z-index:1;border-top:1px solid var(--border);background:var(--surface);padding:28px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
   <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--text)">Crewtiv<span style="color:var(--accent)">.</span></div>
@@ -1465,6 +1458,7 @@ let likedProjectIds = [];
 let currentUser = null;
 let editingProjectId = null;
 let authMode = 'login';
+let messageSubscription = null; // FASE 9: Realtime subscription
 
 function renderProjects(list, containerId='projectsList') {
   const el = document.getElementById(containerId);
@@ -1535,17 +1529,22 @@ async function fetchLikedProjects() {
   if(data) likedProjectIds = data.map(d => d.project_id);
 }
 
-let realProjectsPage = 0;
-const PROJECTS_PER_PAGE = 6;
-let hasMoreProjects = true;
+// FASE 6: URL Hash on load
+async function checkHash() {
+  if (window.location.hash.startsWith('#project/')) {
+    const pid = window.location.hash.replace('#project/', '');
+    if (pid) {
+      setTimeout(() => openProjectById(pid), 300); // Leggero ritardo per assicurarsi che i dati siano caricati
+    }
+  }
+}
 
-async function loadRealProjects(append = false) {
-  if (!append) { realProjectsPage = 0; hasMoreProjects = true; }
-  const from = realProjectsPage * PROJECTS_PER_PAGE;
-  const to = from + PROJECTS_PER_PAGE - 1;
-  const { data, error } = await _supabase.from('projects').select('*').order('created_at', { ascending: false }).range(from, to);
-  if (error || !data || (data.length === 0 && !append)) return;
-  if (data.length < PROJECTS_PER_PAGE) hasMoreProjects = false;
+async function loadRealProjects() {
+  const { data, error } = await _supabase.from('projects').select('*').order('created_at', { ascending: false });
+  if (error || !data || data.length === 0) {
+    checkHash(); // Eseguiamo l'hash anche se ci sono solo demo projects
+    return;
+  }
   
   realProjects = data.map(p => {
     return {
@@ -1561,66 +1560,15 @@ async function loadRealProjects(append = false) {
     };
   });
   
-const section = document.getElementById('realProjectsSection');
+  const section = document.getElementById('realProjectsSection');
   if (section && realProjects.length > 0) {
     section.style.display = 'block';
-    if (append) {
-      const el = document.getElementById('realProjectsList');
-      const temp = document.createElement('div');
-      data.map((p, i) => {
-        const mapped = realProjects[realProjects.length - data.length + i];
-        return mapped;
-      });
-      renderProjects(realProjects, 'realProjectsList');
-    } else {
-      renderProjects(realProjects, 'realProjectsList');
-    }
-
-    let loadMoreBtn = document.getElementById('loadMoreBtn');
-    if (!loadMoreBtn) {
-      loadMoreBtn = document.createElement('div');
-      loadMoreBtn.id = 'loadMoreBtn';
-      loadMoreBtn.style.cssText = 'text-align:center; margin-top:24px;';
-      section.appendChild(loadMoreBtn);
-    }
-    if (hasMoreProjects) {
-      loadMoreBtn.innerHTML = `<button class="btn btn-ghost" onclick="realProjectsPage++; loadRealProjects(true)">Carica altri →</button>`;
-    } else {
-      loadMoreBtn.innerHTML = '';
-    }
+    renderProjects(realProjects, 'realProjectsList');
   }
+  checkHash(); // FASE 6
 }
 
 loadRealProjects();
-
-(function checkHash() {
-  const match = window.location.hash.match(/^#progetto\/(.+)$/);
-  if (match) setTimeout(() => openProjectById(match[1]), 800);
-})();
-
-window.addEventListener('popstate', function() {
-  const match = window.location.hash.match(/^#progetto\/(.+)$/);
-  if (match) openProjectById(match[1]);
-  else closeModal('projectModal');
-});
-
-async function updateTrending() {
-  const { data } = await _supabase.from('projects').select('id, title, category, views').order('views', { ascending: false }).limit(4);
-  if (!data || data.length === 0) return;
-  const catIcon = { game:'🎮', arch:'🏛', app:'📱', art:'🎨', music:'🎵', science:'🔬', film:'🎬', hardware:'🔧', other:'✦' };
-  const catLabel = { game:'Videogiochi', arch:'Architettura', app:'App', art:'Arte & Design', music:'Musica', science:'Scienza', film:'Film', hardware:'Hardware', other:'Altro' };
-  const html = data.map((p, i) => `
-    <div class="titem" onclick="openProjectById('${p.id}')">
-      <div class="trank">0${i+1}</div>
-      <div><div class="ttitle">${sanitize(p.title)}</div><div class="tmeta">${catIcon[p.category]||'✦'} ${catLabel[p.category]||'Altro'} · ${p.views||0} viste</div></div>
-    </div>
-  `).join('');
-  const list = document.getElementById('trendingList');
-  if (list) list.innerHTML = html;
-  const listMobile = document.getElementById('trendingListMobile');
-  if (listMobile) listMobile.innerHTML = html;
-}
-updateTrending();
 
 async function deleteProject(id) {
   if (!currentUser) { showToast('❌ Devi essere loggato.'); return; }
@@ -1677,23 +1625,25 @@ function sortProjects(val) {
 }
 
 async function openProjectById(id) {
-  history.pushState({ projectId: id }, '', `#progetto/${id}`);
   currentProject = realProjects.find(p=> String(p.id) === String(id)) || projects.find(p=> String(p.id) === String(id));
   if (!currentProject) return;
-const p = currentProject;
+  const p = currentProject;
+  
+  // FASE 6: Aggiornamento URL Hash
+  window.history.pushState(null, '', '#project/' + id);
 
-// Incrementa views reali in modo sicuro
-if (p && p.isReal && currentUser && p.author_id !== currentUser.id) {
-  try {
-    _supabase.rpc('increment_views', { project_id: p.id });
-    p.views++; 
-  } catch (e) { console.error("Errore incremento views:", e); }
-}
+  // Incrementa views reali in modo sicuro
+  if (p && p.isReal && currentUser && p.author_id !== currentUser.id) {
+    try {
+      _supabase.rpc('increment_views', { project_id: p.id });
+      p.views++; 
+    } catch (e) { console.error("Errore incremento views:", e); }
+  }
 
-// Assicuriamoci che l'overlay sia pulito prima di aprirlo
-const modalOverlay = document.getElementById('projectModal');
-modalOverlay.classList.remove('open'); 
-setTimeout(() => modalOverlay.classList.add('open'), 10);
+  // Assicuriamoci che l'overlay sia pulito prima di aprirlo
+  const modalOverlay = document.getElementById('projectModal');
+  modalOverlay.classList.remove('open'); 
+  setTimeout(() => modalOverlay.classList.add('open'), 10);
   const sMap = {open:'s-open',progress:'s-progress',closed:'s-closed'};
   const sLabel = {open:'Aperto a collaborazioni',progress:'In corso',closed:'Chiuso'};
   document.getElementById('mStatus').className = `status-badge ${sMap[p.status]}`;
@@ -1911,7 +1861,7 @@ async function loadMessages() {
     const initials = otherName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     
     return `
-      <div class="msg-item ${activeChatId === otherId ? 'active' : ''}" onclick="selectRealChat('${otherId}', '${otherName}', '${projectTitle}', '${m.project_id}')">
+      <div class="msg-item ${activeChatId === otherId ? 'active' : ''}" onclick="selectRealChat('${otherId}', '${sanitize(otherName)}', '${sanitize(projectTitle)}', '${m.project_id}')">
         <div class="msg-item-name">${otherName}</div>
         <div class="msg-item-preview">Progetto: ${projectTitle}</div>
       </div>
@@ -1928,7 +1878,6 @@ async function loadMessages() {
 async function selectRealChat(otherId, otherName, projectTitle, projectId) {
   activeChatId = otherId;
   currentChatProjectId = projectId;
-  if (currentUser) subscribeToMessages(currentUser.id, otherId, projectId);
   
   document.getElementById('noChatSelected').style.display = 'none';
   document.getElementById('activeChatArea').style.display = 'flex';
@@ -1938,6 +1887,7 @@ async function selectRealChat(otherId, otherName, projectTitle, projectId) {
   
   // Evidenziamo il contatto attivo nella lista
   document.querySelectorAll('.msg-item').forEach(el => el.classList.remove('active'));
+  loadMessages(); // Aggiorna la lista contatti per mostrare l'active
 
   // Carichiamo i messaggi dal DB
   const { data: msgs, error } = await _supabase.from('messages')
@@ -1949,82 +1899,49 @@ async function selectRealChat(otherId, otherName, projectTitle, projectId) {
   const msgContainer = document.getElementById('chatMessages');
   msgContainer.innerHTML = (msgs && msgs.length > 0) ? msgs.map(m => `
     <div class="cmsg ${m.sender_id === currentUser.id ? 'me' : 'them'}">
-      <div class="cmsg-bubble">${m.content}</div>
+      <div class="cmsg-bubble">${sanitize(m.content)}</div>
       <div class="cmsg-time">${new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
     </div>
   `).join('') : `<div style="text-align:center; padding:20px; color:var(--text3); font-size:12px;">Inizia la conversazione!</div>`;
   
   msgContainer.scrollTop = msgContainer.scrollHeight;
-}
 
-let realtimeChannel = null;
-
-function subscribeToMessages(userId1, userId2, projectId) {
-  if (realtimeChannel) realtimeChannel.unsubscribe();
-  realtimeChannel = _supabase
-    .channel('messages-live')
-    .on('postgres_changes', {
-      event: 'INSERT',
-      schema: 'public',
-      table: 'messages'
-    }, payload => {
-      const m = payload.new;
-      const isRelevant =
-        m.project_id == projectId &&
-        ((m.sender_id === userId1 && m.receiver_id === userId2) ||
-         (m.sender_id === userId2 && m.receiver_id === userId1));
-      if (!isRelevant) return;
-      const msgContainer = document.getElementById('chatMessages');
-      if (!msgContainer) return;
-      const isMine = m.sender_id === currentUser.id;
-      const div = document.createElement('div');
-      div.className = `cmsg ${isMine ? 'cmsg-mine' : 'cmsg-theirs'}`;
-      div.innerHTML = `
-        <div class="cmsg-bubble">${m.content}</div>
-        <div class="cmsg-time">${new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
-      `;
-      msgContainer.appendChild(div);
-      msgContainer.scrollTop = msgContainer.scrollHeight;
-    })
-    .subscribe();
-}
-
-let realtimeChannel = null;
-
-function subscribeToMessages(userId1, userId2, projectId) {
-  if (realtimeChannel) realtimeChannel.unsubscribe();
-  realtimeChannel = _supabase
-    .channel('messages-live')
-    .on('postgres_changes', {
-      event: 'INSERT',
-      schema: 'public',
-      table: 'messages'
-    }, payload => {
-      const m = payload.new;
-      const isRelevant =
-        m.project_id == projectId &&
-        ((m.sender_id === userId1 && m.receiver_id === userId2) ||
-         (m.sender_id === userId2 && m.receiver_id === userId1));
-      if (!isRelevant) return;
-      const msgContainer = document.getElementById('chatMessages');
-      if (!msgContainer) return;
-      const isMine = m.sender_id === currentUser.id;
-      const div = document.createElement('div');
-      div.className = `cmsg ${isMine ? 'me' : 'them'}`;
-      div.innerHTML = `
-        <div class="cmsg-bubble">${m.content}</div>
-        <div class="cmsg-time">${new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
-      `;
-      msgContainer.appendChild(div);
-      msgContainer.scrollTop = msgContainer.scrollHeight;
-    })
-    .subscribe();
+  // FASE 9: Realtime Messages 🟡
+  if (messageSubscription) {
+      _supabase.removeChannel(messageSubscription);
+  }
+  messageSubscription = _supabase.channel('chat_' + projectId)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `project_id=eq.${projectId}` }, payload => {
+          const m = payload.new;
+          // Mostriamo il messaggio se è stato ricevuto e appartiene alla chat attiva (evitiamo di ricaricare il nostro che carichiamo in modo ottimistico)
+          if (m.sender_id !== currentUser.id && m.receiver_id === currentUser.id) {
+              msgContainer.innerHTML += `
+                  <div class="cmsg them">
+                    <div class="cmsg-bubble">${sanitize(m.content)}</div>
+                    <div class="cmsg-time">${new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                  </div>
+              `;
+              msgContainer.scrollTop = msgContainer.scrollHeight;
+          }
+      })
+      .subscribe();
 }
 
 async function sendMessage() {
   const input = document.getElementById('chatInput');
   const content = input.value.trim();
   if (!content || !activeChatId || !currentChatProjectId) return;
+
+  // FASE 9: Optimistic UI (Aggiungiamo subito il messaggio per far sembrare l'app fulminea)
+  input.value = '';
+  const msgContainer = document.getElementById('chatMessages');
+  msgContainer.innerHTML += `
+    <div class="cmsg me">
+      <div class="cmsg-bubble">${sanitize(content)}</div>
+      <div class="cmsg-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+    </div>
+  `;
+  msgContainer.scrollTop = msgContainer.scrollHeight;
 
   const { error } = await _supabase.from('messages').insert({
     sender_id: currentUser.id,
@@ -2035,12 +1952,7 @@ async function sendMessage() {
 
   if (error) {
     showToast('❌ Errore invio messaggio');
-    return;
   }
-
-  input.value = '';
-  // Ricarichiamo la chat per vedere il messaggio inviato
-  selectRealChat(activeChatId, document.getElementById('chatName').textContent, document.getElementById('chatProject').textContent, currentChatProjectId);
 }
 
 let allTalents = [];
@@ -2095,8 +2007,33 @@ function renderTalents(list, targetId = 'talentsList') {
     const d = document.createElement('div');
     d.className = 'pcard';
     d.style.animationDelay = `${i * 0.05}s`;
-    d.style.cursor = 'pointer';
-    d.onclick = () => openTalentModal(t);
+    d.style.cursor = 'pointer'; // FASE 8
+    
+    // FASE 8: Talenti cliccabili
+    d.onclick = () => {
+      document.getElementById('tModName').textContent = name;
+      document.getElementById('tModRole').textContent = t.title || 'Collaboratore';
+      document.getElementById('tModBio').textContent = t.bio || 'Nessuna bio inserita.';
+      document.getElementById('tModSkills').innerHTML = (t.skills || []).map(s => `<span class="tag">${sanitize(s)}</span>`).join('');
+      
+      const btn = document.getElementById('tModContactBtn');
+      if (currentUser && t.id && t.id !== currentUser.id) {
+         btn.style.display = 'flex';
+         btn.textContent = 'Invita in un progetto ✦';
+         btn.onclick = () => {
+             closeModal('talentModal');
+             showToast('Funzionalità in arrivo! Presto potrai inviare messaggi diretti ai talenti.');
+         };
+      } else if (!currentUser) {
+         btn.style.display = 'flex';
+         btn.textContent = 'Accedi per contattare';
+         btn.onclick = () => { closeModal('talentModal'); openAuth('login'); };
+      } else {
+         btn.style.display = 'none'; // È il proprio profilo
+      }
+      document.getElementById('talentModal').classList.add('open');
+    };
+
     d.innerHTML = `
       <div style="display:flex; gap:14px; align-items:center; margin-bottom:16px;">
         <div class="avatar" style="width:48px; height:48px; border-radius:14px; font-size:16px; background:${color}; color:#0a0a0f;">${sanitize(initials)}</div>
@@ -2114,30 +2051,6 @@ function renderTalents(list, targetId = 'talentsList') {
     `;
     container.appendChild(d);
   });
-}
-
-function openTalentModal(t) {
-  const name = t.full_name || 'Creativo Anonimo';
-  const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  const color = getColorForString(name);
-  const isReal = !!t.id;
-
-  document.getElementById('talentModalAvatar').textContent = initials;
-  document.getElementById('talentModalAvatar').style.background = color;
-  document.getElementById('talentModalName').textContent = name;
-  document.getElementById('talentModalTitle').textContent = t.title || 'Collaboratore';
-  document.getElementById('talentModalBio').textContent = t.bio || 'Nessuna bio inserita.';
-  document.getElementById('talentModalSkills').innerHTML = (t.skills||[]).map(s=>`<span class="tag">${sanitize(s)}</span>`).join('');
-
-  const btn = document.getElementById('talentModalContactBtn');
-  if (isReal && currentUser && t.id !== currentUser.id) {
-    btn.style.display = 'inline-flex';
-    btn.onclick = () => { closeModal('talentModal'); showPage('messages'); openChat(t.id, name, null); };
-  } else {
-    btn.style.display = 'none';
-  }
-
-  document.getElementById('talentModal').classList.add('open');
 }
 
 function applyTalentFilters() {
@@ -2450,9 +2363,12 @@ async function submitEditProfile() {
   await loadUserProfile();
 }
 
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-  if (id === 'projectModal') history.pushState({}, '', window.location.pathname);
+// FASE 6: Chiusura modale e pulizia URL Hash
+function closeModal(id) { 
+  document.getElementById(id).classList.remove('open'); 
+  if (id === 'projectModal') {
+    window.history.pushState(null, '', window.location.pathname);
+  }
 }
 function closeIfBg(e,id) { if(e.target===document.getElementById(id)) closeModal(id); }
 
