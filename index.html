@@ -1787,6 +1787,13 @@ async function openProjectById(id) {
             <input class="form-input" id="propRole" placeholder="es. Dev backend, 3D artist, compositore…">
           </div>
           <div class="form-group">
+            <label class="form-label" data-i18n="propose_type">Tipo di collaborazione</label>
+            <select class="form-select" id="propType">
+              <option>Volontaria</option>
+              <option>Retribuita — da discutere</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label class="form-label" data-i18n="propose_msg">Messaggio per il creatore</label>
             <textarea class="form-textarea" id="propMsg" placeholder="Racconta cosa puoi portare al progetto…"></textarea>
           </div>
@@ -2081,12 +2088,12 @@ function renderTalents(list, targetId = 'talentsList') {
     const name = t.full_name || 'Creativo Anonimo';
     const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     
-    // LOGICA COLORE BLINDATA: usa il colore del ruolo se esiste, altrimenti il colore generato dal nome
-    const color = t.primary_role ? (getRoleColor(t.primary_role) || getColorForString(name)) : getColorForString(name);
+    // LOGICA COLORE E BADGE BLINDATA (gestione sicura maiuscole/minuscole e spazi)
+    const roleKey = t.primary_role ? String(t.primary_role).trim().toLowerCase() : null;
+    const color = (roleKey && getRoleColor(roleKey)) ? getRoleColor(roleKey) : getColorForString(name);
     
-    // Costruiamo il badge del ruolo (con fallback al testo se non c'è ruolo primario)
-    const roleLabel = t.primary_role 
-        ? getRolePrimaryBadge(t.primary_role) 
+    const roleLabel = (roleKey && getRolePrimaryBadge(roleKey)) 
+        ? getRolePrimaryBadge(roleKey) 
         : `<span style="color:var(--accent); font-weight:500;">${sanitize(t.title || 'Collaboratore')}</span>`;
     
     const d = document.createElement('div');
