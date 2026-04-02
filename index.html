@@ -1527,9 +1527,31 @@ async function loadRealProjects(append = false) {
 const section = document.getElementById('realProjectsSection');
   if (section && realProjects.length > 0) {
     section.style.display = 'block';
-    renderProjects(realProjects, 'realProjectsList');
-    
+    if (append) {
+      const el = document.getElementById('realProjectsList');
+      const temp = document.createElement('div');
+      data.map((p, i) => {
+        const mapped = realProjects[realProjects.length - data.length + i];
+        return mapped;
+      });
+      renderProjects(realProjects, 'realProjectsList');
+    } else {
+      renderProjects(realProjects, 'realProjectsList');
     }
+
+    let loadMoreBtn = document.getElementById('loadMoreBtn');
+    if (!loadMoreBtn) {
+      loadMoreBtn = document.createElement('div');
+      loadMoreBtn.id = 'loadMoreBtn';
+      loadMoreBtn.style.cssText = 'text-align:center; margin-top:24px;';
+      section.appendChild(loadMoreBtn);
+    }
+    if (hasMoreProjects) {
+      loadMoreBtn.innerHTML = `<button class="btn btn-ghost" onclick="realProjectsPage++; loadRealProjects(true)">Carica altri →</button>`;
+    } else {
+      loadMoreBtn.innerHTML = '';
+    }
+  }
 }
 
 loadRealProjects();
