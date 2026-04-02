@@ -1732,7 +1732,7 @@ async function openProjectById(id) {
   document.getElementById('mAuthor').textContent = p.author;
   document.getElementById('mDate').textContent = '· '+p.date;
   document.getElementById('mDesc').textContent = p.desc;
-  document.getElementById('mTags').innerHTML = p.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+  document.getElementById('mTags').innerHTML = p.tags.map(t=>`<span class="tag">${sanitize(t)}</span>`).join('');
   const cl = document.getElementById('mCollabs');
   
   // Mostra "Caricamento" finché non arrivano i dati veri dal DB
