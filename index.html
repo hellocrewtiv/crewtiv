@@ -1555,9 +1555,7 @@ async function fetchLikedProjects() {
 async function checkHash() {
   if (window.location.hash.startsWith('#project/')) {
     const pid = window.location.hash.replace('#project/', '');
-    if (pid) {
-      setTimeout(() => openProjectById(pid), 300); // Leggero ritardo per assicurarsi che i dati siano caricati
-    }
+    if (pid) openProjectById(pid);
   }
 }
 
