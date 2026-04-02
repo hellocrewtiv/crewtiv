@@ -1947,8 +1947,8 @@ async function loadMessages() {
     
     return `
       <div class="msg-item ${activeChatId === otherId ? 'active' : ''}" onclick="selectRealChat('${otherId}', '${sanitize(otherName)}', '${sanitize(projectTitle)}', '${m.project_id}')">
-        <div class="msg-item-name">${otherName}</div>
-        <div class="msg-item-preview">Progetto: ${projectTitle}</div>
+        <div class="msg-item-name">${sanitize(otherName)}</div>
+        <div class="msg-item-preview">Progetto: ${sanitize(projectTitle)}</div>
       </div>
     `;
   }).join('');
