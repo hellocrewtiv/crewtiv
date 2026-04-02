@@ -2309,7 +2309,10 @@ async function submitEditProfile() {
   await loadUserProfile();
 }
 
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  if (id === 'projectModal') history.pushState({}, '', window.location.pathname);
+}
 function closeIfBg(e,id) { if(e.target===document.getElementById(id)) closeModal(id); }
 
   // ── FUNZIONE PONTE PER LA CHAT ──────────────────────────────────────────
