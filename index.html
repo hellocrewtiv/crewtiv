@@ -2633,23 +2633,16 @@ async function logout() {
 let sessionInitialized = false;
 
 const hashParams = new URLSearchParams(window.location.hash.substring(1));
-if (hashParams.get('type') === 'signup' || hashParams.get('access_token')) {
-  _supabase.auth.getSession().then(({ data: { session } }) => {
-    if (session?.user) {
-      sessionInitialized = true;
-      onLogin(session.user, true); // Accesso confermato
+const isEmailConfirmation = hashParams.get('type') === 'signup' || !!hashParams.get('access_token');
+
+_supabase.auth.getSession().then(({ data: { session } }) => {
+  if (session?.user) {
+    onLogin(session.user, isEmailConfirmation);
+    if (isEmailConfirmation) {
       showToast('✅ Email confermata!');
       window.history.replaceState(null, '', window.location.pathname);
     }
-  });
-}
-
-_supabase.auth.getSession().then(({ data: { session } }) => {
-  if (session?.user && !sessionInitialized) {
-    sessionInitialized = true;
-    onLogin(session.user, false); // Niente toast "Benvenuto", è un refresh
-  } else if (!session?.user) {
-    // Se l'utente non è loggato ma aggiorna una pagina pubblica (es. Talenti, About)
+  } else {
     showPage(localStorage.getItem('crewtiv_lastPage') || 'home');
   }
 });
