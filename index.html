@@ -1627,6 +1627,7 @@ function sortProjects(val) {
 }
 
 async function openProjectById(id) {
+  history.pushState({ projectId: id }, '', `#progetto/${id}`);
   currentProject = realProjects.find(p=> String(p.id) === String(id)) || projects.find(p=> String(p.id) === String(id));
   if (!currentProject) return;
 const p = currentProject;
