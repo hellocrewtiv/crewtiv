@@ -2560,7 +2560,6 @@ async function updateNavForUser(user) {
     const name = user.user_metadata?.full_name || user.email.split('@')[0];
     const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     
-    // Disegniamo subito l'UI con il colore base per non far aspettare l'utente
     navRight.innerHTML = `
       <button class="btn btn-accent btn-sm" onclick="openNewProject()">+ Nuovo Progetto</button>
       <div style="position:relative; cursor:pointer;" onclick="showPage('profile')">
@@ -2570,12 +2569,18 @@ async function updateNavForUser(user) {
     `;
     fetchNotifications();
 
-    // Peschiamo il ruolo reale in background per colorare l'avatar
-    const { data } = await _supabase.from('profiles').select('primary_role').eq('id', user.id).single();
-    if (data && data.primary_role) {
-      const realColor = getRoleColor(data.primary_role) || getColorForString(name);
-      const navAv = document.getElementById('navAvatar');
-      if (navAv) navAv.style.background = realColor;
+    try {
+      // maybeSingle() è molto più sicuro, non si rompe se il dato tarda ad arrivare
+      const { data, error } = await _supabase.from('profiles').select('primary_role').eq('id', user.id).maybeSingle();
+      
+      if (data && data.primary_role) {
+        const realColor = getRoleColor(data.primary_role) || getColorForString(name);
+        const navAv = document.getElementById('navAvatar');
+        // Usiamo setProperty per sparare un !important che scavalca qualsiasi altra regola CSS
+        if (navAv) navAv.style.setProperty('background', realColor, 'important');
+      }
+    } catch (err) {
+      console.error("Bug cacciato: Errore caricamento colore avatar ->", err);
     }
   } else {
     navRight.innerHTML = `
