@@ -2500,7 +2500,7 @@ async function submitAuth() {
     if (authMode === 'login') {
       const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      onLogin(data.user);
+      onLogin(data.user, true); // <--- Aggiunto flag true
     } else {
       if (!name) { errEl.textContent = 'Inserisci il tuo nome.'; btn.disabled = false; btn.textContent = 'Crea account'; return; }
       const { data, error } = await _supabase.auth.signUp({ email, password, options: { data: { full_name: name } } });
@@ -2513,7 +2513,7 @@ async function submitAuth() {
         document.getElementById('authNote').style.display = 'none';
         return;
       }
-      onLogin(data.user);
+      onLogin(data.user, true); // <--- Aggiunto flag true
     }
   } catch(err) {
     errEl.style.color = 'var(--red)';
