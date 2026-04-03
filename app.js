@@ -508,7 +508,9 @@ async function toggleLikeProject(projectId) {
 
 function openNewProject() {
   if (!currentUser) { openAuth('register'); return; }
-  document.getElementById('newProjectModal').classList.add('open');
+  const npModal = document.getElementById('newProjectModal');
+npModal.classList.add('open');
+trapFocus(npModal);
 }
 
 async function submitNewProject() {
