@@ -606,8 +606,12 @@ async function selectRealChat(otherId, otherName, projectTitle, projectId) {
   document.getElementById('chatAvatar').textContent = otherName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
   
   // Evidenziamo il contatto attivo nella lista
-  document.querySelectorAll('.msg-item').forEach(el => el.classList.remove('active'));
-  loadMessages(); // Aggiorna la lista contatti per mostrare l'active
+document.querySelectorAll('.msg-item').forEach(el => {
+  el.classList.remove('active');
+  if (el.getAttribute('onclick') && el.getAttribute('onclick').includes(otherId)) {
+    el.classList.add('active');
+  }
+});
 
   // Carichiamo i messaggi dal DB
   const { data: msgs, error } = await _supabase.from('messages')
