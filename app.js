@@ -1175,7 +1175,9 @@ function showToast(msg) {
 function openAuth(mode) {
   authMode = mode || 'login';
   switchTab(authMode);
-  document.getElementById('authOverlay').classList.add('open');
+  const authModal = document.getElementById('authOverlay');
+authModal.classList.add('open');
+trapFocus(authModal);
   setTimeout(() => document.getElementById('authEmail').focus(), 100);
 }
 function closeAuth() { document.getElementById('authOverlay').classList.remove('open'); }
