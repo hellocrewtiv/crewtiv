@@ -435,7 +435,9 @@ async function openProjectById(id) {
     document.getElementById('proposeDemoText').textContent = t.propose_demo;
     document.getElementById('proposeDemoBtn').textContent = t.propose_demo_btn;
   }
-  document.getElementById('projectModal').classList.add('open');
+  const pModal = document.getElementById('projectModal');
+pModal.classList.add('open');
+trapFocus(pModal);
 }
 
 async function submitProposal() {
