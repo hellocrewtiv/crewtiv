@@ -59,16 +59,7 @@
   // Legge la memoria PRIMA che il browser disegni il sito
   document.documentElement.setAttribute('data-current-page', localStorage.getItem('crewtiv_lastPage') || 'home');
 </script>
-<style>
-  /* Sovrascrive l'HTML impedendo alla Home di apparire per un istante */
-  .page { display: none !important; }
-  html[data-current-page="home"] #page-home,
-  html[data-current-page="profile"] #page-profile,
-  html[data-current-page="messages"] #page-messages,
-  html[data-current-page="talents"] #page-talents,
-  html[data-current-page="about"] #page-about,
-  html[data-current-page="privacy"] #page-privacy { display: block !important; }
-</style>
+
 </head>
 <body>
 
