@@ -1483,8 +1483,7 @@ function applyLang() {
   if (privacyEN) privacyEN.style.display = currentLang === 'en' ? 'block' : 'none';
   const footerAbout = document.getElementById('footerAbout');
   if (footerAbout) footerAbout.textContent = currentLang === 'it' ? 'Chi siamo' : 'About';
-  renderProjects(filtered, 'projectsList');
-  if(realProjects.length > 0) renderProjects(realProjects, 'realProjectsList');
+  if(realProjects.length > 0) renderProjects(getFilteredProjects(realProjects), 'realProjectsList');
 }
 
 // Inizializza immediatamente la pagina corretta prima che il browser disegni lo schermo
