@@ -721,7 +721,8 @@ nav {
   .stat-item { min-width: 50%; border-right: none; border-bottom: 1px solid var(--border); }
   .main { grid-template-columns: 1fr; padding: 24px 16px 60px; }
   /* FASE 7: Sidebar mobile 🟡 (reso visibile su mobile) */
-  .sidebar { display: flex; order: 2; margin-top: 32px; }
+  .sidebar { display: flex; order: -1; margin-top: 0; margin-bottom: 24px; flex-direction: row; flex-wrap: wrap; gap: 16px; }
+  .sidebar .scard { flex: 1; min-width: 280px; }
   .search-wrap, .cats-wrap { padding-left: 16px; padding-right: 16px; }
   .profile-content { grid-template-columns: 1fr; }
   .messages-wrap { grid-template-columns: 1fr; }
