@@ -1113,6 +1113,24 @@ async function submitEditProfile() {
 }
 
 // FASE 6: Chiusura modale e pulizia URL Hash
+function trapFocus(modalEl) {
+  const focusable = modalEl.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  modalEl.addEventListener('keydown', function handler(e) {
+    if (e.key !== 'Tab') return;
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+    if (!modalEl.classList.contains('open')) modalEl.removeEventListener('keydown', handler);
+  });
+  if (first) first.focus();
+}
+
 function closeModal(id) { 
   document.getElementById(id).classList.remove('open'); 
   if (id === 'projectModal') {
