@@ -39,7 +39,6 @@ function sanitize(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#x27;');
 }
-const AVCOLORS = ['#c8ff57','#57b4ff','#ff9d57','#b057ff','#57ff85'];
 
 function formatProjectFromDB(p) {
   const name = p.author_name || 'Anonimo';
