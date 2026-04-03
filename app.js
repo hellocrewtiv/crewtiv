@@ -1387,6 +1387,7 @@ const i18n = {
 function setLang(lang) {
   currentLang = lang;
   localStorage.setItem('lang', lang);
+  document.documentElement.lang = lang;
   document.getElementById('langToggle').textContent = lang === 'it' ? 'EN' : 'IT';
   applyLang();
 }
