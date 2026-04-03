@@ -1080,7 +1080,9 @@ async function openEditProfile() {
     });
   }
   if (btn) { btn.disabled = false; btn.textContent = '✏️ Modifica Profilo'; }
-  document.getElementById('editProfileModal').classList.add('open');
+  const eprModal = document.getElementById('editProfileModal');
+eprModal.classList.add('open');
+trapFocus(eprModal);
 }
 
 async function submitEditProfile() {
