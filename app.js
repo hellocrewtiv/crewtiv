@@ -1024,7 +1024,9 @@ function openEditProject(id) {
   document.getElementById('eStatus').value = p.status;
   document.getElementById('eDesc').value = p.desc;
   document.getElementById('eTags').value = p.tags.join(', ');
-  document.getElementById('editProjectModal').classList.add('open');
+  const epModal = document.getElementById('editProjectModal');
+epModal.classList.add('open');
+trapFocus(epModal);
 }
 
 async function submitEditProject() {
