@@ -107,36 +107,37 @@ let hasMoreProjects = true;
 function renderProjects(list, containerId='projectsList') {
   const el = document.getElementById(containerId);
   if (!el) return;
+  const t = i18n[currentLang];
   const meta = document.getElementById('pMeta');
-  if (meta && containerId==='projectsList') meta.textContent = `${projects.length} progetti di esempio`;
+  if (meta && containerId==='projectsList') meta.textContent = `${projects.length} ${t.demo_projects_meta}`;
   el.innerHTML = '';
-  
+
   if (!list.length) {
     if (containerId === 'projectsList' || containerId === 'realProjectsList') {
-      el.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--text3)">Nessun progetto trovato.</div>`;
+      el.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--text3)">${t.no_projects_found}</div>`;
     } else {
-      el.innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">Nessun progetto da mostrare.</div>`;
+      el.innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">${t.no_projects_show}</div>`;
     }
     return;
   }
-  
+
   list.forEach((p,i) => {
     const sMap = {open:'s-open',progress:'s-progress',closed:'s-closed'};
-    const sLabel = {open:'Aperto',progress:'In corso',closed:'Chiuso'};
+    const sLabel = {open: t.status_open, progress: t.status_progress, closed: t.status_closed};
     const isOwner = currentUser && p.author_id === currentUser.id;
-    
+
     const isLiked = likedProjectIds.includes(p.id);
     const isReal = p.isReal === true;
-    const likeBtnHtml = currentUser && !isOwner && isReal ? 
-        `<button class="btn-save ${isLiked?'saved':''}" style="${isLiked ? 'color: var(--red); border-color: rgba(255,87,87,0.3); background: rgba(255,87,87,0.1);' : ''}" onclick="event.stopPropagation(); toggleLikeProject('${p.id}')">${isLiked ? '♥️ Piace' : '♡ Mi piace'}</button>` : '';
+    const likeBtnHtml = currentUser && !isOwner && isReal ?
+        `<button class="btn-save ${isLiked?'saved':''}" style="${isLiked ? 'color: var(--red); border-color: rgba(255,87,87,0.3); background: rgba(255,87,87,0.1);' : ''}" onclick="event.stopPropagation(); toggleLikeProject('${p.id}')">${isLiked ? t.liked_btn : t.like_btn}</button>` : '';
 
     const d = document.createElement('div');
     d.className = `pcard${p.featured?' featured':''}`;
     d.style.animationDelay = `${i*.07}s`;
     d.onclick = () => openProjectById(p.id);
-    
+
     d.innerHTML = `
-      ${p.featured?'<div class="featured-label">✦ In evidenza</div>':''}
+      ${p.featured?`<div class="featured-label">${t.featured_label}</div>`:''}
       <div class="pcard-top">
         <div class="pcard-author">
           <div class="avatar" style="background:${p.color}">${sanitize(p.initials)}</div>
@@ -146,21 +147,21 @@ function renderProjects(list, containerId='projectsList') {
           ${likeBtnHtml}
           <span class="status-badge ${sMap[p.status]}">${sLabel[p.status]}</span>
           ${isOwner ? `
-            <button style="background:rgba(200,255,87,0.1);border:1px solid rgba(200,255,87,0.2);color:var(--accent);font-size:11px;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:'Instrument Sans',sans-serif" onclick="event.stopPropagation();openEditProject('${sanitize(p.id)}')">Modifica</button>
-            <button style="background:rgba(255,87,87,0.1);border:1px solid rgba(255,87,87,0.2);color:var(--red);font-size:11px;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:'Instrument Sans',sans-serif" onclick="event.stopPropagation();deleteProject('${sanitize(p.id)}')">Elimina</button>
+            <button style="background:rgba(200,255,87,0.1);border:1px solid rgba(200,255,87,0.2);color:var(--accent);font-size:11px;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:'Instrument Sans',sans-serif" onclick="event.stopPropagation();openEditProject('${sanitize(p.id)}')">${t.edit_btn}</button>
+            <button style="background:rgba(255,87,87,0.1);border:1px solid rgba(255,87,87,0.2);color:var(--red);font-size:11px;padding:4px 8px;border-radius:6px;cursor:pointer;font-family:'Instrument Sans',sans-serif" onclick="event.stopPropagation();deleteProject('${sanitize(p.id)}')">${t.delete_btn}</button>
           ` : ''}
         </div>
       </div>
       <div class="pcard-title">${sanitize(p.title)}</div>
       <div class="pcard-desc">${sanitize(p.desc.slice(0,185))}${p.desc.length>185?'…':''}</div>
-      <div class="pcard-tags">${p.tags.map(t=>`<span class="tag">${sanitize(t)}</span>`).join('')}</div>
+      <div class="pcard-tags">${p.tags.map(tag=>`<span class="tag">${sanitize(tag)}</span>`).join('')}</div>
       <div class="pcard-footer">
         <div class="pcard-stats">
           <span class="pstat">👁 ${p.views}</span>
           <span class="pstat">♥️ ${p.likes || 0}</span>
         </div>
         <div class="pcard-action">
-          ${p.status!=='closed'?`<button class="btn btn-accent btn-sm" onclick="event.stopPropagation();openProjectById('${sanitize(p.id)}')">Proponi →</button>`:'<span style="font-size:11px;color:var(--text3)">Team al completo</span>'}
+          ${p.status!=='closed'?`<button class="btn btn-accent btn-sm" onclick="event.stopPropagation();openProjectById('${sanitize(p.id)}')">${t.propose_card_btn}</button>`:`<span style="font-size:11px;color:var(--text3)">${t.team_full}</span>`}
         </div>
       </div>`;
     el.appendChild(d);
@@ -239,9 +240,9 @@ function loadMoreProjects() {
   if (!hasMoreProjects) return;
   currentProjPage++;
   const btn = document.getElementById('loadMoreBtn');
-  if(btn) btn.textContent = 'Caricamento...';
+  if(btn) btn.textContent = i18n[currentLang].loading;
   loadRealProjects(true).then(() => {
-      if(btn) btn.textContent = 'Carica altri ↓';
+      if(btn) btn.textContent = i18n[currentLang].load_more;
   });
 }
 
@@ -359,7 +360,7 @@ async function openProjectById(id) {
   const cl = document.getElementById('mCollabs');
   
   // Mostra "Caricamento" finché non arrivano i dati veri dal DB
-  cl.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:8px 0">Caricamento team...</div>';
+  cl.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:8px 0">${i18n[currentLang].loading_team}</div>`;
   
   // Se è un progetto reale, peschiamo le proposte accettate
   if (p.isReal) {
@@ -393,7 +394,7 @@ async function openProjectById(id) {
   if (p.status==='closed') {
     demoNotice.style.display = 'none';
     proposeForm.style.display = 'block';
-    proposeForm.innerHTML = `<div style="padding:14px;background:var(--surface2);border-radius:8px;font-size:13px;color:var(--text3);text-align:center">${currentLang==='it'?'Questo progetto non accetta più proposte.':'This project is no longer accepting proposals.'}</div>`;
+    proposeForm.innerHTML = `<div style="padding:14px;background:var(--surface2);border-radius:8px;font-size:13px;color:var(--text3);text-align:center">${i18n[currentLang].proj_no_proposals}</div>`;
   } else if (p.isReal) {
     demoNotice.style.display = 'none';
     
@@ -553,11 +554,12 @@ async function loadMessages() {
     .or(`owner_id.eq.${currentUser.id},applicant_id.eq.${currentUser.id}`);
 
   if (error || !matches || matches.length === 0) {
+    const t = i18n[currentLang];
     contactsContainer.innerHTML = `
       <div style="padding:40px 20px; text-align:center; color:var(--text3);">
         <div style="font-size:32px; margin-bottom:12px; opacity:0.5;">💬</div>
-        <div style="font-size:14px; font-weight:500; color:var(--text); margin-bottom:6px;">Nessuna chat attiva</div>
-        <div style="font-size:12px; line-height:1.5;">Le conversazioni appariranno qui quando una tua proposta verrà accettata o quando accetterai un collaboratore.</div>
+        <div style="font-size:14px; font-weight:500; color:var(--text); margin-bottom:6px;">${t.no_chat_active}</div>
+        <div style="font-size:12px; line-height:1.5;">${t.no_chat_sub}</div>
       </div>`;
     return;
   }
@@ -574,7 +576,7 @@ async function loadMessages() {
     return `
       <div class="msg-item ${activeChatId === otherId ? 'active' : ''}" onclick="selectRealChat('${otherId}', '${sanitize(otherName)}', '${sanitize(projectTitle)}', '${m.project_id}')">
         <div class="msg-item-name">${sanitize(otherName)}</div>
-        <div class="msg-item-preview">Progetto: ${sanitize(projectTitle)}</div>
+        <div class="msg-item-preview">${i18n[currentLang].project_prefix} ${sanitize(projectTitle)}</div>
       </div>
     `;
   }).join('');
@@ -683,7 +685,7 @@ const demoTalents = [
 
 async function loadTalents() {
   const container = document.getElementById('talentsList');
-  container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text3);">Caricamento talenti...</div>';
+  container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text3);">${i18n[currentLang].loading_talents}</div>`;
   
   const { data, error } = await _supabase.from('profiles').select('*').order('full_name', { ascending: true });
   if (error || !data || data.length === 0) {
@@ -882,60 +884,62 @@ async function loadUserProfile() {
 
 const { data: props } = await _supabase.from('proposals').select('*, projects(title)').eq('owner_id', currentUser.id).in('status', ['pending', 'accepted']);
   const propList = document.getElementById('proposalList');
+  const tProp = i18n[currentLang];
   if(props && props.length > 0) {
       propList.innerHTML = props.map(pr => `
           <div class="prop-item">
               <div class="prop-avatar" style="background:${getColorForString(pr.applicant_name)}">${pr.applicant_name ? pr.applicant_name.slice(0,2).toUpperCase() : 'AN'}</div>
               <div style="flex:1">
                   <div class="prop-name">${pr.applicant_name || 'Utente'}</div>
-                  <div class="prop-role">${pr.role} · per <strong>${pr.projects?.title || 'Progetto'}</strong></div>
+                  <div class="prop-role">${pr.role} · ${tProp.for_project} <strong>${pr.projects?.title || tProp.project_deleted}</strong></div>
                   ${pr.status === 'pending' ? `
                   <div class="prop-msg">"${pr.message}"</div>
                   <div class="prop-actions">
-                      <button class="btn-accept" onclick="respondProposal('${pr.id}', 'accepted', '${pr.applicant_name}')">✓ Accetta</button>
-                      <button class="btn-decline" onclick="respondProposal('${pr.id}', 'declined', '${pr.applicant_name}')">✕ Rifiuta</button>
+                      <button class="btn-accept" onclick="respondProposal('${pr.id}', 'accepted', '${pr.applicant_name}')">${tProp.accept_btn}</button>
+                      <button class="btn-decline" onclick="respondProposal('${pr.id}', 'declined', '${pr.applicant_name}')">${tProp.decline_btn}</button>
                   </div>` : `
                   <div style="margin-top:10px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-                      <span style="font-size:11px; font-weight:600; color:#57ff85;">✓ Nel team</span>
-                      <button class="btn btn-accent btn-sm" onclick="openChat('${pr.applicant_id}', '${pr.applicant_name}', '${pr.projects?.id}')">💬 Apri Chat</button>
-                      <button class="btn btn-ghost btn-sm" style="color:var(--red); border-color:rgba(255,87,87,0.3);" onclick="updateProposalStatus('${pr.id}', 'terminated', 'Collaboratore rimosso')">Rimuovi</button>
+                      <span style="font-size:11px; font-weight:600; color:#57ff85;">${tProp.in_team}</span>
+                      <button class="btn btn-accent btn-sm" onclick="openChat('${pr.applicant_id}', '${pr.applicant_name}', '${pr.projects?.id}')">${tProp.open_chat_btn}</button>
+                      <button class="btn btn-ghost btn-sm" style="color:var(--red); border-color:rgba(255,87,87,0.3);" onclick="updateProposalStatus('${pr.id}', 'terminated', 'Collaboratore rimosso')">${tProp.remove_btn}</button>
                   </div>`}
               </div>
           </div>
       `).join('');
   } else {
-      propList.innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">Nessuna notifica al momento.</div>`;
+      propList.innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">${tProp.no_notifications}</div>`;
   }
 
 const { data: sentProps } = await _supabase.from('proposals').select('*, projects(id, title, author_id, author_name)').eq('applicant_id', currentUser.id);
   const sentPropList = document.getElementById('sentProposalList');
+  const tSent = i18n[currentLang];
   if(sentProps && sentProps.length > 0) {
       sentPropList.innerHTML = sentProps.map(pr => {
           const statusColors = { pending: 'var(--orange)', accepted: '#57ff85', declined: 'var(--red)', withdrawn: 'var(--text3)', terminated: 'var(--text3)' };
-          const statusLabels = { pending: 'In attesa', accepted: 'Accettata', declined: 'Rifiutata', withdrawn: 'Ritirata', terminated: 'Interrotta' };
+          const statusLabels = { pending: tSent.status_pending_label, accepted: tSent.status_accepted_label, declined: tSent.status_declined_label, withdrawn: tSent.status_withdrawn_label, terminated: tSent.status_terminated_label };
           const projId = pr.projects?.id;
           const ownerId = pr.projects?.author_id;
           const ownerName = pr.projects?.author_name || 'Autore';
-          
+
           const onClickAttr = projId ? `onclick="openProjectById('${projId}')" style="cursor:pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'"` : '';
-          
+
           let actionBtns = '';
           if (pr.status === 'pending') {
-              actionBtns = `<button class="btn btn-ghost btn-sm" style="margin-top:8px; color:var(--red); border-color:rgba(255,87,87,0.3);" onclick="event.stopPropagation(); updateProposalStatus('${pr.id}', 'withdrawn', 'Candidatura ritirata')">Ritira</button>`;
+              actionBtns = `<button class="btn btn-ghost btn-sm" style="margin-top:8px; color:var(--red); border-color:rgba(255,87,87,0.3);" onclick="event.stopPropagation(); updateProposalStatus('${pr.id}', 'withdrawn', 'Candidatura ritirata')">${tSent.withdraw_btn}</button>`;
           } else if (pr.status === 'accepted' && ownerId) {
               actionBtns = `
-                <button class="btn btn-accent btn-sm" style="margin-top:8px;" onclick="event.stopPropagation(); openChat('${ownerId}', '${ownerName}', '${projId}')">💬 Apri Chat</button>
-                <button class="btn btn-ghost btn-sm" style="margin-top:8px; color:var(--red); border-color:rgba(255,87,87,0.3);" onclick="event.stopPropagation(); updateProposalStatus('${pr.id}', 'terminated', 'Collaborazione interrotta')">Interrompi</button>
+                <button class="btn btn-accent btn-sm" style="margin-top:8px;" onclick="event.stopPropagation(); openChat('${ownerId}', '${ownerName}', '${projId}')">${tSent.open_chat_btn}</button>
+                <button class="btn btn-ghost btn-sm" style="margin-top:8px; color:var(--red); border-color:rgba(255,87,87,0.3);" onclick="event.stopPropagation(); updateProposalStatus('${pr.id}', 'terminated', 'Collaborazione interrotta')">${tSent.stop_collab_btn}</button>
               `;
           }
 
           return `
           <div class="prop-item" ${onClickAttr}>
               <div style="flex:1">
-                  <div class="prop-role" style="font-size:13px; color:var(--text);">Ruolo: <strong>${sanitize(pr.role)}</strong></div>
-                  <div style="font-size:11px; color:var(--text3); margin-top:2px;">per il progetto <strong style="color:var(--text2); text-decoration:underline;">${sanitize(pr.projects?.title || 'Progetto eliminato')}</strong></div>
+                  <div class="prop-role" style="font-size:13px; color:var(--text);">${tSent.role_label} <strong>${sanitize(pr.role)}</strong></div>
+                  <div style="font-size:11px; color:var(--text3); margin-top:2px;">${tSent.for_project} <strong style="color:var(--text2); text-decoration:underline;">${sanitize(pr.projects?.title || tSent.project_deleted)}</strong></div>
                   <div style="display:flex; align-items:center; gap:10px; margin-top:8px; flex-wrap:wrap;">
-                      <div style="font-size:11px; font-weight:600; color:${statusColors[pr.status] || 'var(--text3)'}; display:inline-block; padding:3px 8px; background:rgba(255,255,255,0.05); border-radius:4px;">Stato: ${statusLabels[pr.status] || pr.status}</div>
+                      <div style="font-size:11px; font-weight:600; color:${statusColors[pr.status] || 'var(--text3)'}; display:inline-block; padding:3px 8px; background:rgba(255,255,255,0.05); border-radius:4px;">${tSent.status_label} ${statusLabels[pr.status] || pr.status}</div>
                       ${actionBtns}
                   </div>
               </div>
@@ -943,7 +947,7 @@ const { data: sentProps } = await _supabase.from('proposals').select('*, project
           </div>`;
       }).join('');
   } else {
-      sentPropList.innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">Non ti sei ancora candidato a nessun progetto.</div>`;
+      sentPropList.innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">${tSent.not_applied}</div>`;
   }
 
   const { data } = await _supabase.from('projects').select('*').eq('author_id', currentUser.id).order('created_at', {ascending: false});
@@ -980,10 +984,10 @@ const { data: sentProps } = await _supabase.from('proposals').select('*, project
           });
           renderProjects(formatted, 'dashSavedProjectsList');
       } else {
-          document.getElementById('dashSavedProjectsList').innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px;">Non è stato possibile caricare i progetti salvati.</div>`;
+          document.getElementById('dashSavedProjectsList').innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px;">${i18n[currentLang].no_saved}</div>`;
       }
   } else {
-      document.getElementById('dashSavedProjectsList').innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px;">Non hai ancora salvato nessun progetto.</div>`;
+      document.getElementById('dashSavedProjectsList').innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px;">${i18n[currentLang].no_saved}</div>`;
   }
 }
 
@@ -1370,6 +1374,46 @@ const i18n = {
     talents_title: 'Trova i collaboratori giusti', talents_subtitle: 'Esplora i talenti su Crewtiv e invitali nel tuo progetto.',
     edit_proj_label: 'Modifica progetto', edit_proj_t: 'Titolo del progetto', edit_proj_status: 'Stato', edit_proj_desc: 'Descrizione', edit_proj_btn: 'Salva modifiche ✦',
     edit_prof_label: 'Il tuo profilo', edit_prof_title: 'Modifica profilo', edit_prof_primary: 'Ruolo Primario *', edit_prof_prof_title: 'Titolo professionale', edit_prof_bio: 'Bio', edit_prof_btn: 'Salva profilo ✦',
+    edit_prof_skills: 'Skills',
+    stats_bar_1: 'Pubblica il tuo progetto.', stats_bar_2: 'Trova il tuo team.', stats_bar_3: 'Costruisci qualcosa di grande.',
+    load_more: 'Carica altri ↓', loading: 'Caricamento...',
+    collab_section: 'COLLABORATORI',
+    talent_modal_label: 'Profilo Talento', talent_invite: 'Invita in un progetto ✦',
+    kpi_projects: 'Progetti Creati', kpi_pending: 'In attesa', kpi_sent: 'Le tue Candidature',
+    dash_sent_title: 'Le mie Candidature Inviate', dash_projects_title: 'I miei progetti pubblicati',
+    dash_liked_title: '♥️ Progetti che ti piacciono', dash_requests_title: '🔔 Richieste di Collaborazione',
+    profile_complete_text: '✦ <strong style="color:var(--text)">Completa il tuo profilo</strong> — aggiungi bio e skills per farti notare dai creatori!',
+    profile_complete_btn: 'Completa ora →', edit_profile_btn: '✏️ Modifica Profilo', logout_btn: "Esci dall'account",
+    profile_bio_default: 'Accedi per vedere il tuo profilo.',
+    conversations_title: 'Conversazioni', chat_placeholder: 'Scrivi un messaggio…', chat_send: 'Invia ↑',
+    no_chat_selected: 'Seleziona una conversazione per iniziare a messaggiare',
+    no_projects_found: 'Nessun progetto trovato.', no_projects_show: 'Nessun progetto da mostrare.',
+    featured_label: '✦ In evidenza', like_btn: '♡ Mi piace', liked_btn: '♥️ Piace',
+    propose_card_btn: 'Proponi →', team_full: 'Team al completo', edit_btn: 'Modifica', delete_btn: 'Elimina',
+    no_chat_active: 'Nessuna chat attiva',
+    no_chat_sub: 'Le conversazioni appariranno qui quando una tua proposta verrà accettata o quando accetterai un collaboratore.',
+    project_prefix: 'Progetto:', no_notifications: 'Nessuna notifica al momento.',
+    not_applied: 'Non ti sei ancora candidato a nessun progetto.',
+    no_saved: 'Non hai ancora salvato nessun progetto.',
+    status_pending_label: 'In attesa', status_accepted_label: 'Accettata', status_declined_label: 'Rifiutata',
+    status_withdrawn_label: 'Ritirata', status_terminated_label: 'Interrotta',
+    role_label: 'Ruolo:', for_project: 'per il progetto', status_label: 'Stato:',
+    in_team: '✓ Nel team', accept_btn: '✓ Accetta', decline_btn: '✕ Rifiuta',
+    open_chat_btn: '💬 Apri Chat', remove_btn: 'Rimuovi', withdraw_btn: 'Ritira', stop_collab_btn: 'Interrompi',
+    project_deleted: 'Progetto eliminato', loading_team: 'Caricamento team...', loading_talents: 'Caricamento talenti...',
+    loading_conversations: 'Caricamento conversazioni...', demo_projects_meta: 'progetti di esempio',
+    edit_cat_note: 'ℹ️ La categoria non è modificabile — fa parte della registrazione originale.',
+    new_proj_modal_label: 'Nuovo progetto', new_proj_modal_title: 'Pubblica il tuo progetto',
+    propose_opt1: 'Volontaria', propose_opt2: 'Retribuita — da discutere',
+    collab_opt1: 'Volontaria', collab_opt2: 'Retribuita', collab_opt3: 'Entrambe accettate',
+    proj_no_proposals: 'Questo progetto non accetta più proposte.',
+    about_eyebrow: 'Chi siamo',
+    about_title: 'Ogni progetto creativo merita di trovare le persone giuste.',
+    about_p1: "Crewtiv nasce da un'idea semplice: ogni progetto creativo merita di trovare le persone giuste per prendere vita.",
+    about_p2: 'Siamo una piattaforma dove artisti, sviluppatori, architetti, musicisti e creativi di ogni tipo possono pubblicare le loro idee, registrarle con data e autore e trovare collaboratori che condividono la stessa visione.',
+    about_p3: 'Ogni progetto pubblicato su Crewtiv è tuo — registrato con data e autore. Perché le idee hanno un valore, e chi le ha avute merita il riconoscimento.',
+    about_p4: 'Siamo appena nati. Stiamo costruendo qualcosa di grande, un progetto alla volta.',
+    about_contact: 'Contatti',
   },
   en: {
     nav_home: 'Home', nav_messages: 'Messages', nav_profile: 'Profile', nav_about: 'About',
@@ -1417,6 +1461,46 @@ const i18n = {
     talents_title: 'Find the right collaborators', talents_subtitle: 'Explore talents on Crewtiv and invite them to your project.',
     edit_proj_label: 'Edit project', edit_proj_t: 'Project title', edit_proj_status: 'Status', edit_proj_desc: 'Description', edit_proj_btn: 'Save changes ✦',
     edit_prof_label: 'Your profile', edit_prof_title: 'Edit profile', edit_prof_primary: 'Primary Role *', edit_prof_prof_title: 'Professional title', edit_prof_bio: 'Bio', edit_prof_btn: 'Save profile ✦',
+    edit_prof_skills: 'Skills',
+    stats_bar_1: 'Publish your project.', stats_bar_2: 'Find your team.', stats_bar_3: 'Build something great.',
+    load_more: 'Load more ↓', loading: 'Loading...',
+    collab_section: 'COLLABORATORS',
+    talent_modal_label: 'Talent Profile', talent_invite: 'Invite to a project ✦',
+    kpi_projects: 'Projects Created', kpi_pending: 'Pending', kpi_sent: 'Your Applications',
+    dash_sent_title: 'My Sent Applications', dash_projects_title: 'My Published Projects',
+    dash_liked_title: '♥️ Projects you like', dash_requests_title: '🔔 Collaboration Requests',
+    profile_complete_text: '✦ <strong style="color:var(--text)">Complete your profile</strong> — add bio and skills to get noticed by creators!',
+    profile_complete_btn: 'Complete now →', edit_profile_btn: '✏️ Edit Profile', logout_btn: 'Sign out',
+    profile_bio_default: 'Sign in to see your profile.',
+    conversations_title: 'Conversations', chat_placeholder: 'Write a message…', chat_send: 'Send ↑',
+    no_chat_selected: 'Select a conversation to start messaging',
+    no_projects_found: 'No projects found.', no_projects_show: 'No projects to show.',
+    featured_label: '✦ Featured', like_btn: '♡ Like', liked_btn: '♥️ Liked',
+    propose_card_btn: 'Apply →', team_full: 'Team complete', edit_btn: 'Edit', delete_btn: 'Delete',
+    no_chat_active: 'No active chats',
+    no_chat_sub: 'Conversations will appear here when one of your proposals is accepted or when you accept a collaborator.',
+    project_prefix: 'Project:', no_notifications: 'No notifications at the moment.',
+    not_applied: "You haven't applied to any projects yet.",
+    no_saved: "You haven't saved any projects yet.",
+    status_pending_label: 'Pending', status_accepted_label: 'Accepted', status_declined_label: 'Declined',
+    status_withdrawn_label: 'Withdrawn', status_terminated_label: 'Ended',
+    role_label: 'Role:', for_project: 'for project', status_label: 'Status:',
+    in_team: '✓ In the team', accept_btn: '✓ Accept', decline_btn: '✕ Decline',
+    open_chat_btn: '💬 Open Chat', remove_btn: 'Remove', withdraw_btn: 'Withdraw', stop_collab_btn: 'End',
+    project_deleted: 'Deleted project', loading_team: 'Loading team...', loading_talents: 'Loading talents...',
+    loading_conversations: 'Loading conversations...', demo_projects_meta: 'example projects',
+    edit_cat_note: "ℹ️ The category cannot be changed — it's part of the original registration.",
+    new_proj_modal_label: 'New project', new_proj_modal_title: 'Publish your project',
+    propose_opt1: 'Voluntary', propose_opt2: 'Paid — to discuss',
+    collab_opt1: 'Voluntary', collab_opt2: 'Paid', collab_opt3: 'Both accepted',
+    proj_no_proposals: 'This project is no longer accepting proposals.',
+    about_eyebrow: 'About us',
+    about_title: 'Every creative project deserves to find the right people.',
+    about_p1: 'Crewtiv was born from a simple idea: every creative project deserves to find the right people to come to life.',
+    about_p2: 'We are a platform where artists, developers, architects, musicians and creatives of all kinds can publish their ideas, register them with date and author, and find collaborators who share the same vision.',
+    about_p3: 'Every project published on Crewtiv is yours — registered with date and author. Because ideas have value, and those who had them deserve recognition.',
+    about_p4: "We just launched. We're building something great, one project at a time.",
+    about_contact: 'Contact',
   }
 };
 
@@ -1495,9 +1579,87 @@ function applyLang() {
   if (sortOpts[1]) sortOpts[1].textContent = t.sort_popular;
   if (sortOpts[2]) sortOpts[2].textContent = t.sort_open;
   const footerAbout = document.getElementById('footerAbout');
-  if (footerAbout) footerAbout.textContent = currentLang === 'it' ? 'Chi siamo' : 'About';
+  if (footerAbout) footerAbout.textContent = t.about_eyebrow;
   const footerPrivacy = document.getElementById('footerPrivacy');
   if (footerPrivacy) footerPrivacy.textContent = 'Privacy Policy';
+  // Stats bar
+  const statsBar1 = document.getElementById('statsBar1');
+  if (statsBar1) statsBar1.textContent = t.stats_bar_1;
+  const statsBar2 = document.getElementById('statsBar2');
+  if (statsBar2) statsBar2.textContent = t.stats_bar_2;
+  const statsBar3 = document.getElementById('statsBar3');
+  if (statsBar3) statsBar3.textContent = t.stats_bar_3;
+  // Load more
+  const loadMoreBtn = document.getElementById('loadMoreBtn');
+  if (loadMoreBtn && loadMoreBtn.textContent !== t.loading) loadMoreBtn.textContent = t.load_more;
+  // Project modal
+  const mCollabTitle = document.getElementById('mCollabTitle');
+  if (mCollabTitle) mCollabTitle.textContent = t.collab_section;
+  // Talent modal
+  const tModLabel = document.getElementById('tModLabel');
+  if (tModLabel) tModLabel.textContent = t.talent_modal_label;
+  const tModContactBtn = document.getElementById('tModContactBtn');
+  if (tModContactBtn) tModContactBtn.textContent = t.talent_invite;
+  // KPI labels
+  const kpiLabelProjects = document.getElementById('kpiLabelProjects');
+  if (kpiLabelProjects) kpiLabelProjects.textContent = t.kpi_projects;
+  const kpiLabelPending = document.getElementById('kpiLabelPending');
+  if (kpiLabelPending) kpiLabelPending.textContent = t.kpi_pending;
+  const kpiLabelSent = document.getElementById('kpiLabelSent');
+  if (kpiLabelSent) kpiLabelSent.textContent = t.kpi_sent;
+  // Profile section titles
+  const dashTitleSent = document.getElementById('dashTitleSent');
+  if (dashTitleSent) dashTitleSent.textContent = t.dash_sent_title;
+  const dashTitleProjects = document.getElementById('dashTitleProjects');
+  if (dashTitleProjects) dashTitleProjects.textContent = t.dash_projects_title;
+  const dashTitleLiked = document.getElementById('dashTitleLiked');
+  if (dashTitleLiked) dashTitleLiked.textContent = t.dash_liked_title;
+  const dashTitleRequests = document.getElementById('dashTitleRequests');
+  if (dashTitleRequests) dashTitleRequests.textContent = t.dash_requests_title;
+  // Profile complete banner
+  const profileCompleteBannerText = document.getElementById('profileCompleteBannerText');
+  if (profileCompleteBannerText) profileCompleteBannerText.innerHTML = t.profile_complete_text;
+  const profileCompleteBtn = document.getElementById('profileCompleteBtn');
+  if (profileCompleteBtn) profileCompleteBtn.textContent = t.profile_complete_btn;
+  // Profile buttons
+  const editProfileBtn = document.getElementById('editProfileBtn');
+  if (editProfileBtn) editProfileBtn.textContent = t.edit_profile_btn;
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) logoutBtn.textContent = t.logout_btn;
+  // Profile bio default
+  const profileBio = document.getElementById('profileBio');
+  if (profileBio && !currentUser) profileBio.textContent = t.profile_bio_default;
+  // Messages page
+  const msgListHead = document.getElementById('msgListHead');
+  if (msgListHead) msgListHead.textContent = t.conversations_title;
+  const chatInput = document.getElementById('chatInput');
+  if (chatInput) chatInput.placeholder = t.chat_placeholder;
+  const chatSendBtn = document.getElementById('chatSendBtn');
+  if (chatSendBtn) chatSendBtn.textContent = t.chat_send;
+  const noChatSelected = document.getElementById('noChatSelected');
+  if (noChatSelected) noChatSelected.textContent = t.no_chat_selected;
+  // newProjectModal label + title
+  const newProjLabel = document.querySelector('#newProjectModal .modal-label');
+  if (newProjLabel) newProjLabel.textContent = t.new_proj_modal_label;
+  const newProjModalTitle = document.querySelector('#newProjectModal .modal-title');
+  if (newProjModalTitle) newProjModalTitle.textContent = t.new_proj_modal_title;
+  // editProjectModal category note
+  const editCatNote = document.getElementById('editCatNote');
+  if (editCatNote) editCatNote.textContent = t.edit_cat_note;
+  // propType options
+  const propTypeOpts = document.querySelectorAll('#propType option');
+  if (propTypeOpts[0]) propTypeOpts[0].textContent = t.propose_opt1;
+  if (propTypeOpts[1]) propTypeOpts[1].textContent = t.propose_opt2;
+  // nCollab options
+  const nCollabOpts = document.querySelectorAll('#nCollab option');
+  if (nCollabOpts[0]) nCollabOpts[0].textContent = t.collab_opt1;
+  if (nCollabOpts[1]) nCollabOpts[1].textContent = t.collab_opt2;
+  if (nCollabOpts[2]) nCollabOpts[2].textContent = t.collab_opt3;
+  // About page visibility
+  const aboutIT = document.getElementById('aboutIT');
+  const aboutEN = document.getElementById('aboutEN');
+  if (aboutIT) aboutIT.style.display = currentLang === 'it' ? 'block' : 'none';
+  if (aboutEN) aboutEN.style.display = currentLang === 'en' ? 'block' : 'none';
   if(realProjects.length > 0) renderProjects(getFilteredProjects(realProjects), 'realProjectsList');
 }
 
