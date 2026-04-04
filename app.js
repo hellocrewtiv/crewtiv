@@ -123,8 +123,8 @@ function renderProjects(list, containerId='projectsList') {
   }
 
   list.forEach((p,i) => {
-    const sMap = {open:'s-open',progress:'s-progress',closed:'s-closed'};
-    const sLabel = {open: t.status_open, progress: t.status_progress, closed: t.status_closed};
+    const sMap = {open:'s-open',progress:'s-progress',closed:'s-closed',completed:'s-completed'};
+    const sLabel = {open: t.status_open, progress: t.status_progress, closed: t.status_closed, completed: t.status_completed};
     const isOwner = currentUser && p.author_id === currentUser.id;
 
     const isLiked = likedProjectIds.includes(p.id);
@@ -163,7 +163,7 @@ function renderProjects(list, containerId='projectsList') {
           <span class="pstat">♥️ ${p.likes || 0}</span>
         </div>
         <div class="pcard-action">
-          ${p.status!=='closed'?`<button class="btn btn-accent btn-sm" onclick="event.stopPropagation();openProjectById('${sanitize(p.id)}')">${t.propose_card_btn}</button>`:`<span style="font-size:11px;color:var(--text3)">${t.team_full}</span>`}
+          ${(p.status!=='closed' && p.status!=='completed')?`<button class="btn btn-accent btn-sm" onclick="event.stopPropagation();openProjectById('${sanitize(p.id)}')">${t.propose_card_btn}</button>`:`<span style="font-size:11px;color:var(--text3)">${t.team_full}</span>`}
         </div>
       </div>`;
     el.appendChild(d);
@@ -348,8 +348,8 @@ async function openProjectById(id) {
     } catch (e) { console.error("Errore incremento views:", e); }
   }
 
-  const sMap = {open:'s-open',progress:'s-progress',closed:'s-closed'};
-  const sLabel = {open: i18n[currentLang].status_open, progress: i18n[currentLang].status_progress, closed: i18n[currentLang].status_closed};
+  const sMap = {open:'s-open',progress:'s-progress',closed:'s-closed',completed:'s-completed'};
+  const sLabel = {open: i18n[currentLang].status_open, progress: i18n[currentLang].status_progress, closed: i18n[currentLang].status_closed, completed: i18n[currentLang].status_completed};
   document.getElementById('mStatus').className = `status-badge ${sMap[p.status]}`;
   document.getElementById('mStatus').textContent = sLabel[p.status];
   document.getElementById('mTitle').textContent = p.title;
@@ -365,35 +365,90 @@ async function openProjectById(id) {
   cl.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:8px 0">${i18n[currentLang].loading_team}</div>`;
   
   // Se è un progetto reale, peschiamo le proposte accettate
+  let projectReviews = [];
   if (p.isReal) {
     const { data: acceptedProps } = await _supabase.from('proposals')
-        .select('applicant_name, role')
+        .select('applicant_name, applicant_id, role')
         .eq('project_id', p.id)
         .eq('status', 'accepted');
-        
+
     p.collabs = (acceptedProps || []).map(pr => ({
         n: pr.applicant_name || 'Utente',
         r: pr.role || 'Collaboratore',
-        s: 'accepted'
+        s: 'accepted',
+        aid: pr.applicant_id
     }));
+
+    // Carica recensioni esistenti se il progetto è in corso o completato
+    if (p.status === 'progress' || p.status === 'completed') {
+      const { data: reviewsData } = await _supabase.from('reviews').select('*').eq('project_id', p.id);
+      projectReviews = reviewsData || [];
+    }
   }
 
+  const canReview = p.isReal && currentUser && (p.status === 'progress' || p.status === 'completed');
+  const isOwner = currentUser && p.author_id === currentUser.id;
+  const isCollaborator = p.collabs.some(c => c.aid === currentUser?.id);
+
   // Stampiamo i collaboratori (sia quelli veri appena pescati, sia quelli finti delle demo)
-  cl.innerHTML = p.collabs.length ? p.collabs.map(c=>`
-    <div class="citem">
+  cl.innerHTML = p.collabs.length ? p.collabs.map(c => {
+    const initials = sanitize(c.n.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase());
+    const alreadyReviewed = projectReviews.some(r => r.reviewer_id === currentUser?.id && r.reviewee_id === c.aid);
+    let reviewHtml = '';
+    if (canReview && isOwner && c.aid) {
+      reviewHtml = alreadyReviewed
+        ? `<span style="font-size:11px;color:#57ff85;margin-left:6px">✓ Recensito</span>`
+        : `<button onclick="openReviewForm('${sanitize(p.id)}','${sanitize(c.aid)}','${sanitize(c.n)}','rev-${sanitize(c.aid)}')" style="font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(200,255,87,0.1);border:1px solid rgba(200,255,87,0.2);color:var(--accent);cursor:pointer;font-family:'Instrument Sans',sans-serif">★ Recensisci</button>`;
+    }
+    return `<div class="citem" style="flex-wrap:wrap;">
       <div class="citem-left">
-        <div class="avatar" style="width:30px;height:30px;border-radius:7px;font-size:10px;background:${getColorForString(c.n)}">${sanitize(c.n.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase())}</div>
+        <div class="avatar" style="width:30px;height:30px;border-radius:7px;font-size:10px;background:${getColorForString(c.n)}">${initials}</div>
         <div><div class="cname">${sanitize(c.n)}</div><div class="crole">${sanitize(c.r)}</div></div>
       </div>
-      <span class="cstatus cs-accepted">✓ Ruolo Assegnato</span>
-    </div>`).join('') : '<div style="font-size:12px;color:var(--text3);padding:8px 0">Nessun collaboratore ancora — sii il primo a proporti!</div>';
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        <span class="cstatus cs-accepted">✓ Ruolo Assegnato</span>
+        ${reviewHtml}
+      </div>
+      <div id="rev-${sanitize(c.aid)}" style="width:100%"></div>
+    </div>`;
+  }).join('') : '<div style="font-size:12px;color:var(--text3);padding:8px 0">Nessun collaboratore ancora — sii il primo a proporti!</div>';
+
+  // Sezione recensione autore (visibile al collaboratore accettato)
+  const reviewsSection = document.getElementById('mReviewsSection');
+  reviewsSection.style.display = 'none';
+  reviewsSection.innerHTML = '';
+  if (canReview && isCollaborator && !isOwner) {
+    const alreadyReviewedOwner = projectReviews.some(r => r.reviewer_id === currentUser?.id && r.reviewee_id === p.author_id);
+    let ownerReviewHtml = alreadyReviewedOwner
+      ? `<span style="font-size:12px;color:#57ff85">✓ Hai già recensito l'autore</span>`
+      : `<button onclick="openReviewForm('${sanitize(p.id)}','${sanitize(p.author_id)}','${sanitize(p.author)}','rev-owner')" style="font-size:12px;padding:4px 10px;border-radius:6px;background:rgba(200,255,87,0.1);border:1px solid rgba(200,255,87,0.2);color:var(--accent);cursor:pointer;font-family:'Instrument Sans',sans-serif">★ Recensisci l'autore</button>`;
+    reviewsSection.style.display = 'block';
+    reviewsSection.innerHTML = `
+      <div class="msec-title">RECENSIONE</div>
+      ${ownerReviewHtml}
+      <div id="rev-owner" style="margin-top:8px"></div>
+    `;
+  }
+
+  // Mostra recensioni esistenti se ce ne sono
+  if (projectReviews.length > 0) {
+    const reviewsHtml = projectReviews.map(r => {
+      const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+      return `<div style="padding:10px 12px;background:var(--surface2);border-radius:8px;margin-bottom:8px;">
+        <div style="font-size:13px;color:var(--accent);letter-spacing:1px;margin-bottom:4px">${stars}</div>
+        ${r.text ? `<div style="font-size:12px;color:var(--text2);line-height:1.5">${sanitize(r.text)}</div>` : ''}
+      </div>`;
+    }).join('');
+    reviewsSection.style.display = 'block';
+    reviewsSection.innerHTML += `<div class="msec-title" style="margin-top:16px">RECENSIONI</div>${reviewsHtml}`;
+  }
   
   const ps = document.getElementById('mProposeSection');
   const demoNotice = document.getElementById('proposeDemoNotice');
   const proposeForm = document.getElementById('proposeForm');
   const t = i18n[currentLang];
   
-  if (p.status==='closed') {
+  if (p.status==='closed' || p.status==='completed') {
     demoNotice.style.display = 'none';
     proposeForm.style.display = 'block';
     proposeForm.innerHTML = `<div style="padding:14px;background:var(--surface2);border-radius:8px;font-size:13px;color:var(--text3);text-align:center">${i18n[currentLang].proj_no_proposals}</div>`;
@@ -436,6 +491,65 @@ async function openProjectById(id) {
   const pModal = document.getElementById('projectModal');
 pModal.classList.add('open');
 trapFocus(pModal);
+}
+
+let currentReviewRating = 0;
+
+function setReviewStars(rating) {
+  currentReviewRating = rating;
+  for (let i = 1; i <= 5; i++) {
+    const star = document.getElementById(`rStar${i}`);
+    if (star) star.style.color = i <= rating ? 'var(--accent)' : 'var(--text3)';
+  }
+}
+
+function openReviewForm(projectId, revieweeId, revieweeName, targetDivId) {
+  currentReviewRating = 0;
+  const container = document.getElementById(targetDivId);
+  if (!container) return;
+  container.innerHTML = `
+    <div style="margin-top:10px;padding:12px;background:var(--surface2);border-radius:10px;border:1px solid var(--border2);">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Recensisci <strong style="color:var(--text)">${sanitize(revieweeName)}</strong></div>
+      <div style="display:flex;gap:6px;font-size:24px;cursor:pointer;margin-bottom:10px;">
+        ${[1,2,3,4,5].map(i => `<span id="rStar${i}" style="color:var(--text3);transition:color .15s;" onmouseover="setReviewStars(${i})" onclick="setReviewStars(${i})">★</span>`).join('')}
+      </div>
+      <textarea class="form-textarea" id="rText" placeholder="Scrivi una breve recensione (opzionale)…" style="min-height:70px;margin-bottom:10px;font-size:13px;"></textarea>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-accent btn-sm" onclick="submitReview('${sanitize(projectId)}','${sanitize(revieweeId)}','${sanitize(targetDivId)}')">Invia ✦</button>
+        <button onclick="document.getElementById('${sanitize(targetDivId)}').innerHTML=''" style="font-size:12px;padding:4px 10px;border-radius:6px;background:transparent;border:1px solid var(--border2);color:var(--text2);cursor:pointer;font-family:'Instrument Sans',sans-serif;">Annulla</button>
+      </div>
+    </div>
+  `;
+}
+
+async function submitReview(projectId, revieweeId, targetDivId) {
+  if (!currentUser) return;
+  if (!currentReviewRating) { showToast('⚠️ Seleziona almeno una stella'); return; }
+  const text = document.getElementById('rText')?.value.trim() || '';
+
+  const { error } = await _supabase.from('reviews').insert({
+    project_id: projectId,
+    reviewer_id: currentUser.id,
+    reviewee_id: revieweeId,
+    rating: currentReviewRating,
+    text: text || null
+  });
+  if (error) { showToast('❌ ' + error.message); return; }
+
+  // Ricalcola avg_rating e review_count nel profilo del recensito
+  const { data: allReviews } = await _supabase.from('reviews').select('rating').eq('reviewee_id', revieweeId);
+  if (allReviews && allReviews.length > 0) {
+    const avg = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
+    await _supabase.from('profiles').upsert({
+      id: revieweeId,
+      avg_rating: Math.round(avg * 100) / 100,
+      review_count: allReviews.length
+    }, { onConflict: 'id' });
+  }
+
+  const container = document.getElementById(targetDivId);
+  if (container) container.innerHTML = `<div style="padding:8px 0;font-size:12px;color:#57ff85;">✓ Recensione inviata!</div>`;
+  showToast('✅ Recensione inviata!');
 }
 
 async function submitProposal() {
@@ -770,7 +884,10 @@ function renderTalents(list, targetId = 'talentsList') {
     // FASE 8: Talenti cliccabili
     d.onclick = () => {
       document.getElementById('tModName').textContent = name;
-      document.getElementById('tModRole').innerHTML = roleLabel + renderSocialLinks(t.social_links);
+      const modalAvgHtml = t.avg_rating
+        ? `<div style="font-size:13px;margin-top:4px;color:var(--accent);letter-spacing:1px;">${'★'.repeat(Math.round(t.avg_rating))}${'☆'.repeat(5-Math.round(t.avg_rating))} <span style="color:var(--text3);font-size:11px;">${Number(t.avg_rating).toFixed(1)} (${t.review_count} recensioni)</span></div>`
+        : '';
+      document.getElementById('tModRole').innerHTML = roleLabel + modalAvgHtml + renderSocialLinks(t.social_links);
       document.getElementById('tModBio').textContent = t.bio || 'Nessuna bio inserita.';
       document.getElementById('tModSkills').innerHTML = (t.skills || []).map(s => `<span class="tag">${sanitize(s)}</span>`).join('');
       
@@ -792,12 +909,16 @@ function renderTalents(list, targetId = 'talentsList') {
       document.getElementById('talentModal').classList.add('open');
     };
 
+    const avgRatingHtml = t.avg_rating
+      ? `<div style="font-size:12px;margin-top:3px;color:var(--accent);letter-spacing:1px;">${'★'.repeat(Math.round(t.avg_rating))}${'☆'.repeat(5-Math.round(t.avg_rating))} <span style="color:var(--text3);font-size:11px;">${Number(t.avg_rating).toFixed(1)} (${t.review_count})</span></div>`
+      : '';
     d.innerHTML = `
       <div style="display:flex; gap:14px; align-items:center; margin-bottom:16px;">
         <div class="avatar" style="width:48px; height:48px; border-radius:14px; font-size:16px; background:${color}; color:#0a0a0f;">${sanitize(initials)}</div>
         <div>
           <div style="font-family:'Syne',sans-serif; font-size:18px; font-weight:700; color:var(--text);">${sanitize(name)}</div>
           <div style="font-size:13px; margin-top:2px;">${roleLabel}</div>
+          ${avgRatingHtml}
           ${renderSocialLinks(t.social_links)}
         </div>
       </div>
@@ -1417,7 +1538,7 @@ const i18n = {
     new_proj_tags: 'Tag', new_proj_tags_ph: 'Unity, C#, RPG, open-world…',
     new_proj_collab: 'Tipo di collaborazione', new_proj_btn: 'Pubblica e registra ✦',
     new_proj_note: '🔒 Data e autore vengono registrati automaticamente al momento della pubblicazione.',
-    status_open: 'Aperto a collaborazioni', status_progress: 'In corso', status_closed: 'Chiuso',
+    status_open: 'Aperto a collaborazioni', status_progress: 'In corso', status_closed: 'Chiuso', status_completed: 'Completato',
     sort_recent: 'Più recenti', sort_popular: 'Più popolari', sort_open: 'Cercano collaboratori',
     talents_title: 'Trova i collaboratori giusti', talents_subtitle: 'Esplora i talenti su Crewtiv e invitali nel tuo progetto.',
     edit_proj_label: 'Modifica progetto', edit_proj_t: 'Titolo del progetto', edit_proj_status: 'Stato', edit_proj_desc: 'Descrizione', edit_proj_btn: 'Salva modifiche ✦',
@@ -1513,7 +1634,7 @@ const i18n = {
     new_proj_tags: 'Tags', new_proj_tags_ph: 'Unity, C#, RPG, open-world…',
     new_proj_collab: 'Collaboration type', new_proj_btn: 'Publish & register ✦',
     new_proj_note: '🔒 Date and author are automatically registered at the time of publication.',
-    status_open: 'Open to collaborations', status_progress: 'In progress', status_closed: 'Closed',
+    status_open: 'Open to collaborations', status_progress: 'In progress', status_closed: 'Closed', status_completed: 'Completed',
     sort_recent: 'Most recent', sort_popular: 'Most popular', sort_open: 'Looking for collaborators',
     talents_title: 'Find the right collaborators', talents_subtitle: 'Explore talents on Crewtiv and invite them to your project.',
     edit_proj_label: 'Edit project', edit_proj_t: 'Project title', edit_proj_status: 'Status', edit_proj_desc: 'Description', edit_proj_btn: 'Save changes ✦',
