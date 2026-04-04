@@ -51,7 +51,7 @@ function formatProjectFromDB(p) {
     category: p.category, status: p.status,
     desc: p.description || '', tags: p.tags || [],
     views: p.views||0, proposals: p.proposals||0, likes: p.likes||0, collabs: [],
-    isReal: true, author_id: p.author_id, created_at: p.created_at
+    collab_type: p.collab_type || '', isReal: true, author_id: p.author_id, created_at: p.created_at
   };
 }
 
@@ -90,13 +90,6 @@ const projects = [
 let filtered = [...projects];
 let activeCategory = 'all';
 let currentProject = null;
-
-const chatData = [
-  { name:"Sofia Russo", initials:"SR", color:"#c8ff57", project:"EchoVerse RPG — Narrative Designer" },
-  { name:"Luca Verdi", initials:"LV", color:"#57b4ff", project:"EchoVerse RPG — Sound Designer" },
-  { name:"Anna Pellegrini", initials:"AP", color:"#57ff85", project:"Palazzo Vouta Verde — Paesaggista" },
-  { name:"Pietro Mori", initials:"PM", color:"#b057ff", project:"NeuroScan AI — Data Scientist" }
-];
 
 let realProjects = [];
 let likedProjectIds = []; 
@@ -346,12 +339,8 @@ async function openProjectById(id) {
     } catch (e) { console.error("Errore incremento views:", e); }
   }
 
-  // Assicuriamoci che l'overlay sia pulito prima di aprirlo
-  const modalOverlay = document.getElementById('projectModal');
-  modalOverlay.classList.remove('open'); 
-  setTimeout(() => modalOverlay.classList.add('open'), 10);
   const sMap = {open:'s-open',progress:'s-progress',closed:'s-closed'};
-  const sLabel = {open:'Aperto a collaborazioni',progress:'In corso',closed:'Chiuso'};
+  const sLabel = {open: i18n[currentLang].status_open, progress: i18n[currentLang].status_progress, closed: i18n[currentLang].status_closed};
   document.getElementById('mStatus').className = `status-badge ${sMap[p.status]}`;
   document.getElementById('mStatus').textContent = sLabel[p.status];
   document.getElementById('mTitle').textContent = p.title;
@@ -397,8 +386,8 @@ async function openProjectById(id) {
   
   if (p.status==='closed') {
     demoNotice.style.display = 'none';
-    proposeForm.style.display = 'none';
-    document.getElementById('mProposeSection').innerHTML = `<div style="padding:14px;background:var(--surface2);border-radius:8px;font-size:13px;color:var(--text3);text-align:center">${currentLang==='it'?'Questo progetto non accetta più proposte.':'This project is no longer accepting proposals.'}</div>`;
+    proposeForm.style.display = 'block';
+    proposeForm.innerHTML = `<div style="padding:14px;background:var(--surface2);border-radius:8px;font-size:13px;color:var(--text3);text-align:center">${currentLang==='it'?'Questo progetto non accetta più proposte.':'This project is no longer accepting proposals.'}</div>`;
   } else if (p.isReal) {
     demoNotice.style.display = 'none';
     
@@ -411,21 +400,21 @@ async function openProjectById(id) {
     } else {
         proposeForm.innerHTML = `
           <div class="form-group">
-            <label class="form-label" data-i18n="propose_role">Il tuo ruolo</label>
-            <input class="form-input" id="propRole" placeholder="es. Dev backend, 3D artist, compositore…">
+            <label class="form-label">${t.propose_role}</label>
+            <input class="form-input" id="propRole" placeholder="${t.propose_role_ph}">
           </div>
           <div class="form-group">
-            <label class="form-label" data-i18n="propose_type">Tipo di collaborazione</label>
+            <label class="form-label">${t.propose_type}</label>
             <select class="form-select" id="propType">
               <option>Volontaria</option>
               <option>Retribuita — da discutere</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label" data-i18n="propose_msg">Messaggio per il creatore</label>
-            <textarea class="form-textarea" id="propMsg" placeholder="Racconta cosa puoi portare al progetto…"></textarea>
+            <label class="form-label">${t.propose_msg}</label>
+            <textarea class="form-textarea" id="propMsg" placeholder="${t.propose_msg_ph}"></textarea>
           </div>
-          <button class="btn btn-accent" onclick="submitProposal()" data-i18n="propose_btn">Invia proposta →</button>
+          <button class="btn btn-accent" onclick="submitProposal()">${t.propose_btn}</button>
         `;
         proposeForm.style.display = 'block';
     }
@@ -541,15 +530,7 @@ async function submitNewProject() {
   await loadRealProjects();
 }
 
-function selectChat(i) {
-  document.querySelectorAll('.msg-item').forEach((el,idx)=>el.classList.toggle('active',idx===i));
-  const c = chatData[i];
-  document.getElementById('chatAvatar').textContent = c.initials;
-  document.getElementById('chatAvatar').style.background = c.color;
-  document.getElementById('chatName').textContent = c.name;
-  document.getElementById('chatProject').textContent = 'Re: '+c.project;
-  document.getElementById('chatMessages').innerHTML = `<div class="cmsg them"><div class="cmsg-bubble">Ciao! Sono molto interessato al tuo progetto e mi piacerebbe collaborare.</div><div class="cmsg-time">2 giorni fa</div></div><div class="cmsg me"><div class="cmsg-bubble">Grazie per esserti fatto vivo! Raccontami della tua esperienza.</div><div class="cmsg-time">2 giorni fa</div></div>`;
-}
+
 
 // ── MOTORE MESSAGGI REALI ──────────────────────────────────────────
 let activeChatId = null; // ID dell'altro utente
@@ -608,6 +589,7 @@ async function selectRealChat(otherId, otherName, projectTitle, projectId) {
   document.getElementById('chatName').textContent = otherName;
   document.getElementById('chatProject').textContent = projectTitle;
   document.getElementById('chatAvatar').textContent = otherName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('chatAvatar').style.background = getColorForString(otherName);
   
   // Evidenziamo il contatto attivo nella lista
 document.querySelectorAll('.msg-item').forEach(el => {
@@ -888,7 +870,7 @@ async function loadUserProfile() {
   const { count: countRecv } = await _supabase.from('proposals').select('*', {count:'exact', head:true}).eq('owner_id', currentUser.id).eq('status', 'pending');
   const { count: countProj } = await _supabase.from('projects').select('*', {count:'exact', head:true}).eq('author_id', currentUser.id);
 
-  document.getElementById('dashTotalViews').textContent = countProj || 0;
+  document.getElementById('dashTotalProjects').textContent = countProj || 0;
   document.getElementById('dashProposalsReceived').textContent = countRecv || 0;
   document.getElementById('dashProposalsSent').textContent = countSent || 0;
 
@@ -1122,25 +1104,35 @@ async function submitEditProfile() {
 
 // FASE 6: Chiusura modale e pulizia URL Hash
 function trapFocus(modalEl) {
+  // Rimuove il listener precedente prima di aggiungerne uno nuovo (evita accumulo)
+  if (modalEl._trapFocusHandler) {
+    modalEl.removeEventListener('keydown', modalEl._trapFocusHandler);
+  }
   const focusable = modalEl.querySelectorAll(
     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
   );
   const first = focusable[0];
   const last = focusable[focusable.length - 1];
-  modalEl.addEventListener('keydown', function handler(e) {
+  function handler(e) {
     if (e.key !== 'Tab') return;
     if (e.shiftKey) {
       if (document.activeElement === first) { e.preventDefault(); last.focus(); }
     } else {
       if (document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
-    if (!modalEl.classList.contains('open')) modalEl.removeEventListener('keydown', handler);
-  });
+  }
+  modalEl._trapFocusHandler = handler;
+  modalEl.addEventListener('keydown', handler);
   if (first) first.focus();
 }
 
-function closeModal(id) { 
-  document.getElementById(id).classList.remove('open'); 
+function closeModal(id) {
+  const el = document.getElementById(id);
+  el.classList.remove('open');
+  if (el._trapFocusHandler) {
+    el.removeEventListener('keydown', el._trapFocusHandler);
+    el._trapFocusHandler = null;
+  }
   if (id === 'projectModal') {
     window.history.pushState(null, '', window.location.pathname);
   }
@@ -1160,8 +1152,6 @@ function openChat(otherUserId, otherUserName, projectId) {
   // Cambia pagina per andare ai messaggi
   showPage('messages');
   showToast('Caricamento chat con ' + otherUserName + '...');
-  
-  loadMessages(); 
 }
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -1180,7 +1170,14 @@ authModal.classList.add('open');
 trapFocus(authModal);
   setTimeout(() => document.getElementById('authEmail').focus(), 100);
 }
-function closeAuth() { document.getElementById('authOverlay').classList.remove('open'); }
+function closeAuth() {
+  const el = document.getElementById('authOverlay');
+  el.classList.remove('open');
+  if (el._trapFocusHandler) {
+    el.removeEventListener('keydown', el._trapFocusHandler);
+    el._trapFocusHandler = null;
+  }
+}
 function closeAuthIfBg(e) { if (e.target === document.getElementById('authOverlay')) closeAuth(); }
 
 function switchTab(tab) {
@@ -1236,6 +1233,7 @@ function onLogin(user, isNewLogin = false) {
   fetchLikedProjects().then(() => {
     // Dopo aver caricato i dati essenziali, ricarica l'ultima pagina visitata
     showPage(localStorage.getItem('crewtiv_lastPage') || 'home');
+    applyFilters();
   });
   updateNavForUser(user);
   if (isNewLogin) showToast('✅ Benvenuto su Crewtiv!');
@@ -1301,8 +1299,6 @@ async function logout() {
   loadRealProjects();
 }
 
-let sessionInitialized = false;
-
 const hashParams = new URLSearchParams(window.location.hash.substring(1));
 const isEmailConfirmation = hashParams.get('type') === 'signup' || !!hashParams.get('access_token');
 
@@ -1310,7 +1306,6 @@ _supabase.auth.getSession().then(({ data: { session } }) => {
   if (session?.user) {
     onLogin(session.user, isEmailConfirmation);
     if (isEmailConfirmation) {
-      showToast('✅ Email confermata!');
       window.history.replaceState(null, '', window.location.pathname);
     }
   } else {
@@ -1365,6 +1360,9 @@ const i18n = {
     new_proj_note: '🔒 Data e autore vengono registrati automaticamente al momento della pubblicazione.',
     status_open: 'Aperto a collaborazioni', status_progress: 'In corso', status_closed: 'Chiuso',
     sort_recent: 'Più recenti', sort_popular: 'Più popolari', sort_open: 'Cercano collaboratori',
+    talents_title: 'Trova i collaboratori giusti', talents_subtitle: 'Esplora i talenti su Crewtiv e invitali nel tuo progetto.',
+    edit_proj_label: 'Modifica progetto', edit_proj_t: 'Titolo del progetto', edit_proj_status: 'Stato', edit_proj_desc: 'Descrizione', edit_proj_btn: 'Salva modifiche ✦',
+    edit_prof_label: 'Il tuo profilo', edit_prof_title: 'Modifica profilo', edit_prof_primary: 'Ruolo Primario *', edit_prof_prof_title: 'Titolo professionale', edit_prof_bio: 'Bio', edit_prof_btn: 'Salva profilo ✦',
   },
   en: {
     nav_home: 'Home', nav_messages: 'Messages', nav_profile: 'Profile', nav_about: 'About',
@@ -1409,6 +1407,9 @@ const i18n = {
     new_proj_note: '🔒 Date and author are automatically registered at the time of publication.',
     status_open: 'Open to collaborations', status_progress: 'In progress', status_closed: 'Closed',
     sort_recent: 'Most recent', sort_popular: 'Most popular', sort_open: 'Looking for collaborators',
+    talents_title: 'Find the right collaborators', talents_subtitle: 'Explore talents on Crewtiv and invite them to your project.',
+    edit_proj_label: 'Edit project', edit_proj_t: 'Project title', edit_proj_status: 'Status', edit_proj_desc: 'Description', edit_proj_btn: 'Save changes ✦',
+    edit_prof_label: 'Your profile', edit_prof_title: 'Edit profile', edit_prof_primary: 'Primary Role *', edit_prof_prof_title: 'Professional title', edit_prof_bio: 'Bio', edit_prof_btn: 'Save profile ✦',
   }
 };
 
@@ -1428,7 +1429,6 @@ function applyLang() {
   });
   const eyebrow = document.querySelector('.hero-eyebrow');
   if (eyebrow) eyebrow.textContent = t.hero_eyebrow;
-  const h1lines = document.querySelectorAll('.hero h1 .line1, .hero h1 .line2, .hero h1 .highlight');
   const heroH1 = document.querySelector('.hero h1');
   if (heroH1) heroH1.innerHTML = `${t.hero_h1_1}<br><span class="line2">${t.hero_h1_2}</span><br><span class="highlight">${t.hero_h1_3}</span>`;
   const heroSub = document.querySelector('.hero-sub');
@@ -1437,19 +1437,19 @@ function applyLang() {
   if (heroCta1) heroCta1.textContent = t.hero_cta1;
   const heroCta2 = document.querySelector('.hero-actions .btn-ghost');
   if (heroCta2) heroCta2.textContent = t.hero_cta2;
-  const statLabels = document.querySelectorAll('.stat-label');
-  if (statLabels[0]) statLabels[0].textContent = t.stat1;
-  if (statLabels[1]) statLabels[1].textContent = t.stat2;
-  if (statLabels[2]) statLabels[2].textContent = t.stat3;
-  if (statLabels[3]) statLabels[3].textContent = t.stat4;
   const searchInput = document.getElementById('searchInput');
   if (searchInput) searchInput.placeholder = t.search_placeholder;
-  const searchBtn = document.querySelector('.search-btn');
-  if (searchBtn) searchBtn.textContent = t.search_btn;
+  document.querySelectorAll('.search-btn').forEach(btn => btn.textContent = t.search_btn);
   const catsLabel = document.querySelector('.cats-label');
   if (catsLabel) catsLabel.textContent = t.filter_label;
   const allPill = document.querySelector('.cat-pill');
   if (allPill) allPill.textContent = t.filter_all;
+  const searchTalentInput = document.getElementById('searchTalentInput');
+  if (searchTalentInput) searchTalentInput.placeholder = t.search_placeholder;
+  const talentsTitle = document.getElementById('talentsTitle');
+  if (talentsTitle) talentsTitle.textContent = t.talents_title;
+  const talentsSubtitle = document.getElementById('talentsSubtitle');
+  if (talentsSubtitle) talentsSubtitle.textContent = t.talents_subtitle;
   const projTitle = document.querySelector('.projects-title');
   if (projTitle) projTitle.textContent = t.projects_title;
   const demoBanner = document.getElementById('demoBannerText');
@@ -1464,6 +1464,8 @@ function applyLang() {
   if (betaText) betaText.innerHTML = t.beta_text;
   const betaBtn = document.querySelector('.beta-btn');
   if (betaBtn) betaBtn.textContent = t.beta_btn;
+  const proposeTitle = document.querySelector('[data-i18n-propose-title]');
+  if (proposeTitle) proposeTitle.textContent = t.propose_title;
   document.getElementById('authSubtitle').textContent = authMode === 'login' ? t.auth_login_sub : t.auth_reg_sub;
   document.getElementById('tabLogin').textContent = t.auth_tab_login;
   document.getElementById('tabRegister').textContent = t.auth_tab_reg;
@@ -1481,8 +1483,14 @@ function applyLang() {
   const privacyEN = document.getElementById('privacyEN');
   if (privacyIT) privacyIT.style.display = currentLang === 'it' ? 'block' : 'none';
   if (privacyEN) privacyEN.style.display = currentLang === 'en' ? 'block' : 'none';
+  const sortOpts = document.querySelectorAll('.sort-select option');
+  if (sortOpts[0]) sortOpts[0].textContent = t.sort_recent;
+  if (sortOpts[1]) sortOpts[1].textContent = t.sort_popular;
+  if (sortOpts[2]) sortOpts[2].textContent = t.sort_open;
   const footerAbout = document.getElementById('footerAbout');
   if (footerAbout) footerAbout.textContent = currentLang === 'it' ? 'Chi siamo' : 'About';
+  const footerPrivacy = document.getElementById('footerPrivacy');
+  if (footerPrivacy) footerPrivacy.textContent = 'Privacy Policy';
   if(realProjects.length > 0) renderProjects(getFilteredProjects(realProjects), 'realProjectsList');
 }
 
