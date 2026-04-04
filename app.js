@@ -1057,9 +1057,8 @@ async function openEditProfile() {
     document.getElementById('epSkills').value = (data.skills||[]).join(', ');
     document.getElementById('epPrimaryRole').value = data.primary_role || '';
     const secRoles = data.secondary_roles || [];
-    document.querySelectorAll('.ep-sec-role').forEach(cb => {
-      cb.checked = secRoles.includes(cb.value);
-    });
+    document.getElementById('epSecRole1').value = secRoles[0] || '';
+    document.getElementById('epSecRole2').value = secRoles[1] || '';
   }
   if (btn) { btn.disabled = false; btn.textContent = '✏️ Modifica Profilo'; }
   const eprModal = document.getElementById('editProfileModal');
@@ -1076,8 +1075,10 @@ async function submitEditProfile() {
   const primaryRole = document.getElementById('epPrimaryRole').value;
   if (!primaryRole) { showToast('⚠️ Seleziona un ruolo primario'); return; }
   
-  const secondaryRoles = Array.from(document.querySelectorAll('.ep-sec-role:checked')).map(cb => cb.value);
-  if (secondaryRoles.length > 3) { showToast('⚠️ Puoi selezionare massimo 3 ruoli secondari'); return; }
+  const secondaryRoles = [
+    document.getElementById('epSecRole1').value,
+    document.getElementById('epSecRole2').value
+  ].filter(Boolean);
   
   // Peschiamo il nome dall'account di registrazione
   const fullName = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
