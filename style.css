@@ -17,6 +17,17 @@
   --orange: #ff9d57;
   --radius: 14px;
   --radius-sm: 8px;
+  --role-developer: #b057ff;
+  --role-designer: #ff5757;
+  --role-musician: #ff9d57;
+  --role-visual: #c8ff57;
+  --role-writer: #57b4ff;
+  --role-strategist: #e0e0e0;
+  --role-director: #57ffe0;
+  --role-scientist: #ff57b4;
+  --role-finance: #57ffb4;
+  --role-architect: #ffd557;
+  --role-other: #9896a0;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -157,20 +168,6 @@ nav {
   background: var(--surface);
   overflow: hidden;
 }
-.stat-item {
-  flex: 1; max-width: 200px;
-  padding: 28px 20px; text-align: center;
-  border-right: 1px solid var(--border);
-}
-.stat-item:last-child { border-right: none; }
-.stat-num {
-  font-family: 'Syne', sans-serif;
-  font-size: 30px; font-weight: 800;
-  color: var(--text); letter-spacing: -1px;
-}
-.stat-num span { color: var(--accent); }
-.stat-label { font-size: 12px; color: var(--text3); margin-top: 4px; letter-spacing: .3px; }
-
 /* SEARCH */
 .search-wrap {
   position: relative; z-index: 1;
@@ -651,20 +648,6 @@ nav {
 }
 .toast.show { transform: translateY(0); opacity: 1; }
 
-/* ROLE COLORS */
-:root {
-  --role-developer: #b057ff;
-  --role-designer: #ff5757;
-  --role-musician: #ff9d57;
-  --role-visual: #c8ff57;
-  --role-writer: #57b4ff;
-  --role-strategist: #e0e0e0;
-  --role-director: #57ffe0;
-  --role-scientist: #ff57b4;
-  --role-finance: #57ffb4;
-  --role-architect: #ffd557;
-  --role-other: #9896a0;
-}
 .role-tag {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 3px 10px; border-radius: 100px;
@@ -700,7 +683,7 @@ nav {
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 .scroll-down-arrow {
-  color: #000;
+  color: var(--bg);
   font-size: 24px;
   font-weight: bold;
   user-select: none;
@@ -725,7 +708,6 @@ nav {
   .hero { padding: 50px 20px 40px; }
   .hero h1 { font-size: 38px; }
   .stats-bar { flex-wrap: wrap; }
-  .stat-item { min-width: 50%; border-right: none; border-bottom: 1px solid var(--border); }
   .main { grid-template-columns: 1fr; padding: 24px 16px 60px; }
   /* FASE 7: Sidebar mobile 🟡 (reso visibile su mobile) */
   .sidebar { display: flex; order: -1; margin-top: 0; margin-bottom: 24px; flex-direction: row; flex-wrap: wrap; gap: 16px; }
