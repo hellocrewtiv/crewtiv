@@ -52,7 +52,8 @@ function formatProjectFromDB(p, roleMap = {}) {
     category: p.category, status: p.status,
     desc: p.description || '', tags: p.tags || [],
     views: p.views||0, proposals: p.proposals||0, likes: p.likes||0, collabs: [],
-    collab_type: p.collab_type || '', isReal: true, author_id: p.author_id, created_at: p.created_at
+    collab_type: p.collab_type || '', isReal: true, author_id: p.author_id, created_at: p.created_at,
+    cover_image: p.cover_image || null
   };
 }
 
@@ -137,6 +138,7 @@ function renderProjects(list, containerId='projectsList') {
     d.onclick = () => openProjectById(p.id);
 
     d.innerHTML = `
+      ${p.cover_image?`<img class="pcard-cover" src="${sanitize(p.cover_image)}" alt="" loading="lazy" onerror="this.style.display='none'">`:''}
       ${p.featured?`<div class="featured-label">${t.featured_label}</div>`:''}
       <div class="pcard-top">
         <div class="pcard-author">
@@ -518,6 +520,7 @@ async function submitNewProject() {
   const desc = document.getElementById('nDesc').value;
   if (!title||!cat||!desc) { showToast('⚠️ Compila i campi obbligatori'); return; }
   const tags = document.getElementById('nTags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const cover_image = document.getElementById('nImage').value.trim() || null;
   const name = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
   const btn = document.querySelector('#newProjectModal .btn-accent');
   btn.disabled = true; btn.textContent = 'Pubblicazione…';
@@ -527,13 +530,14 @@ async function submitNewProject() {
     tags: tags.length ? tags : ['Nuovo'],
     author_id: currentUser.id,
     author_name: name,
-    collab_type: document.getElementById('nCollab').value
+    collab_type: document.getElementById('nCollab').value,
+    cover_image
   }).select().single();
   btn.disabled = false; btn.textContent = 'Pubblica e registra ✦';
   if (error) { showToast('❌ Errore: ' + error.message); return; }
   closeModal('newProjectModal');
   showToast('🎉 Progetto pubblicato e registrato!');
-  ['nTitle','nDesc','nTags'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['nTitle','nDesc','nTags','nImage'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   await loadRealProjects();
 }
 
@@ -1016,6 +1020,7 @@ function openEditProject(id) {
   document.getElementById('eStatus').value = p.status;
   document.getElementById('eDesc').value = p.desc;
   document.getElementById('eTags').value = p.tags.join(', ');
+  document.getElementById('eImage').value = p.cover_image || '';
   const epModal = document.getElementById('editProjectModal');
 epModal.classList.add('open');
 trapFocus(epModal);
@@ -1030,23 +1035,25 @@ async function submitEditProject() {
   const status = document.getElementById('eStatus').value;
   const desc = document.getElementById('eDesc').value;
   const tags = document.getElementById('eTags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const cover_image = document.getElementById('eImage').value.trim() || null;
   const btn = document.querySelector('#editProjectModal .btn-accent');
   btn.disabled = true; btn.textContent = 'Salvataggio…';
-  
-  const { error } = await _supabase.from('projects').update({ title, status, description: desc, tags }).eq('id', editingProjectId);
-  
+
+  const { error } = await _supabase.from('projects').update({ title, status, description: desc, tags, cover_image }).eq('id', editingProjectId);
+
   btn.disabled = false; btn.textContent = 'Salva modifiche ✦';
   if (error) { showToast('❌ Errore: ' + error.message); return; }
-  
+
   closeModal('editProjectModal');
   showToast('✅ Progetto aggiornato!');
-  
+
   const idx = realProjects.findIndex(x => String(x.id) === String(editingProjectId));
   if (idx !== -1) {
     if(title) realProjects[idx].title = title;
     realProjects[idx].status = status;
     realProjects[idx].desc = desc;
     realProjects[idx].tags = tags;
+    realProjects[idx].cover_image = cover_image;
   }
   
   if(document.getElementById('page-profile').classList.contains('active')) {
