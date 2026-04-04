@@ -304,6 +304,8 @@ nav {
 .s-progress::before { background: var(--orange); }
 .s-closed { background: rgba(255,87,87,0.1); color: var(--red); }
 .s-closed::before { background: var(--red); }
+.s-completed { background: rgba(87,180,255,0.1); color: var(--blue); }
+.s-completed::before { background: var(--blue); }
 
 .featured-label {
   font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
