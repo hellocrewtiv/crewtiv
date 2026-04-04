@@ -1368,6 +1368,66 @@ function switchTab(tab) {
   document.getElementById('authSubmitBtn').textContent = tab === 'login' ? 'Accedi' : 'Crea account';
   document.getElementById('authSubtitle').textContent = tab === 'login' ? 'Bentornato su Crewtiv!' : 'Crea il tuo account gratuito';
   document.getElementById('authError').textContent = '';
+  const forgotLink = document.getElementById('forgotPasswordLink');
+  if (forgotLink) forgotLink.style.display = tab === 'login' ? 'block' : 'none';
+}
+
+async function resetPassword() {
+  const email = document.getElementById('authEmail').value.trim();
+  if (!email) {
+    document.getElementById('authError').textContent = 'Inserisci la tua email per recuperare la password.';
+    return;
+  }
+  const { error } = await _supabase.auth.resetPasswordForEmail(email);
+  if (error) {
+    document.getElementById('authError').textContent = error.message;
+    return;
+  }
+  document.getElementById('authError').textContent = '';
+  showToast('✅ Email di recupero inviata! Controlla la tua casella.');
+}
+
+async function deleteAccount() {
+  if (!currentUser) return;
+  const section = document.getElementById('deleteAccountSection');
+  if (!section) return;
+  // Mostra conferma inline
+  section.innerHTML = `
+    <div style="padding:12px;background:rgba(255,87,87,0.08);border:1px solid rgba(255,87,87,0.2);border-radius:10px;">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:10px;">⚠️ Sei sicuro? Questa azione è <strong style="color:var(--red)">irreversibile</strong>. Tutti i tuoi dati verranno eliminati.</div>
+      <div style="display:flex;gap:8px;">
+        <button id="confirmDeleteBtn" onclick="confirmDeleteAccount()" style="font-size:12px;padding:5px 12px;border-radius:6px;background:var(--red);border:none;color:#fff;cursor:pointer;font-family:'Instrument Sans',sans-serif;font-weight:600;">Conferma eliminazione</button>
+        <button onclick="resetDeleteSection()" style="font-size:12px;padding:5px 12px;border-radius:6px;background:transparent;border:1px solid var(--border2);color:var(--text2);cursor:pointer;font-family:'Instrument Sans',sans-serif;">Annulla</button>
+      </div>
+    </div>
+  `;
+}
+
+function resetDeleteSection() {
+  const section = document.getElementById('deleteAccountSection');
+  if (section) section.innerHTML = `<a href="#" onclick="deleteAccount(); return false;" style="font-size:12px; color:var(--red); opacity:0.5; text-decoration:none;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">Elimina account</a>`;
+}
+
+async function confirmDeleteAccount() {
+  if (!currentUser) return;
+  const btn = document.getElementById('confirmDeleteBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Eliminazione…'; }
+
+  const uid = currentUser.id;
+  // Elimina dati dalle tabelle pubbliche
+  await _supabase.from('reviews').delete().or(`reviewer_id.eq.${uid},reviewee_id.eq.${uid}`);
+  await _supabase.from('proposals').delete().or(`applicant_id.eq.${uid},owner_id.eq.${uid}`);
+  await _supabase.from('saved_projects').delete().eq('user_id', uid);
+  await _supabase.from('projects').delete().eq('author_id', uid);
+  await _supabase.from('profiles').delete().eq('id', uid);
+
+  // Elimina utente da auth.users tramite funzione server-side
+  const { error } = await _supabase.rpc('delete_user');
+  if (error) { showToast('❌ Errore: ' + error.message); resetDeleteSection(); return; }
+
+  await _supabase.auth.signOut();
+  closeModal('editProfileModal');
+  showToast('✅ Account eliminato.');
 }
 
 async function submitAuth() {
