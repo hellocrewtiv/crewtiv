@@ -334,6 +334,14 @@ nav {
 .pcard-stats { display: flex; gap: 16px; }
 .pstat { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 4px; }
 .pcard-action .btn-accent { padding: 7px 14px; font-size: 12px; border-radius: 7px; }
+.pcard-cover {
+  width: calc(100% + 44px);
+  margin: -22px -22px 18px -22px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: var(--radius) var(--radius) 0 0;
+  display: block;
+}
 
 /* SIDEBAR */
 .sidebar { display: flex; flex-direction: column; gap: 20px; }
