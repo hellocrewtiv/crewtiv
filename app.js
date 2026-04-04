@@ -40,13 +40,14 @@ function sanitize(str) {
     .replace(/'/g, '&#x27;');
 }
 
-function formatProjectFromDB(p) {
+function formatProjectFromDB(p, roleMap = {}) {
   const name = p.author_name || 'Anonimo';
+  const roleColor = getRoleColor(roleMap[p.author_id]) || getColorForString(name);
   return {
     id: p.id, featured: false,
     title: p.title, author: name,
     initials: name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),
-    color: getColorForString(name),
+    color: roleColor,
     date: new Date(p.created_at).toLocaleDateString('it-IT', {day:'numeric',month:'short',year:'numeric'}),
     category: p.category, status: p.status,
     desc: p.description || '', tags: p.tags || [],
@@ -202,8 +203,13 @@ async function loadRealProjects(isAppend = false) {
   }
   
   if (data.length < PROJ_PER_PAGE) hasMoreProjects = false;
-  
-  const formatted = data.map(p => formatProjectFromDB(p));
+
+  const authorIds = [...new Set(data.map(p => p.author_id).filter(Boolean))];
+  const { data: profilesData } = await _supabase.from('profiles').select('id, primary_role').in('id', authorIds);
+  const roleMap = {};
+  (profilesData || []).forEach(pr => { roleMap[pr.id] = pr.primary_role; });
+
+  const formatted = data.map(p => formatProjectFromDB(p, roleMap));
 
   realProjects = isAppend ? [...realProjects, ...formatted] : formatted;
   
