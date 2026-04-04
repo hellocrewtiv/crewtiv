@@ -106,9 +106,9 @@
   
   <div class="stats-bar">
     <div style="width:100%;text-align:center;padding:28px 20px">
-      <span style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text);letter-spacing:-0.5px">Pubblica il tuo progetto.</span>
-      <span style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text3);letter-spacing:-0.5px"> Trova il tuo team.</span>
-      <span style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--accent);letter-spacing:-0.5px"> Costruisci qualcosa di grande.</span>
+      <span id="statsBar1" style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text);letter-spacing:-0.5px">Pubblica il tuo progetto.</span>
+      <span id="statsBar2" style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text3);letter-spacing:-0.5px"> Trova il tuo team.</span>
+      <span id="statsBar3" style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--accent);letter-spacing:-0.5px"> Costruisci qualcosa di grande.</span>
     </div>
   </div>
 
@@ -189,8 +189,8 @@
 
 <section id="page-profile" class="page">
   <div id="profileCompleteBanner" style="display:none;background:var(--accent-dim);border-bottom:1px solid rgba(200,255,87,0.2);padding:12px 32px;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:1">
-    <span style="font-size:13px;color:var(--text2)">✦ <strong style="color:var(--text)">Completa il tuo profilo</strong> — aggiungi bio e skills per farti notare dai creatori!</span>
-    <button class="btn btn-accent btn-sm" onclick="openEditProfile()">Completa ora →</button>
+    <span id="profileCompleteBannerText" style="font-size:13px;color:var(--text2)">✦ <strong style="color:var(--text)">Completa il tuo profilo</strong> — aggiungi bio e skills per farti notare dai creatori!</span>
+    <button id="profileCompleteBtn" class="btn btn-accent btn-sm" onclick="openEditProfile()">Completa ora →</button>
   </div>
   
   <section class="profile-hero">
@@ -211,27 +211,27 @@
     <div class="dash-kpis" style="max-width: 1100px; margin: 32px auto 0;">
       <div class="kpi">
         <div class="kpi-val" id="dashTotalProjects">0</div>
-        <div class="kpi-label">Progetti Creati</div>
+        <div class="kpi-label" id="kpiLabelProjects">Progetti Creati</div>
       </div>
       <div class="kpi">
         <div class="kpi-val" id="dashProposalsReceived">0</div>
-        <div class="kpi-label">In attesa</div>
+        <div class="kpi-label" id="kpiLabelPending">In attesa</div>
       </div>
       <div class="kpi">
         <div class="kpi-val" id="dashProposalsSent">0</div>
-        <div class="kpi-label">Le tue Candidature</div>
+        <div class="kpi-label" id="kpiLabelSent">Le tue Candidature</div>
       </div>
     </div>
   </section>
 
 <div class="profile-content">
     <section>
-      <h3 class="dash-section-title">Le mie Candidature Inviate</h3>
+      <h3 class="dash-section-title" id="dashTitleSent">Le mie Candidature Inviate</h3>
       <div class="proposal-list" id="sentProposalList" style="margin-bottom: 32px;">
         <div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">Non ti sei ancora candidato a nessun progetto.</div>
       </div>
 
-      <h3 class="dash-section-title">I miei progetti pubblicati</h3>
+      <h3 class="dash-section-title" id="dashTitleProjects">I miei progetti pubblicati</h3>
       <div id="profileProjectsList" class="projects-list"></div>
       <div id="profileEmpty" style="display:none;" class="empty-state">
         Nessun progetto ancora — <span style="color:var(--accent);cursor:pointer" onclick="openNewProject()">pubblica il tuo primo!</span>
@@ -239,14 +239,14 @@
     </section>
 
     <aside>
-      <h3 class="dash-section-title">♥️ Progetti che ti piacciono</h3>
+      <h3 class="dash-section-title" id="dashTitleLiked">♥️ Progetti che ti piacciono</h3>
       <div class="scard" style="padding:16px; margin-bottom: 24px;">
         <div class="projects-list" id="dashSavedProjectsList" style="gap:10px;">
            <div style="color:var(--text3); font-size:13px;">Non hai ancora salvato nessun progetto.</div>
         </div>
       </div>
 
-      <h3 class="dash-section-title dash-section-title-accent">🔔 Richieste di Collaborazione</h3>
+      <h3 class="dash-section-title dash-section-title-accent" id="dashTitleRequests">🔔 Richieste di Collaborazione</h3>
       <div class="proposal-list" id="proposalList" style="margin-bottom: 24px;">
         <div style="color:var(--text3); font-size:13px; padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;">Nessuna proposta in attesa al momento.</div>
       </div>
@@ -257,7 +257,7 @@
 <section id="page-messages" class="page">
   <div class="messages-wrap">
     <div class="msg-list">
-      <div class="msg-list-head">Conversazioni</div>
+      <div class="msg-list-head" id="msgListHead">Conversazioni</div>
       <div id="contactsList">
         <div style="padding:20px; color:var(--text3); font-size:13px;">Caricamento conversazioni...</div>
       </div>
@@ -274,7 +274,7 @@
         </div>
       <div class="chat-input-row">
         <input class="chat-input" id="chatInput" type="text" placeholder="Scrivi un messaggio…" onkeydown="if(event.key==='Enter')sendMessage()">
-        <button class="chat-send" onclick="sendMessage()">Invia ↑</button>
+        <button id="chatSendBtn" class="chat-send" onclick="sendMessage()">Invia ↑</button>
       </div>
     </div>
     <div id="noChatSelected" style="flex:1; display:flex; align-items:center; justify-content:center; color:var(--text3); font-size:14px;">
@@ -301,7 +301,7 @@
       <p class="modal-desc" id="mDesc"></p>
       <div class="pcard-tags" id="mTags" style="margin-bottom:18px"></div>
       <div id="mCollabSection" style="margin-bottom:20px">
-        <div class="msec-title">COLLABORATORI</div>
+        <div class="msec-title" id="mCollabTitle">COLLABORATORI</div>
         <div class="collab-list" id="mCollabs"></div>
       </div>
       <div id="mProposeSection">
@@ -406,7 +406,7 @@
       <button class="modal-close" onclick="closeModal('editProjectModal')" aria-label="Chiudi">✕</button>
     </div>
     <div class="modal-body">
-      <div class="info-box">
+      <div id="editCatNote" class="info-box">
         ℹ️ La categoria non è modificabile — fa parte della registrazione originale.
       </div>
       <div class="form-group">
@@ -550,7 +550,7 @@
   <div class="modal" style="max-width: 480px;">
     <div class="modal-head">
       <div>
-        <div class="modal-label">Profilo Talento</div>
+        <div class="modal-label" id="tModLabel">Profilo Talento</div>
         <div class="modal-title" id="tModName"></div>
       </div>
       <button class="modal-close" onclick="closeModal('talentModal')" aria-label="Chiudi">✕</button>
@@ -588,17 +588,33 @@
 
 <section id="page-about" class="page">
   <div style="max-width:720px;margin:0 auto;padding:60px 32px 100px;position:relative;z-index:1">
-    <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Chi siamo</div>
-    <h2 style="font-family:'Syne',sans-serif;font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:32px;line-height:1.1">Ogni progetto creativo merita di trovare le persone giuste.</h2>
-    <div style="font-size:15px;color:var(--text2);line-height:1.9;display:flex;flex-direction:column;gap:20px;font-weight:300">
-      <p>Crewtiv nasce da un'idea semplice: ogni progetto creativo merita di trovare le persone giuste per prendere vita.</p>
-      <p>Siamo una piattaforma dove artisti, sviluppatori, architetti, musicisti e creativi di ogni tipo possono pubblicare le loro idee, registrarle con data e autore e trovare collaboratori che condividono la stessa visione.</p>
-      <p>Ogni progetto pubblicato su Crewtiv è tuo — registrato con data e autore. Perché le idee hanno un valore, e chi le ha avute merita il riconoscimento.</p>
-      <p>Siamo appena nati. Stiamo costruendo qualcosa di grande, un progetto alla volta.</p>
+    <div id="aboutIT">
+      <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Chi siamo</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:32px;line-height:1.1">Ogni progetto creativo merita di trovare le persone giuste.</h2>
+      <div style="font-size:15px;color:var(--text2);line-height:1.9;display:flex;flex-direction:column;gap:20px;font-weight:300">
+        <p>Crewtiv nasce da un'idea semplice: ogni progetto creativo merita di trovare le persone giuste per prendere vita.</p>
+        <p>Siamo una piattaforma dove artisti, sviluppatori, architetti, musicisti e creativi di ogni tipo possono pubblicare le loro idee, registrarle con data e autore e trovare collaboratori che condividono la stessa visione.</p>
+        <p>Ogni progetto pubblicato su Crewtiv è tuo — registrato con data e autore. Perché le idee hanno un valore, e chi le ha avute merita il riconoscimento.</p>
+        <p>Siamo appena nati. Stiamo costruendo qualcosa di grande, un progetto alla volta.</p>
+      </div>
+      <div style="margin-top:40px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:14px">
+        <div style="font-size:13px;color:var(--text3);margin-bottom:8px">Contatti</div>
+        <a href="mailto:hello.crewtiv@gmail.com" style="color:var(--accent);font-size:14px;font-weight:500;text-decoration:none">hello.crewtiv@gmail.com</a>
+      </div>
     </div>
-    <div style="margin-top:40px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:14px">
-      <div style="font-size:13px;color:var(--text3);margin-bottom:8px">Contatti</div>
-      <a href="mailto:hello.crewtiv@gmail.com" style="color:var(--accent);font-size:14px;font-weight:500;text-decoration:none">hello.crewtiv@gmail.com</a>
+    <div id="aboutEN" style="display:none">
+      <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px">About us</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:32px;line-height:1.1">Every creative project deserves to find the right people.</h2>
+      <div style="font-size:15px;color:var(--text2);line-height:1.9;display:flex;flex-direction:column;gap:20px;font-weight:300">
+        <p>Crewtiv was born from a simple idea: every creative project deserves to find the right people to come to life.</p>
+        <p>We are a platform where artists, developers, architects, musicians and creatives of all kinds can publish their ideas, register them with date and author, and find collaborators who share the same vision.</p>
+        <p>Every project published on Crewtiv is yours — registered with date and author. Because ideas have value, and those who had them deserve recognition.</p>
+        <p>We just launched. We're building something great, one project at a time.</p>
+      </div>
+      <div style="margin-top:40px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:14px">
+        <div style="font-size:13px;color:var(--text3);margin-bottom:8px">Contact</div>
+        <a href="mailto:hello.crewtiv@gmail.com" style="color:var(--accent);font-size:14px;font-weight:500;text-decoration:none">hello.crewtiv@gmail.com</a>
+      </div>
     </div>
   </div>
 </section>
