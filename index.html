@@ -529,6 +529,9 @@
         <input class="form-input" id="epPortfolio" placeholder="Portfolio personale (https://…)" type="url" style="margin-top:8px">
       </div>
       <button class="btn btn-accent" style="margin-top:4px" onclick="submitEditProfile()" data-i18n="edit_prof_btn">Salva profilo ✦</button>
+      <div id="deleteAccountSection" style="margin-top:24px; padding-top:16px; border-top:1px solid var(--border2);">
+        <a href="#" onclick="deleteAccount(); return false;" style="font-size:12px; color:var(--red); opacity:0.5; text-decoration:none;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">Elimina account</a>
+      </div>
     </div>
   </div>
 </div>
@@ -559,6 +562,9 @@
     <input class="auth-input" id="authName" type="text" placeholder="Il tuo nome (es. Marco Ferretti)" style="display:none">
     <button class="auth-btn" id="authSubmitBtn" onclick="submitAuth()">Accedi</button>
     <div class="auth-error" id="authError"></div>
+    <div id="forgotPasswordLink" style="text-align:right; margin-top:-4px; margin-bottom:4px;">
+      <a href="#" onclick="resetPassword(); return false;" style="font-size:12px; color:var(--text3); text-decoration:none;" onmouseover="this.style.color='var(--text2)'" onmouseout="this.style.color='var(--text3)'">Password dimenticata?</a>
+    </div>
     <div class="auth-note" id="authNote">Creando un account accetti la <a href="#" onclick="closeAuth(); showPage('privacy')" style="color:var(--accent); text-decoration:none;">Privacy Policy</a>.</div>
   </div>
 </div>
