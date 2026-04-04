@@ -693,7 +693,7 @@ async function loadTalents() {
     container.innerHTML = `
       <div style="grid-column: 1/-1; background:var(--accent-dim);border:1px solid rgba(200,255,87,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px">
         <span style="font-size:16px">✦</span>
-        <span style="font-size:13px;color:var(--text2)">Questi sono <strong style="color:var(--text)">profili di esempio</strong>. <span style="color:var(--accent);cursor:pointer;font-weight:500" onclick="openAuth('register')">Registrati per creare il tuo →</span></span>
+        <span style="font-size:13px;color:var(--text2)" id="talentsDemoBanner">${i18n[currentLang].talents_demo_text} <span style="color:var(--accent);cursor:pointer;font-weight:500" onclick="openAuth('register')">${i18n[currentLang].talents_demo_cta}</span></span>
       </div>
       <div id="talentsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; width: 100%; grid-column: 1/-1;"></div>
     `;
@@ -712,7 +712,7 @@ function renderTalents(list, targetId = 'talentsList') {
   container.innerHTML = '';
   
   if (!list.length) {
-    container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text3);">Nessun talento corrisponde alla ricerca.</div>';
+    container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text3);">${i18n[currentLang].no_talents_found}</div>`;
     return;
   }
   
@@ -746,14 +746,14 @@ function renderTalents(list, targetId = 'talentsList') {
       const btn = document.getElementById('tModContactBtn');
       if (currentUser && t.id && t.id !== currentUser.id) {
          btn.style.display = 'flex';
-         btn.textContent = 'Invita in un progetto ✦';
+         btn.textContent = i18n[currentLang].talent_invite;
          btn.onclick = () => {
              closeModal('talentModal');
-             showToast('Funzionalità in arrivo! Presto potrai inviare messaggi diretti ai talenti.');
+             showToast(i18n[currentLang].talent_coming_soon);
          };
       } else if (!currentUser) {
          btn.style.display = 'flex';
-         btn.textContent = 'Accedi per contattare';
+         btn.textContent = i18n[currentLang].talent_login_to_contact;
          btn.onclick = () => { closeModal('talentModal'); openAuth('login'); };
       } else {
          btn.style.display = 'none'; // È il proprio profilo
@@ -770,7 +770,7 @@ function renderTalents(list, targetId = 'talentsList') {
         </div>
       </div>
       <div style="font-size:13px; color:var(--text2); line-height:1.6; margin-bottom:16px; font-weight:300;">
-        ${t.bio ? sanitize(t.bio.length > 120 ? t.bio.slice(0, 120) + '...' : t.bio) : 'Nessuna bio inserita.'}
+        ${t.bio ? sanitize(t.bio.length > 120 ? t.bio.slice(0, 120) + '...' : t.bio) : i18n[currentLang].no_bio}
       </div>
       <div class="pcard-tags" style="margin-bottom:0;">
         ${(t.skills || []).map(s => `<span class="tag">${sanitize(s)}</span>`).join('')}
@@ -1414,6 +1414,15 @@ const i18n = {
     about_p3: 'Ogni progetto pubblicato su Crewtiv è tuo — registrato con data e autore. Perché le idee hanno un valore, e chi le ha avute merita il riconoscimento.',
     about_p4: 'Siamo appena nati. Stiamo costruendo qualcosa di grande, un progetto alla volta.',
     about_contact: 'Contatti',
+    cat_game: '🎮 Videogiochi', cat_arch: '🏛 Architettura', cat_app: '📱 App',
+    cat_art: '🎨 Arte & Design', cat_music: '🎵 Musica', cat_science: '🔬 Scienza',
+    cat_film: '🎬 Film', cat_hardware: '🔧 Hardware', cat_other: '✦ Altro',
+    no_talents_found: 'Nessun talento corrisponde alla ricerca.',
+    no_bio: 'Nessuna bio inserita.',
+    talent_coming_soon: 'Funzionalità in arrivo! Presto potrai inviare messaggi diretti ai talenti.',
+    talent_login_to_contact: 'Accedi per contattare',
+    talents_demo_text: 'Questi sono <strong style="color:var(--text)">profili di esempio</strong>.',
+    talents_demo_cta: 'Registrati per creare il tuo →',
   },
   en: {
     nav_home: 'Home', nav_messages: 'Messages', nav_profile: 'Profile', nav_about: 'About',
@@ -1501,6 +1510,15 @@ const i18n = {
     about_p3: 'Every project published on Crewtiv is yours — registered with date and author. Because ideas have value, and those who had them deserve recognition.',
     about_p4: "We just launched. We're building something great, one project at a time.",
     about_contact: 'Contact',
+    cat_game: '🎮 Games', cat_arch: '🏛 Architecture', cat_app: '📱 App',
+    cat_art: '🎨 Art & Design', cat_music: '🎵 Music', cat_science: '🔬 Science',
+    cat_film: '🎬 Film', cat_hardware: '🔧 Hardware', cat_other: '✦ Other',
+    no_talents_found: 'No talents match your search.',
+    no_bio: 'No bio added.',
+    talent_coming_soon: 'Coming soon! You will be able to send direct messages to talents.',
+    talent_login_to_contact: 'Sign in to contact',
+    talents_demo_text: 'These are <strong style="color:var(--text)">example profiles</strong>.',
+    talents_demo_cta: 'Sign up to create yours →',
   }
 };
 
@@ -1660,7 +1678,18 @@ function applyLang() {
   const aboutEN = document.getElementById('aboutEN');
   if (aboutIT) aboutIT.style.display = currentLang === 'it' ? 'block' : 'none';
   if (aboutEN) aboutEN.style.display = currentLang === 'en' ? 'block' : 'none';
-  if(realProjects.length > 0) renderProjects(getFilteredProjects(realProjects), 'realProjectsList');
+  // Category filter pills
+  const catPills = document.querySelectorAll('.cat-pill');
+  const catLabels = [t.filter_all, t.cat_game, t.cat_arch, t.cat_app, t.cat_art, t.cat_music, t.cat_science, t.cat_film, t.cat_hardware, t.cat_other];
+  catPills.forEach((pill, i) => { if (catLabels[i]) pill.textContent = catLabels[i]; });
+  // Re-render projects (demo + real)
+  renderProjects(getFilteredProjects(projects), 'projectsList');
+  if (realProjects.length > 0) renderProjects(getFilteredProjects(realProjects), 'realProjectsList');
+  // Re-render dynamic pages if currently active
+  const activePage = document.querySelector('.page.active')?.id;
+  if (activePage === 'page-profile' && currentUser) loadUserProfile();
+  if (activePage === 'page-talents') loadTalents();
+  if (activePage === 'page-messages' && currentUser) loadMessages();
 }
 
 // Inizializza immediatamente la pagina corretta prima che il browser disegni lo schermo
