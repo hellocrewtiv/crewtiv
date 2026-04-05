@@ -348,17 +348,22 @@ function updateMetaTags(p) {
   setMeta('og:title', p.title + ' — Crewtiv');
   setMeta('og:description', desc);
   setMeta('og:url', window.location.href);
-  if (p.cover_image) setMeta('og:image', p.cover_image);
+  setMeta('og:image', p.cover_image || 'https://crewtiv.com/og-image.jpg');
 }
 
 function resetMetaTags() {
-  document.title = 'Crewtiv — Condividi la tua visione. Costruisci il tuo team.';
+  const isIT = currentLang === 'it';
+  document.title = isIT
+    ? 'Crewtiv — Condividi la tua visione. Costruisci il tuo team.'
+    : 'Crewtiv — Share your vision. Build your team.';
   const setMeta = (prop, content) => {
     const el = document.querySelector(`meta[property="${prop}"]`);
     if (el) el.setAttribute('content', content);
   };
-  setMeta('og:title', 'Crewtiv — Condividi la tua visione.');
-  setMeta('og:description', 'Trova i creativi giusti per il tuo progetto. Unisciti alla piattaforma in beta.');
+  setMeta('og:title', isIT ? 'Crewtiv — Condividi la tua visione.' : 'Crewtiv — Share your vision.');
+  setMeta('og:description', isIT
+    ? 'Trova i creativi giusti per il tuo progetto. Unisciti alla piattaforma in beta.'
+    : 'Find the right creatives for your project. Join the platform in beta.');
   setMeta('og:url', window.location.origin + window.location.pathname);
   setMeta('og:image', 'https://crewtiv.com/og-image.jpg');
 }
@@ -1059,9 +1064,22 @@ function renderTalents(list, targetId = 'talentsList', append = false) {
   });
 }
 
-function applyTalentFilters() {
-  const q = (document.getElementById('searchTalentInput')?.value || '').toLowerCase();
-  const filtered = allTalents.filter(t => {
+async function applyTalentFilters() {
+  const q = (document.getElementById('searchTalentInput')?.value || '').toLowerCase().trim();
+  const btn = document.getElementById('loadMoreTalentsBtn');
+
+  if (!q) {
+    // Ricerca svuotata: ripristina vista paginata
+    if (btn) btn.style.display = hasMoreTalents ? 'block' : 'none';
+    renderTalents(allTalents, 'talentsGrid');
+    return;
+  }
+
+  // Ricerca attiva: nasconde "Carica altri" (Bug 2) e interroga tutto il DB (Bug 1)
+  if (btn) btn.style.display = 'none';
+  const { data } = await _supabase.from('profiles').select('*').order('full_name', { ascending: true });
+  const source = (data && data.length > 0) ? data : allTalents;
+  const filtered = source.filter(t => {
     const name = (t.full_name || '').toLowerCase();
     const title = (t.title || '').toLowerCase();
     const bio = (t.bio || '').toLowerCase();
