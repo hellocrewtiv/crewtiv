@@ -98,6 +98,7 @@ let likedProjectIds = [];
 let currentUser = null;
 let editingProjectId = null;
 let authMode = 'login';
+let _pendingSimilarProject = null;
 let messageSubscription = null; // FASE 9: Realtime subscription
 
 // Variabili per Paginazione (FASE 5)
@@ -627,15 +628,55 @@ npModal.classList.add('open');
 trapFocus(npModal);
 }
 
-async function submitNewProject() {
-  if (!currentUser) { openAuth('login'); return; }
-  const title = document.getElementById('nTitle').value;
-  const cat = document.getElementById('nCat').value;
-  const desc = document.getElementById('nDesc').value;
-  if (!title||!cat||!desc) { showToast('⚠️ Compila i campi obbligatori'); return; }
-  const tags = document.getElementById('nTags').value.split(',').map(t=>t.trim()).filter(Boolean);
-  const cover_image = document.getElementById('nImage').value.trim() || null;
-  const name = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
+function _similarityScore(titleA, tagsA, titleB, tagsB) {
+  const tokenize = str => String(str||'').toLowerCase().split(/[\s,]+/).filter(w=>w.length>3);
+  const jaccard = (setA, setB) => {
+    const a = new Set(setA), b = new Set(setB);
+    if (!a.size && !b.size) return 1;
+    const inter = [...a].filter(x=>b.has(x)).length;
+    const union = new Set([...a,...b]).size;
+    return union ? inter/union : 0;
+  };
+  const titleScore = jaccard(tokenize(titleA), tokenize(titleB));
+  const tagsANorm = (tagsA||[]).map(t=>t.toLowerCase().trim()).filter(Boolean);
+  const tagsBNorm = (tagsB||[]).map(t=>t.toLowerCase().trim()).filter(Boolean);
+  if (!tagsANorm.length && !tagsBNorm.length) return titleScore;
+  const tagsScore = jaccard(tagsANorm, tagsBNorm);
+  return 0.4 * titleScore + 0.6 * tagsScore;
+}
+
+function _openSimilarityModal(similarProject, onProceed) {
+  const t = i18n[currentLang];
+  _pendingSimilarProject = similarProject;
+  document.getElementById('simAttentionLabel').textContent = t.sim_attention_label;
+  document.getElementById('simModalTitle').textContent = t.similarity_title;
+  document.getElementById('simModalMsg').textContent = t.similarity_msg;
+  document.getElementById('simModalFoundLabel').textContent = t.sim_found_label;
+  document.getElementById('simProjectTitle').textContent = similarProject.title;
+  const btnView = document.getElementById('btnViewExisting');
+  btnView.textContent = t.btn_view_existing;
+  btnView.onclick = () => { closeModal('similarityModal'); closeModal('newProjectModal'); openProjectById(_pendingSimilarProject.id); };
+  const btnProceed = document.getElementById('btnProceedAnyway');
+  btnProceed.textContent = t.btn_proceed_anyway;
+  btnProceed.onclick = () => { closeModal('similarityModal'); _openFinalWarningModal(onProceed); };
+  document.getElementById('similarityModal').classList.add('open');
+  trapFocus(document.getElementById('similarityModal'));
+}
+
+function _openFinalWarningModal(onConfirm) {
+  const t = i18n[currentLang];
+  document.getElementById('finalWarnLabel').textContent = t.warn_label;
+  document.getElementById('finalWarnTitle').textContent = t.warning_final_title;
+  document.getElementById('finalWarnMsg').textContent = t.warning_final_msg;
+  document.getElementById('btnCancelFinal').textContent = t.btn_cancel;
+  const btnConfirm = document.getElementById('btnFinalConfirm');
+  btnConfirm.textContent = t.btn_final_confirm;
+  btnConfirm.onclick = () => { closeModal('finalWarningModal'); onConfirm(); };
+  document.getElementById('finalWarningModal').classList.add('open');
+  trapFocus(document.getElementById('finalWarningModal'));
+}
+
+async function _doInsertProject(title, desc, cat, tags, cover_image, name) {
   const btn = document.querySelector('#newProjectModal .btn-accent');
   btn.disabled = true; btn.textContent = 'Pubblicazione…';
   const { data, error } = await _supabase.from('projects').insert({
@@ -653,6 +694,30 @@ async function submitNewProject() {
   showToast('🎉 Progetto pubblicato e registrato!');
   ['nTitle','nDesc','nTags','nImage'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   await loadRealProjects();
+}
+
+async function submitNewProject() {
+  if (!currentUser) { openAuth('login'); return; }
+  const title = document.getElementById('nTitle').value;
+  const cat = document.getElementById('nCat').value;
+  const desc = document.getElementById('nDesc').value;
+  if (!title||!cat||!desc) { showToast('⚠️ Compila i campi obbligatori'); return; }
+  const tags = document.getElementById('nTags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const cover_image = document.getElementById('nImage').value.trim() || null;
+  const name = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
+
+  // Controllo similarità contro i progetti reali
+  const similarProject = realProjects.find(p =>
+    p.author_id !== currentUser.id &&
+    _similarityScore(title, tags, p.title, p.tags) > 0.7
+  );
+
+  if (similarProject) {
+    _openSimilarityModal(similarProject, () => _doInsertProject(title, desc, cat, tags, cover_image, name));
+    return;
+  }
+
+  await _doInsertProject(title, desc, cat, tags, cover_image, name);
 }
 
 
@@ -966,6 +1031,10 @@ function showPage(page) {
   if (page==='privacy') {
     document.getElementById('privacyIT').style.display = currentLang==='it' ? 'block' : 'none';
     document.getElementById('privacyEN').style.display = currentLang==='en' ? 'block' : 'none';
+  }
+  if (page==='tos') {
+    document.getElementById('tosIT').style.display = currentLang==='it' ? 'block' : 'none';
+    document.getElementById('tosEN').style.display = currentLang==='en' ? 'block' : 'none';
   }
   window.scrollTo(0,0);
 }
@@ -1652,6 +1721,19 @@ const i18n = {
     talent_login_to_contact: 'Accedi per contattare',
     talents_demo_text: 'Questi sono <strong style="color:var(--text)">profili di esempio</strong>.',
     talents_demo_cta: 'Registrati per creare il tuo →',
+    tos_nav: 'Termini di Servizio',
+    tos_title: 'Termini di Servizio e Regolamento',
+    similarity_title: 'Idea simile rilevata!',
+    similarity_msg: "Abbiamo trovato un progetto molto simile al tuo. Prima di procedere, che ne dici di dare un'occhiata e magari collaborare con l'autore originale?",
+    btn_view_existing: 'Vedi Progetto Esistente',
+    btn_proceed_anyway: 'Procedi comunque',
+    warning_final_title: '⚠️ AVVISO FINALE',
+    warning_final_msg: 'Attenzione: pubblicando un duplicato ti esponi a segnalazioni per plagio. Se il progetto verrà giudicato non originale, potrà essere rimosso definitivamente dal sistema senza preavviso. Confermi?',
+    btn_final_confirm: 'Sì, pubblica ora',
+    sim_attention_label: '⚠️ Attenzione',
+    sim_found_label: 'Progetto simile trovato',
+    warn_label: 'Avviso',
+    btn_cancel: 'Annulla',
   },
   en: {
     nav_home: 'Home', nav_messages: 'Messages', nav_profile: 'Profile', nav_about: 'About',
@@ -1748,6 +1830,19 @@ const i18n = {
     talent_login_to_contact: 'Sign in to contact',
     talents_demo_text: 'These are <strong style="color:var(--text)">example profiles</strong>.',
     talents_demo_cta: 'Sign up to create yours →',
+    tos_nav: 'Terms of Service',
+    tos_title: 'Terms of Service & Rules',
+    similarity_title: 'Similar idea detected!',
+    similarity_msg: 'We found a project very similar to yours. Before proceeding, how about taking a look and maybe collaborating with the original author?',
+    btn_view_existing: 'View Existing Project',
+    btn_proceed_anyway: 'Proceed anyway',
+    warning_final_title: '⚠️ FINAL WARNING',
+    warning_final_msg: 'Warning: by publishing a duplicate you expose yourself to plagiarism reports. If the project is judged non-original, it may be permanently removed from the system without notice. Confirm?',
+    btn_final_confirm: 'Yes, publish now',
+    sim_attention_label: '⚠️ Attention',
+    sim_found_label: 'Similar project found',
+    warn_label: 'Warning',
+    btn_cancel: 'Cancel',
   }
 };
 
@@ -1821,6 +1916,12 @@ function applyLang() {
   const privacyEN = document.getElementById('privacyEN');
   if (privacyIT) privacyIT.style.display = currentLang === 'it' ? 'block' : 'none';
   if (privacyEN) privacyEN.style.display = currentLang === 'en' ? 'block' : 'none';
+  const tosIT = document.getElementById('tosIT');
+  const tosEN = document.getElementById('tosEN');
+  if (tosIT) tosIT.style.display = currentLang === 'it' ? 'block' : 'none';
+  if (tosEN) tosEN.style.display = currentLang === 'en' ? 'block' : 'none';
+  const footerTos = document.getElementById('footerTos');
+  if (footerTos) footerTos.textContent = t.tos_nav;
   const sortOpts = document.querySelectorAll('.sort-select option');
   if (sortOpts[0]) sortOpts[0].textContent = t.sort_recent;
   if (sortOpts[1]) sortOpts[1].textContent = t.sort_popular;
