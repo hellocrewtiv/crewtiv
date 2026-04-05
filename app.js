@@ -100,11 +100,16 @@ let editingProjectId = null;
 let authMode = 'login';
 let _pendingSimilarProject = null;
 let messageSubscription = null; // FASE 9: Realtime subscription
+let notificationSubscription = null;
 
 // Variabili per Paginazione (FASE 5)
 let currentProjPage = 0;
 const PROJ_PER_PAGE = 5; // Quanti progetti caricare alla volta
 let hasMoreProjects = true;
+
+let currentTalentsPage = 0;
+const TALENTS_PER_PAGE = 9;
+let hasMoreTalents = true;
 
 function renderProjects(list, containerId='projectsList') {
   const el = document.getElementById(containerId);
@@ -333,6 +338,31 @@ function sortProjects(val) {
   }
 }
 
+function updateMetaTags(p) {
+  document.title = `${p.title} — Crewtiv`;
+  const setMeta = (prop, content) => {
+    const el = document.querySelector(`meta[property="${prop}"]`);
+    if (el) el.setAttribute('content', content);
+  };
+  const desc = p.desc ? p.desc.slice(0, 160) : 'Scopri questo progetto su Crewtiv.';
+  setMeta('og:title', p.title + ' — Crewtiv');
+  setMeta('og:description', desc);
+  setMeta('og:url', window.location.href);
+  if (p.cover_image) setMeta('og:image', p.cover_image);
+}
+
+function resetMetaTags() {
+  document.title = 'Crewtiv — Condividi la tua visione. Costruisci il tuo team.';
+  const setMeta = (prop, content) => {
+    const el = document.querySelector(`meta[property="${prop}"]`);
+    if (el) el.setAttribute('content', content);
+  };
+  setMeta('og:title', 'Crewtiv — Condividi la tua visione.');
+  setMeta('og:description', 'Trova i creativi giusti per il tuo progetto. Unisciti alla piattaforma in beta.');
+  setMeta('og:url', window.location.origin + window.location.pathname);
+  setMeta('og:image', 'https://crewtiv.com/og-image.jpg');
+}
+
 async function openProjectById(id) {
   currentProject = realProjects.find(p=> String(p.id) === String(id)) || projects.find(p=> String(p.id) === String(id));
   if (!currentProject) return;
@@ -340,6 +370,7 @@ async function openProjectById(id) {
   
   // FASE 6: Aggiornamento URL Hash
   window.history.pushState(null, '', '#project/' + id);
+  updateMetaTags(p);
 
   // Incrementa views reali in modo sicuro
   if (p && p.isReal && currentUser && p.author_id !== currentUser.id) {
@@ -866,27 +897,57 @@ const demoTalents = [
   { full_name: "Anna Pellegrini", title: "Paesaggista", bio: "Progettazione di spazi verdi sostenibili e integrazione architettonica.", skills: ["AutoCAD", "Botanica", "Sostenibilità"] }
 ];
 
-async function loadTalents() {
+async function loadTalents(reset = true) {
   const container = document.getElementById('talentsList');
-  container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text3);">${i18n[currentLang].loading_talents}</div>`;
-  
-  const { data, error } = await _supabase.from('profiles').select('*').order('full_name', { ascending: true });
-  if (error || !data || data.length === 0) {
+  const t = i18n[currentLang];
+  if (reset) {
+    currentTalentsPage = 0;
+    hasMoreTalents = true;
+    container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text3);">${t.loading_talents}</div>`;
+  }
+
+  const from = currentTalentsPage * TALENTS_PER_PAGE;
+  const to = from + TALENTS_PER_PAGE - 1;
+
+  const { data, error } = await _supabase.from('profiles').select('*').order('full_name', { ascending: true }).range(from, to);
+
+  if (reset && (error || !data || data.length === 0)) {
     allTalents = demoTalents;
     container.innerHTML = `
       <div style="grid-column: 1/-1; background:var(--accent-dim);border:1px solid rgba(200,255,87,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px">
         <span style="font-size:16px">✦</span>
-        <span style="font-size:13px;color:var(--text2)" id="talentsDemoBanner">${i18n[currentLang].talents_demo_text} <span style="color:var(--accent);cursor:pointer;font-weight:500" onclick="openAuth('register')">${i18n[currentLang].talents_demo_cta}</span></span>
+        <span style="font-size:13px;color:var(--text2)" id="talentsDemoBanner">${t.talents_demo_text} <span style="color:var(--accent);cursor:pointer;font-weight:500" onclick="openAuth('register')">${t.talents_demo_cta}</span></span>
       </div>
       <div id="talentsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; width: 100%; grid-column: 1/-1;"></div>
     `;
     renderTalents(allTalents, 'talentsGrid');
+    document.getElementById('loadMoreTalentsBtn').style.display = 'none';
     return;
   }
-  
-  allTalents = data;
-  container.innerHTML = `<div id="talentsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; width: 100%; grid-column: 1/-1;"></div>`;
-  renderTalents(allTalents, 'talentsGrid');
+
+  if (data && data.length > 0) {
+    if (reset) {
+      allTalents = data;
+      container.innerHTML = `<div id="talentsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; width: 100%; grid-column: 1/-1;"></div>`;
+    } else {
+      allTalents = [...allTalents, ...data];
+    }
+    renderTalents(data, 'talentsGrid', !reset);
+    hasMoreTalents = data.length === TALENTS_PER_PAGE;
+    currentTalentsPage++;
+  } else {
+    hasMoreTalents = false;
+  }
+
+  const btn = document.getElementById('loadMoreTalentsBtn');
+  if (btn) btn.style.display = hasMoreTalents ? 'block' : 'none';
+}
+
+async function loadMoreTalents() {
+  const btn = document.getElementById('loadMoreTalentsBtn');
+  if (btn) { btn.disabled = true; btn.textContent = i18n[currentLang].loading; }
+  await loadTalents(false);
+  if (btn) { btn.disabled = false; btn.textContent = i18n[currentLang].load_more; }
 }
 
 function renderSocialLinks(social_links) {
@@ -916,10 +977,10 @@ function renderSocialLinks(social_links) {
   return html ? `<div style="display:flex; gap:8px; margin-top:10px;">${html}</div>` : '';
 }
 
-function renderTalents(list, targetId = 'talentsList') {
+function renderTalents(list, targetId = 'talentsList', append = false) {
   const container = document.getElementById(targetId);
   if (!container) return;
-  container.innerHTML = '';
+  if (!append) container.innerHTML = '';
   
   if (!list.length) {
     container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text3);">${i18n[currentLang].no_talents_found}</div>`;
@@ -1384,6 +1445,7 @@ function closeModal(id) {
   }
   if (id === 'projectModal') {
     window.history.pushState(null, '', window.location.pathname);
+    resetMetaTags();
   }
 }
 function closeIfBg(e,id) { if(e.target===document.getElementById(id)) closeModal(id); }
@@ -1545,6 +1607,7 @@ function onLogin(user, isNewLogin = false) {
     applyFilters();
   });
   updateNavForUser(user);
+  subscribeToNotifications();
   if (isNewLogin) showToast('✅ Benvenuto su Crewtiv!');
 }
 
@@ -1598,8 +1661,29 @@ async function fetchNotifications() {
   }
 }
 
+function subscribeToNotifications() {
+  if (!currentUser) return;
+  if (notificationSubscription) {
+    _supabase.removeChannel(notificationSubscription);
+    notificationSubscription = null;
+  }
+  notificationSubscription = _supabase
+    .channel('notifications-' + currentUser.id)
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'proposals',
+      filter: `owner_id=eq.${currentUser.id}`
+    }, () => fetchNotifications())
+    .subscribe();
+}
+
 async function logout() {
   await _supabase.auth.signOut();
+  if (notificationSubscription) {
+    _supabase.removeChannel(notificationSubscription);
+    notificationSubscription = null;
+  }
   currentUser = null;
   likedProjectIds = [];
   updateNavForUser(null);
