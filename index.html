@@ -587,6 +587,48 @@
   </div>
 </div>
 
+<div class="overlay" id="similarityModal" onclick="closeIfBg(event,'similarityModal')">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-head">
+      <div>
+        <div class="modal-label" id="simAttentionLabel">⚠️ Attenzione</div>
+        <div class="modal-title" id="simModalTitle"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('similarityModal')" aria-label="Chiudi">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:16px" id="simModalMsg"></p>
+      <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:14px;margin-bottom:24px">
+        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px" id="simModalFoundLabel">Progetto simile trovato</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text)" id="simProjectTitle"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn-accent" id="btnViewExisting" style="justify-content:center;width:100%"></button>
+        <button class="btn btn-ghost" id="btnProceedAnyway" style="justify-content:center;width:100%"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="finalWarningModal" onclick="closeIfBg(event,'finalWarningModal')">
+  <div class="modal" style="max-width:480px;border:1px solid rgba(255,87,87,0.35)">
+    <div class="modal-head">
+      <div>
+        <div class="modal-label" style="color:var(--red)" id="finalWarnLabel">Avviso</div>
+        <div class="modal-title" id="finalWarnTitle"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('finalWarningModal')" aria-label="Chiudi">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:24px" id="finalWarnMsg"></p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn" id="btnFinalConfirm" style="justify-content:center;width:100%;background:var(--red);color:#fff;border-color:var(--red);font-family:'Instrument Sans',sans-serif;font-weight:600"></button>
+        <button class="btn btn-ghost" id="btnCancelFinal" onclick="closeModal('finalWarningModal')" style="justify-content:center;width:100%">Annulla</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <section id="page-talents" class="page">
@@ -675,11 +717,71 @@
   </div>
 </section>
 
+<section id="page-tos" class="page">
+  <div style="max-width:720px;margin:0 auto;padding:60px 32px 100px;position:relative;z-index:1">
+    <div id="tosIT">
+      <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Termini di Servizio</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px">Termini di Servizio e Regolamento</h2>
+      <p style="font-size:12px;color:var(--text3);margin-bottom:36px">Ultimo aggiornamento: aprile 2026</p>
+      <div style="display:flex;flex-direction:column;gap:28px;font-size:14px;color:var(--text2);line-height:1.8;font-weight:300">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Cos'è Crewtiv</div>
+          <p>Crewtiv è una piattaforma per creativi che consente di pubblicare progetti, trovare collaboratori e costruire team. Utilizzando il servizio accetti integralmente i presenti Termini di Servizio.</p>
+        </div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Il Timestamp Digitale</div>
+          <p>Ogni progetto pubblicato su Crewtiv riceve automaticamente un <strong style="color:var(--accent)">timestamp digitale</strong> — ovvero la registrazione di data e ora esatta di pubblicazione, associata al profilo dell'autore.<br><br>Questo costituisce una <strong style="color:var(--text)">prova di anteriorità interna alla piattaforma</strong>: dimostra che quella specifica idea, con quel titolo e quella descrizione, è stata registrata su Crewtiv in quella data.<br><br>⚠️ <strong style="color:var(--text)">Il timestamp Crewtiv NON è un brevetto, NON è una registrazione legale e NON costituisce tutela giuridica ai sensi della normativa sulla proprietà intellettuale.</strong> Non sostituisce in alcun modo la protezione offerta da brevetti, marchi registrati o diritti d'autore formali.</p>
+        </div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Cosa NON è garantito</div>
+          <p>Crewtiv non verifica l'originalità dei progetti pubblicati, non garantisce l'esclusività delle idee e non offre assistenza legale. La piattaforma non si assume responsabilità per eventuali controversie tra utenti riguardanti la paternità di un'idea.</p>
+        </div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Regole della piattaforma</div>
+          <p>È vietato pubblicare contenuti che violino diritti di terzi, contenuti offensivi, illeciti o spam. È vietato pubblicare deliberatamente duplicati di progetti altrui. I progetti ritenuti non originali o in violazione di queste regole potranno essere rimossi senza preavviso. Crewtiv si riserva il diritto di sospendere o chiudere account in caso di violazioni.</p>
+        </div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Contatti</div>
+          <p>Per qualsiasi domanda scrivici a <a href="mailto:hello.crewtiv@gmail.com" style="color:var(--accent)">hello.crewtiv@gmail.com</a></p>
+        </div>
+      </div>
+    </div>
+    <div id="tosEN" style="display:none">
+      <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Terms of Service</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px">Terms of Service & Rules</h2>
+      <p style="font-size:12px;color:var(--text3);margin-bottom:36px">Last updated: April 2026</p>
+      <div style="display:flex;flex-direction:column;gap:28px;font-size:14px;color:var(--text2);line-height:1.8;font-weight:300">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">What is Crewtiv</div>
+          <p>Crewtiv is a platform for creatives that allows you to publish projects, find collaborators, and build teams. By using the service you fully accept these Terms of Service.</p>
+        </div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">The Digital Timestamp</div>
+          <p>Every project published on Crewtiv automatically receives a <strong style="color:var(--accent)">digital timestamp</strong> — the registration of the exact date and time of publication, associated with the author's profile.<br><br>This constitutes <strong style="color:var(--text)">proof of prior art within the platform</strong>: it proves that that specific idea, with that title and description, was registered on Crewtiv on that date.<br><br>⚠️ <strong style="color:var(--text)">The Crewtiv timestamp is NOT a patent, NOT a legal registration and does NOT constitute legal protection under intellectual property law.</strong> It does not replace in any way the protection offered by patents, trademarks or formal copyrights.</p>
+        </div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">What is NOT guaranteed</div>
+          <p>Crewtiv does not verify the originality of published projects, does not guarantee the exclusivity of ideas, and does not offer legal assistance. The platform assumes no responsibility for disputes between users regarding the authorship of an idea.</p>
+        </div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Platform Rules</div>
+          <p>It is forbidden to publish content that infringes third-party rights, offensive, illegal content, or spam. It is forbidden to deliberately publish duplicates of other people's projects. Projects deemed non-original or in violation of these rules may be removed without notice. Crewtiv reserves the right to suspend or close accounts in case of violations.</p>
+        </div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Contact</div>
+          <p>For any questions write to us at <a href="mailto:hello.crewtiv@gmail.com" style="color:var(--accent)">hello.crewtiv@gmail.com</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer style="position:relative;z-index:1;border-top:1px solid var(--border);background:var(--surface);padding:28px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
   <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--text)">Crewtiv<span style="color:var(--accent)">.</span></div>
   <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
     <span onclick="showPage('about')" style="font-size:13px;color:var(--text3);cursor:pointer;transition:color .2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'" id="footerAbout">Chi siamo</span>
     <span onclick="showPage('privacy')" style="font-size:13px;color:var(--text3);cursor:pointer;transition:color .2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'" id="footerPrivacy">Privacy Policy</span>
+    <span onclick="showPage('tos')" style="font-size:13px;color:var(--text3);cursor:pointer;transition:color .2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'" id="footerTos">Termini di Servizio</span>
     <a href="mailto:hello.crewtiv@gmail.com" style="font-size:13px;color:var(--text3);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">hello.crewtiv@gmail.com</a>
   </div>
   <div style="font-size:12px;color:var(--text3)">© 2026 Crewtiv</div>
