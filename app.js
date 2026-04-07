@@ -372,8 +372,8 @@ async function openProjectById(id) {
   currentProject = realProjects.find(p=> String(p.id) === String(id)) || projects.find(p=> String(p.id) === String(id));
   if (!currentProject) return;
   if (!currentUser) {
-    document.getElementById('authSubtitle').textContent = i18n[currentLang].gate_project_msg;
     openAuth('register');
+    document.getElementById('authSubtitle').textContent = i18n[currentLang].gate_project_msg;
     return;
   }
   const p = currentProject;
@@ -1071,8 +1071,8 @@ function renderTalents(list, targetId = 'talentsList', append = false) {
     // FASE 8: Talenti cliccabili
     d.onclick = () => {
       if (!currentUser) {
-        document.getElementById('authSubtitle').textContent = i18n[currentLang].gate_talent_msg;
         openAuth('register');
+        document.getElementById('authSubtitle').textContent = i18n[currentLang].gate_talent_msg;
         return;
       }
       document.getElementById('tModName').textContent = name;
