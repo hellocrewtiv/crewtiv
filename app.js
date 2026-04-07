@@ -53,7 +53,7 @@ function formatProjectFromDB(p, roleMap = {}) {
     desc: p.description || '', tags: p.tags || [],
     views: p.views||0, proposals: p.proposals||0, likes: p.likes||0, collabs: [],
     collab_type: p.collab_type || '', isReal: true, author_id: p.author_id, created_at: p.created_at,
-    cover_image: p.cover_image || null
+    cover_image: p.cover_image || null, project_hash: p.project_hash || null
   };
 }
 
@@ -543,6 +543,7 @@ function printReceipt() {
   if (!p || !p.project_hash) return;
   const t = i18n[currentLang];
   const win = window.open('', '_blank');
+  if (!win) { showToast('⚠️ Abilita i popup per stampare la ricevuta'); return; }
   win.document.write(`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>Ricevuta Crewtiv — ${p.title}</title><style>
     body{font-family:'Georgia',serif;max-width:680px;margin:60px auto;padding:0 32px;color:#111;line-height:1.7}
     .logo{font-family:'Arial Black',sans-serif;font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
@@ -557,7 +558,7 @@ function printReceipt() {
     <div style="font-size:12px;color:#888;margin-bottom:32px">Ricevuta di Registrazione Progetto</div>
     <div class="label">Titolo</div><h1>${p.title}</h1>
     <div class="label">Autore</div><p style="margin:0">${p.author}</p>
-    <div class="label">Categoria</div><p style="margin:0">${p.cat || p.category || '—'}</p>
+    <div class="label">Categoria</div><p style="margin:0">${p.category || '—'}</p>
     <div class="label">Data di pubblicazione</div><p style="margin:0">${p.date}</p>
     <div class="label">Descrizione</div><p style="margin:0">${p.desc}</p>
     <div class="label">Codice Hash SHA-256</div>
