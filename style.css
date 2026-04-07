@@ -711,6 +711,13 @@ nav {
 .empty-state { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 13px; }
 .flex-wrap-gap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 
+/* NOTA CONDIVISA */
+.shared-note-card { background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px; padding: 14px 16px; }
+.shared-note-card.confirmed { border-color: var(--accent-glow); background: rgba(200,255,87,0.04); }
+.shared-note-card.rejected { opacity: 0.45; }
+.note-disclaimer { font-size: 11px; color: var(--text3); line-height: 1.6; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border2); font-weight: 300; }
+.note-pending-badge { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--orange); margin-left: 5px; vertical-align: middle; position: relative; top: -1px; }
+
 /* MOBILE */
 @media (max-width: 768px) {
   nav { padding: 0 16px; }
