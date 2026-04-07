@@ -563,8 +563,8 @@ function printReceipt() {
     <div class="label">Codice Hash SHA-256</div>
     <div class="hash">${p.project_hash}</div>
     <div class="disclaimer">
-      Questo documento attesta la registrazione del progetto sulla piattaforma Crewtiv alla data indicata. Il Codice Hash è la tua prova matematica.<br>
-      Crewtiv non sostituisce un deposito brevettuale ufficiale e non assume responsabilità legale in caso di chiusura del servizio. Conserva questo documento.
+      Questo documento attesta che il progetto è stato pubblicato su Crewtiv alla data indicata. Il Codice Hash certifica l'anteriorità della pubblicazione — non costituisce tutela legale né equivale a un deposito brevettuale.<br>
+      Per proteggere la tua idea rivolgiti a un professionista.
     </div>
   </body></html>`);
   win.document.close();
@@ -1916,8 +1916,8 @@ const i18n = {
     btn_cancel: 'Annulla',
     gate_project_msg: 'Registrati per sbloccare i dettagli, i collaboratori e il Codice Hash che certifica la tua idea.',
     gate_talent_msg: 'Registrati per vedere il profilo completo e contattare questo creativo.',
-    beta_check_label: 'Accetto che Crewtiv è in versione Beta. So che il servizio è sperimentale e che spetta a me scaricare e conservare la mia ricevuta Hash.',
-    legal_check_label: 'Ho capito che Crewtiv non sostituisce un deposito brevettuale ufficiale. In caso di chiusura della piattaforma, la mia tutela dipende dal Codice Hash che ho salvato.',
+    beta_check_label: 'Ho letto e accetto che Crewtiv è in versione Beta. Comprendo che il servizio è sperimentale e potrebbe subire modifiche o interruzioni.',
+    legal_check_label: 'Capisco che pubblicare su Crewtiv registra la mia idea con data e nome tramite un Codice Hash. Questo non è una tutela legale, ma una prova di anteriorità. Per protezione reale devo rivolgermi a un professionista.',
     legal_check_toast: '⚠️ Spunta la casella legale prima di pubblicare.',
   },
   en: {
@@ -2030,8 +2030,8 @@ const i18n = {
     btn_cancel: 'Cancel',
     gate_project_msg: 'Sign up to unlock project details, collaborators and the Hash Certificate that certifies your idea.',
     gate_talent_msg: 'Sign up to view the full profile and contact this creative.',
-    beta_check_label: 'I accept that Crewtiv is in Beta. I understand the service is experimental and I am responsible for downloading and saving my Hash receipt.',
-    legal_check_label: 'I understand that Crewtiv does not replace an official patent filing. If the platform closes, my protection depends on the Hash Certificate I have saved.',
+    beta_check_label: 'I have read and accept that Crewtiv is in Beta. I understand the service is experimental and may undergo changes or interruptions.',
+    legal_check_label: 'I understand that publishing on Crewtiv registers my idea with date and name via a Hash Code. This is not legal protection, but proof of prior art. For real protection I must consult a professional.',
     legal_check_toast: '⚠️ Please check the legal disclaimer before publishing.',
   }
 };
