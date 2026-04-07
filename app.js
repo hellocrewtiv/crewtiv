@@ -101,6 +101,7 @@ let authMode = 'login';
 let _pendingSimilarProject = null;
 let messageSubscription = null; // FASE 9: Realtime subscription
 let notificationSubscription = null;
+let _snProjectId = null, _snOtherId = null, _snOtherName = null, _snProjectTitle = null, _snCurrentNote = null;
 
 // Variabili per Paginazione (FASE 5)
 let currentProjPage = 0;
@@ -1245,7 +1246,14 @@ async function loadUserProfile() {
   document.getElementById('dashProposalsReceived').textContent = countRecv || 0;
   document.getElementById('dashProposalsSent').textContent = countSent || 0;
 
-const { data: props } = await _supabase.from('proposals').select('*, projects(title)').eq('owner_id', currentUser.id).in('status', ['pending', 'accepted']);
+  // NOTA CONDIVISA: badge pending — note in arrivo (sono il ricevente)
+  const { data: _pendingForMe } = await _supabase.from('shared_notes').select('project_id, author_id').eq('status', 'pending').eq('receiver_id', currentUser.id);
+  const _pendingNoteForMe = new Set((_pendingForMe || []).map(n => n.project_id + '_' + n.author_id));
+  // NOTA CONDIVISA: badge pending — note inviate (sono l'autore)
+  const { data: _pendingSentByMe } = await _supabase.from('shared_notes').select('project_id, receiver_id').eq('status', 'pending').eq('author_id', currentUser.id);
+  const _pendingNoteSentByMe = new Set((_pendingSentByMe || []).map(n => n.project_id + '_' + n.receiver_id));
+
+  const { data: props } = await _supabase.from('proposals').select('*, projects(title)').eq('owner_id', currentUser.id).in('status', ['pending', 'accepted']);
   const propList = document.getElementById('proposalList');
   const tProp = i18n[currentLang];
   if(props && props.length > 0) {
@@ -1264,6 +1272,7 @@ const { data: props } = await _supabase.from('proposals').select('*, projects(ti
                   <div style="margin-top:10px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                       <span style="font-size:11px; font-weight:600; color:#57ff85;">${tProp.in_team}</span>
                       <button class="btn btn-accent btn-sm" onclick="openChat('${pr.applicant_id}', '${pr.applicant_name}', '${pr.projects?.id}')">${tProp.open_chat_btn}</button>
+                      <button class="btn btn-ghost btn-sm" onclick="openSharedNote('${pr.project_id}', '${pr.applicant_id}', '${pr.applicant_name}', '${pr.projects?.title || ''}')">📝 Nota${_pendingNoteForMe.has(pr.project_id + '_' + pr.applicant_id) ? '<span class=\'note-pending-badge\'></span>' : (_pendingNoteSentByMe.has(pr.project_id + '_' + pr.applicant_id) ? ' ⏳' : '')}</button>
                       <button class="btn btn-ghost btn-sm" style="color:var(--red); border-color:rgba(255,87,87,0.3);" onclick="updateProposalStatus('${pr.id}', 'terminated', 'Collaboratore rimosso')">${tProp.remove_btn}</button>
                   </div>`}
               </div>
@@ -1290,8 +1299,11 @@ const { data: sentProps } = await _supabase.from('proposals').select('*, project
           if (pr.status === 'pending') {
               actionBtns = `<button class="btn btn-ghost btn-sm" style="margin-top:8px; color:var(--red); border-color:rgba(255,87,87,0.3);" onclick="event.stopPropagation(); updateProposalStatus('${pr.id}', 'withdrawn', 'Candidatura ritirata')">${tSent.withdraw_btn}</button>`;
           } else if (pr.status === 'accepted' && ownerId) {
+              const _noteBadge = projId ? (_pendingNoteForMe.has(projId + '_' + ownerId) ? '<span class="note-pending-badge"></span>' : (_pendingNoteSentByMe.has(projId + '_' + ownerId) ? ' ⏳' : '')) : '';
+              const _noteBtn = projId ? `<button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="event.stopPropagation(); openSharedNote('${projId}', '${ownerId}', '${ownerName}', '${pr.projects?.title || ''}')">📝 Nota${_noteBadge}</button>` : '';
               actionBtns = `
                 <button class="btn btn-accent btn-sm" style="margin-top:8px;" onclick="event.stopPropagation(); openChat('${ownerId}', '${ownerName}', '${projId}')">${tSent.open_chat_btn}</button>
+                ${_noteBtn}
                 <button class="btn btn-ghost btn-sm" style="margin-top:8px; color:var(--red); border-color:rgba(255,87,87,0.3);" onclick="event.stopPropagation(); updateProposalStatus('${pr.id}', 'terminated', 'Collaborazione interrotta')">${tSent.stop_collab_btn}</button>
               `;
           }
@@ -1352,7 +1364,151 @@ const { data: sentProps } = await _supabase.from('proposals').select('*, project
   } else {
       document.getElementById('dashSavedProjectsList').innerHTML = `<div style="color:var(--text3); font-size:13px; padding:14px;">${i18n[currentLang].no_saved}</div>`;
   }
+
+  // NOTA CONDIVISA: Archivio note confermate
+  const { data: _confirmedNotes } = await _supabase
+    .from('shared_notes')
+    .select('*, projects(title)')
+    .eq('status', 'confirmed')
+    .or(`author_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`)
+    .order('confirmed_at', { ascending: false });
+  const _archiveEl = document.getElementById('profileNotesArchive');
+  if (_confirmedNotes && _confirmedNotes.length > 0) {
+    const _otherIds = [...new Set(_confirmedNotes.map(n => n.author_id === currentUser.id ? n.receiver_id : n.author_id).filter(Boolean))];
+    let _profilesMap = {};
+    if (_otherIds.length > 0) {
+      const { data: _otherProfiles } = await _supabase.from('profiles').select('id, full_name').in('id', _otherIds);
+      if (_otherProfiles) _otherProfiles.forEach(p => { _profilesMap[p.id] = p.full_name; });
+    }
+    _archiveEl.innerHTML = _confirmedNotes.map(n => {
+      const _otherId = n.author_id === currentUser.id ? n.receiver_id : n.author_id;
+      const _otherName = sanitize(_profilesMap[_otherId] || 'Utente');
+      const _projTitle = sanitize(n.projects?.title || 'Progetto eliminato');
+      const _confDate = n.confirmed_at ? new Date(n.confirmed_at).toLocaleDateString('it-IT') : '—';
+      return `<div class="shared-note-card confirmed" style="margin-bottom:14px;">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:500;">📋 ${_projTitle} · con ${_otherName}</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;white-space:pre-wrap;">${sanitize(n.content)}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:8px;">Confermata il ${_confDate}</div>
+        <p class="note-disclaimer">⚠️ Nota Bene: Questa "Nota Condivisa" è uno strumento per appuntare privatamente i dettagli della collaborazione. Crewtiv NON è parte di alcuna trattativa, non garantisce l'adempimento delle promesse e declina ogni responsabilità legale o finanziaria. Le dispute vanno risolte privatamente.</p>
+      </div>`;
+    }).join('');
+  } else {
+    _archiveEl.innerHTML = `<div style="color:var(--text3);font-size:13px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;">Nessun promemoria confermato ancora.</div>`;
+  }
 }
+
+// ── NOTA CONDIVISA ─────────────────────────────────────────────────────────
+
+function _showSnView(view) {
+  ['snCreateView','snPendingAuthorView','snPendingReceiverView','snConfirmedView','snRejectedView']
+    .forEach(id => document.getElementById(id).style.display = 'none');
+  if (view) document.getElementById(view).style.display = 'block';
+}
+
+function _renderSnCard(note) {
+  const date = new Date(note.created_at).toLocaleDateString('it-IT');
+  return `<div style="font-size:13px;color:var(--text2);line-height:1.7;white-space:pre-wrap;">${sanitize(note.content)}</div>
+    <div style="font-size:10px;color:var(--text3);margin-top:8px;">Creata il ${date}</div>`;
+}
+
+async function openSharedNote(projectId, otherId, otherName, projectTitle) {
+  _snProjectId = projectId;
+  _snOtherId = otherId;
+  _snOtherName = otherName;
+  _snProjectTitle = projectTitle;
+  _snCurrentNote = null;
+
+  document.getElementById('snModalTitle').textContent = 'Nota con ' + otherName;
+  document.getElementById('snProjectInfo').textContent = projectTitle ? 'Progetto: ' + projectTitle : '';
+  _showSnView(null);
+
+  // Cerca nota attiva (pending o confirmed)
+  const { data: active } = await _supabase.from('shared_notes').select('*')
+    .eq('project_id', projectId)
+    .or(`and(author_id.eq.${currentUser.id},receiver_id.eq.${otherId}),and(author_id.eq.${otherId},receiver_id.eq.${currentUser.id})`)
+    .in('status', ['pending','confirmed'])
+    .order('created_at', { ascending: false }).limit(1);
+
+  let note = active && active.length > 0 ? active[0] : null;
+
+  // Se non c'è nota attiva, cerca l'ultima rifiutata
+  if (!note) {
+    const { data: rejected } = await _supabase.from('shared_notes').select('*')
+      .eq('project_id', projectId)
+      .or(`and(author_id.eq.${currentUser.id},receiver_id.eq.${otherId}),and(author_id.eq.${otherId},receiver_id.eq.${currentUser.id})`)
+      .eq('status', 'rejected')
+      .order('created_at', { ascending: false }).limit(1);
+    note = rejected && rejected.length > 0 ? rejected[0] : null;
+  }
+
+  _snCurrentNote = note;
+
+  if (!note) {
+    document.getElementById('snContent').value = '';
+    _showSnView('snCreateView');
+  } else if (note.status === 'pending') {
+    if (note.author_id === currentUser.id) {
+      document.getElementById('snPendingAuthorCard').innerHTML = _renderSnCard(note);
+      _showSnView('snPendingAuthorView');
+    } else {
+      document.getElementById('snPendingReceiverCard').innerHTML = _renderSnCard(note);
+      _showSnView('snPendingReceiverView');
+    }
+  } else if (note.status === 'confirmed') {
+    document.getElementById('snConfirmedCard').innerHTML = _renderSnCard(note);
+    _showSnView('snConfirmedView');
+  } else if (note.status === 'rejected') {
+    document.getElementById('snRejectedCard').innerHTML = _renderSnCard(note);
+    _showSnView('snRejectedView');
+  }
+
+  const modal = document.getElementById('sharedNoteModal');
+  modal.classList.add('open');
+  trapFocus(modal);
+}
+
+async function submitSharedNote() {
+  const content = document.getElementById('snContent').value.trim();
+  if (!content) return showToast('⚠️ Scrivi qualcosa prima di inviare');
+  if (!_snProjectId || !_snOtherId) return;
+  const { error } = await _supabase.from('shared_notes').insert({
+    project_id: _snProjectId, author_id: currentUser.id,
+    receiver_id: _snOtherId, content: content, status: 'pending'
+  });
+  if (error) return showToast('❌ Errore durante l\'invio');
+  showToast('📝 Promemoria inviato!');
+  closeModal('sharedNoteModal');
+  loadUserProfile();
+}
+
+async function confirmNote() {
+  if (!_snCurrentNote) return;
+  const { error } = await _supabase.from('shared_notes')
+    .update({ status: 'confirmed', confirmed_at: new Date().toISOString() })
+    .eq('id', _snCurrentNote.id);
+  if (error) return showToast('❌ Errore durante la conferma');
+  showToast('✅ Promemoria confermato!');
+  closeModal('sharedNoteModal');
+  loadUserProfile();
+}
+
+async function rejectNote() {
+  if (!_snCurrentNote) return;
+  const { error } = await _supabase.from('shared_notes')
+    .update({ status: 'rejected' })
+    .eq('id', _snCurrentNote.id);
+  if (error) return showToast('❌ Errore durante il rifiuto');
+  showToast('Nota rifiutata.');
+  closeModal('sharedNoteModal');
+  loadUserProfile();
+}
+
+function resetSharedNoteToCreate() {
+  document.getElementById('snContent').value = '';
+  _showSnView('snCreateView');
+}
+
+// ───────────────────────────────────────────────────────────────────────────
 
 async function respondProposal(proposalId, newStatus, name) {
   const { error } = await _supabase.from('proposals').update({ status: newStatus }).eq('id', proposalId);
