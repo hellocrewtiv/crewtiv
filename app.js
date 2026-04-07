@@ -371,6 +371,11 @@ function resetMetaTags() {
 async function openProjectById(id) {
   currentProject = realProjects.find(p=> String(p.id) === String(id)) || projects.find(p=> String(p.id) === String(id));
   if (!currentProject) return;
+  if (!currentUser) {
+    document.getElementById('authSubtitle').textContent = i18n[currentLang].gate_project_msg;
+    openAuth('register');
+    return;
+  }
   const p = currentProject;
   
   // FASE 6: Aggiornamento URL Hash
@@ -525,9 +530,45 @@ async function openProjectById(id) {
     document.getElementById('proposeDemoText').textContent = t.propose_demo;
     document.getElementById('proposeDemoBtn').textContent = t.propose_demo_btn;
   }
+  const printBtn = document.getElementById('mPrintBtn');
+  if (printBtn) printBtn.style.display = (currentUser && p.project_hash) ? 'block' : 'none';
+
   const pModal = document.getElementById('projectModal');
 pModal.classList.add('open');
 trapFocus(pModal);
+}
+
+function printReceipt() {
+  const p = currentProject;
+  if (!p || !p.project_hash) return;
+  const t = i18n[currentLang];
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>Ricevuta Crewtiv — ${p.title}</title><style>
+    body{font-family:'Georgia',serif;max-width:680px;margin:60px auto;padding:0 32px;color:#111;line-height:1.7}
+    .logo{font-family:'Arial Black',sans-serif;font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
+    .logo span{color:#b8ff1a}
+    .label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#888;margin-top:28px;margin-bottom:4px}
+    .hash{font-family:'Courier New',monospace;font-size:13px;background:#f4f4f4;padding:12px;border-radius:6px;word-break:break-all;border-left:3px solid #b8ff1a}
+    .disclaimer{font-size:11px;color:#888;border-top:1px solid #ddd;margin-top:40px;padding-top:16px;line-height:1.6}
+    h1{font-size:22px;margin:8px 0 4px}
+    @media print{body{margin:40px}}
+  </style></head><body>
+    <div class="logo">Crewtiv<span>.</span></div>
+    <div style="font-size:12px;color:#888;margin-bottom:32px">Ricevuta di Registrazione Progetto</div>
+    <div class="label">Titolo</div><h1>${p.title}</h1>
+    <div class="label">Autore</div><p style="margin:0">${p.author}</p>
+    <div class="label">Categoria</div><p style="margin:0">${p.cat || p.category || '—'}</p>
+    <div class="label">Data di pubblicazione</div><p style="margin:0">${p.date}</p>
+    <div class="label">Descrizione</div><p style="margin:0">${p.desc}</p>
+    <div class="label">Codice Hash SHA-256</div>
+    <div class="hash">${p.project_hash}</div>
+    <div class="disclaimer">
+      Questo documento attesta la registrazione del progetto sulla piattaforma Crewtiv alla data indicata. Il Codice Hash è la tua prova matematica.<br>
+      Crewtiv non sostituisce un deposito brevettuale ufficiale e non assume responsabilità legale in caso di chiusura del servizio. Conserva questo documento.
+    </div>
+  </body></html>`);
+  win.document.close();
+  win.print();
 }
 
 let currentReviewRating = 0;
@@ -660,8 +701,15 @@ async function toggleLikeProject(projectId) {
 function openNewProject() {
   if (!currentUser) { openAuth('register'); return; }
   const npModal = document.getElementById('newProjectModal');
+  const legalCheck = document.getElementById('legalProjectCheck');
+  if (legalCheck) { legalCheck.checked = false; document.getElementById('nPublishBtn').disabled = true; }
 npModal.classList.add('open');
 trapFocus(npModal);
+}
+
+function toggleLegalCheck() {
+  const checked = document.getElementById('legalProjectCheck').checked;
+  document.getElementById('nPublishBtn').disabled = !checked;
 }
 
 function _similarityScore(titleA, tagsA, titleB, tagsB) {
@@ -715,6 +763,9 @@ function _openFinalWarningModal(onConfirm) {
 async function _doInsertProject(title, desc, cat, tags, cover_image, name) {
   const btn = document.querySelector('#newProjectModal .btn-accent');
   btn.disabled = true; btn.textContent = 'Pubblicazione…';
+  const hashInput = `${title}|${desc}|${new Date().toISOString()}|${currentUser.id}`;
+  const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(hashInput));
+  const project_hash = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
   const { data, error } = await _supabase.from('projects').insert({
     title, description: desc, category: cat,
     status: document.getElementById('nStatus').value,
@@ -722,18 +773,23 @@ async function _doInsertProject(title, desc, cat, tags, cover_image, name) {
     author_id: currentUser.id,
     author_name: name,
     collab_type: document.getElementById('nCollab').value,
-    cover_image
+    cover_image,
+    project_hash
   }).select().single();
   btn.disabled = false; btn.textContent = 'Pubblica e registra ✦';
   if (error) { showToast('❌ Errore: ' + error.message); return; }
   closeModal('newProjectModal');
   showToast('🎉 Progetto pubblicato e registrato!');
+  // TODO EMAIL: invia a currentUser.email con subject "Ricevuta progetto: ${data.title}"
+  // Body: titolo, descrizione, data (data.created_at), project_hash (data.project_hash), disclaimer non-responsabilità
+  // Implementare via Supabase Edge Function o servizio Resend (resend.com)
   ['nTitle','nDesc','nTags','nImage'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   await loadRealProjects();
 }
 
 async function submitNewProject() {
   if (!currentUser) { openAuth('login'); return; }
+  if (!document.getElementById('legalProjectCheck').checked) { showToast(i18n[currentLang].legal_check_toast); return; }
   const title = document.getElementById('nTitle').value;
   const cat = document.getElementById('nCat').value;
   const desc = document.getElementById('nDesc').value;
@@ -1014,6 +1070,11 @@ function renderTalents(list, targetId = 'talentsList', append = false) {
     
     // FASE 8: Talenti cliccabili
     d.onclick = () => {
+      if (!currentUser) {
+        document.getElementById('authSubtitle').textContent = i18n[currentLang].gate_talent_msg;
+        openAuth('register');
+        return;
+      }
       document.getElementById('tModName').textContent = name;
       const modalAvgHtml = t.avg_rating
         ? `<div style="font-size:13px;margin-top:4px;color:var(--accent);letter-spacing:1px;">${'★'.repeat(Math.round(t.avg_rating))}${'☆'.repeat(5-Math.round(t.avg_rating))} <span style="color:var(--text3);font-size:11px;">${Number(t.avg_rating).toFixed(1)} (${t.review_count} recensioni)</span></div>`
@@ -1519,6 +1580,22 @@ function switchTab(tab) {
   document.getElementById('authError').textContent = '';
   const forgotLink = document.getElementById('forgotPasswordLink');
   if (forgotLink) forgotLink.style.display = tab === 'login' ? 'block' : 'none';
+  const betaWrap = document.getElementById('betaCheckWrapper');
+  if (betaWrap) {
+    if (tab === 'register') {
+      betaWrap.style.display = 'block';
+      document.getElementById('betaAcceptCheck').checked = false;
+      document.getElementById('authSubmitBtn').disabled = true;
+    } else {
+      betaWrap.style.display = 'none';
+      document.getElementById('authSubmitBtn').disabled = false;
+    }
+  }
+}
+
+function toggleBetaCheck() {
+  const checked = document.getElementById('betaAcceptCheck').checked;
+  document.getElementById('authSubmitBtn').disabled = !checked;
 }
 
 async function resetPassword() {
@@ -1596,6 +1673,7 @@ async function submitAuth() {
       onLogin(data.user, true); // <--- Aggiunto flag true
     } else {
       if (!name) { errEl.textContent = 'Inserisci il tuo nome.'; btn.disabled = false; btn.textContent = 'Crea account'; return; }
+      if (!document.getElementById('betaAcceptCheck').checked) { errEl.textContent = '⚠️ Devi accettare la dichiarazione Beta per procedere.'; btn.disabled = false; btn.textContent = 'Crea account'; return; }
       const { data, error } = await _supabase.auth.signUp({ email, password, options: { data: { full_name: name } } });
       if (error) throw error;
       if (data.user && !data.session) {
@@ -1836,6 +1914,11 @@ const i18n = {
     sim_found_label: 'Progetto simile trovato',
     warn_label: 'Avviso',
     btn_cancel: 'Annulla',
+    gate_project_msg: 'Registrati per sbloccare i dettagli, i collaboratori e il Codice Hash che certifica la tua idea.',
+    gate_talent_msg: 'Registrati per vedere il profilo completo e contattare questo creativo.',
+    beta_check_label: 'Accetto che Crewtiv è in versione Beta. So che il servizio è sperimentale e che spetta a me scaricare e conservare la mia ricevuta Hash.',
+    legal_check_label: 'Ho capito che Crewtiv non sostituisce un deposito brevettuale ufficiale. In caso di chiusura della piattaforma, la mia tutela dipende dal Codice Hash che ho salvato.',
+    legal_check_toast: '⚠️ Spunta la casella legale prima di pubblicare.',
   },
   en: {
     nav_home: 'Home', nav_messages: 'Messages', nav_profile: 'Profile', nav_about: 'About',
@@ -1945,6 +2028,11 @@ const i18n = {
     sim_found_label: 'Similar project found',
     warn_label: 'Warning',
     btn_cancel: 'Cancel',
+    gate_project_msg: 'Sign up to unlock project details, collaborators and the Hash Certificate that certifies your idea.',
+    gate_talent_msg: 'Sign up to view the full profile and contact this creative.',
+    beta_check_label: 'I accept that Crewtiv is in Beta. I understand the service is experimental and I am responsible for downloading and saving my Hash receipt.',
+    legal_check_label: 'I understand that Crewtiv does not replace an official patent filing. If the platform closes, my protection depends on the Hash Certificate I have saved.',
+    legal_check_toast: '⚠️ Please check the legal disclaimer before publishing.',
   }
 };
 
