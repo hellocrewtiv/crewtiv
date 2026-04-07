@@ -295,7 +295,10 @@
           <span id="mDate"></span>
         </div>
       </div>
-      <button class="modal-close" onclick="closeModal('projectModal')" aria-label="Chiudi">✕</button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button id="mPrintBtn" style="display:none;font-size:12px;padding:6px 12px;border-radius:8px;background:transparent;border:1px solid var(--border2);color:var(--text2);cursor:pointer;font-family:'Instrument Sans',sans-serif;" onclick="printReceipt()">🖨️ Ricevuta</button>
+        <button class="modal-close" onclick="closeModal('projectModal')" aria-label="Chiudi">✕</button>
+      </div>
     </div>
     <div class="modal-body">
       <p class="modal-desc" id="mDesc"></p>
@@ -395,7 +398,13 @@
         <label class="form-label">URL Immagine di copertina <span style="color:var(--text3);font-weight:300">(opzionale)</span></label>
         <input class="form-input" id="nImage" placeholder="https://esempio.com/immagine.jpg">
       </div>
-      <button class="btn btn-accent" style="margin-top:4px" onclick="submitNewProject()" data-i18n="new_proj_btn">Pubblica e registra ✦</button>
+      <div id="legalCheckWrapper" style="margin-top:12px; margin-bottom:4px;">
+        <label style="font-size:12px; color:var(--text3); display:flex; gap:8px; align-items:flex-start; cursor:pointer; line-height:1.5;">
+          <input type="checkbox" id="legalProjectCheck" style="accent-color:var(--accent); margin-top:2px; flex-shrink:0;" onchange="toggleLegalCheck()">
+          <span id="legalCheckLabel">Ho capito che Crewtiv non sostituisce un deposito brevettuale ufficiale. In caso di chiusura della piattaforma, la mia tutela dipende dal Codice Hash che ho salvato.</span>
+        </label>
+      </div>
+      <button class="btn btn-accent" id="nPublishBtn" style="margin-top:4px" onclick="submitNewProject()" data-i18n="new_proj_btn" disabled>Pubblica e registra ✦</button>
       <div class="form-note" data-i18n="new_proj_note">🔒 Data e autore vengono registrati automaticamente al momento della pubblicazione.</div>
     </div>
   </div>
@@ -560,6 +569,12 @@
     <input class="auth-input" id="authEmail" type="email" placeholder="Email" required>
     <input class="auth-input" id="authPassword" type="password" placeholder="Password" required>
     <input class="auth-input" id="authName" type="text" placeholder="Il tuo nome (es. Marco Ferretti)" style="display:none">
+    <div id="betaCheckWrapper" style="display:none; margin-bottom:8px;">
+      <label style="font-size:12px; color:var(--text3); display:flex; gap:8px; align-items:flex-start; cursor:pointer; line-height:1.5;">
+        <input type="checkbox" id="betaAcceptCheck" style="accent-color:var(--accent); margin-top:2px; flex-shrink:0;" onchange="toggleBetaCheck()">
+        <span id="betaCheckLabel">Accetto che Crewtiv è in versione Beta. So che il servizio è sperimentale e che spetta a me scaricare e conservare la mia ricevuta Hash.</span>
+      </label>
+    </div>
     <button class="auth-btn" id="authSubmitBtn" onclick="submitAuth()">Accedi</button>
     <div class="auth-error" id="authError"></div>
     <div id="forgotPasswordLink" style="text-align:right; margin-top:-4px; margin-bottom:4px;">
@@ -701,6 +716,8 @@
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Conservazione dei dati</div><p>I dati sono conservati fino alla cancellazione dell'account da parte dell'utente.</p></div>
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Diritti dell'utente</div><p>Hai il diritto di accedere, modificare o cancellare i tuoi dati in qualsiasi momento. La gestione diretta dal profilo sarà disponibile a breve. Nel frattempo scrivi a <a href="mailto:hello.crewtiv@gmail.com" style="color:var(--accent)">hello.crewtiv@gmail.com</a></p></div>
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Sede del titolare</div><p>Italia</p></div>
+        <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Limitazione di responsabilità</div><p>Crewtiv è un servizio in versione Beta. Non garantiamo la continuità del servizio. In caso di chiusura della piattaforma, la prova di registrazione di un progetto è il Codice Hash SHA-256 che l'utente ha ricevuto e conservato al momento della pubblicazione. Crewtiv non è responsabile della perdita di dati derivante dalla chiusura del servizio qualora l'utente non abbia provveduto a salvare la propria ricevuta.</p></div>
+        <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Proprietà intellettuale</div><p>Crewtiv certifica esclusivamente la data e l'ora di pubblicazione di un progetto sulla piattaforma. Questo non costituisce tutela della proprietà intellettuale, non equivale a un deposito brevettuale e non garantisce l'esclusività dell'idea. Per ottenere protezione legale sulla proprietà intellettuale è necessario rivolgersi a un ufficio brevetti o a un professionista legale abilitato.</p></div>
       </div>
     </div>
     <div id="privacyEN" style="display:none">
@@ -715,6 +732,8 @@
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Data Retention</div><p>Data is retained until the user deletes their account.</p></div>
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Your Rights</div><p>You have the right to access, modify or delete your data at any time. Direct profile management will be available soon. In the meantime, write to <a href="mailto:hello.crewtiv@gmail.com" style="color:var(--accent)">hello.crewtiv@gmail.com</a></p></div>
         <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Location</div><p>Italy</p></div>
+        <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Limitation of Liability</div><p>Crewtiv is a Beta service. We do not guarantee continuity of the service. In the event of platform closure, proof of project registration is the SHA-256 Hash Certificate that the user received and saved at the time of publication. Crewtiv is not responsible for data loss resulting from service closure if the user has not saved their receipt.</p></div>
+        <div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Intellectual Property</div><p>Crewtiv certifies only the date and time of publication of a project on the platform. This does not constitute intellectual property protection, is not equivalent to a patent filing, and does not guarantee exclusivity of the idea. To obtain legal protection for intellectual property, you must contact a patent office or a qualified legal professional.</p></div>
       </div>
     </div>
   </div>
