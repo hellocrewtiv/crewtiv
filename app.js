@@ -57,6 +57,13 @@ function formatProjectFromDB(p, roleMap = {}) {
   };
 }
 
+function sanitizeUrl(url) {
+  if (!url) return '#';
+  const trimmed = String(url).trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return '#';
+}
+
 function getColorForString(str) {
   if (!str) return COLORS[0];
   let hash = 0;
@@ -99,6 +106,7 @@ let currentUser = null;
 let editingProjectId = null;
 let authMode = 'login';
 let _pendingSimilarProject = null;
+let _viewsTimer = null;
 let messageSubscription = null; // FASE 9: Realtime subscription
 let notificationSubscription = null;
 let _snProjectId = null, _snOtherId = null, _snOtherName = null, _snProjectTitle = null, _snCurrentNote = null;
@@ -180,7 +188,7 @@ function renderProjects(list, containerId='projectsList') {
 async function fetchLikedProjects() {
   if(!currentUser) return;
   const { data } = await _supabase.from('saved_projects').select('project_id').eq('user_id', currentUser.id);
-  if(data) likedProjectIds = data.map(d => d.project_id);
+  if(data) likedProjectIds = data.map(d => String(d.project_id));
 }
 
 // FASE 6: URL Hash on load
@@ -215,7 +223,8 @@ async function loadRealProjects(isAppend = false) {
   if (data.length < PROJ_PER_PAGE) hasMoreProjects = false;
 
   const authorIds = [...new Set(data.map(p => p.author_id).filter(Boolean))];
-  const { data: profilesData } = await _supabase.from('profiles').select('id, primary_role').in('id', authorIds);
+  const { data: profilesData, error: profilesError } = await _supabase.from('profiles').select('id, primary_role').in('id', authorIds);
+  if (profilesError) console.error('Errore caricamento profili autori:', profilesError);
   const roleMap = {};
   (profilesData || []).forEach(pr => { roleMap[pr.id] = pr.primary_role; });
 
@@ -288,7 +297,7 @@ loadRealProjects();
 async function deleteProject(id) {
   if (!currentUser) { showToast('❌ Devi essere loggato.'); return; }
   const project = realProjects.find(p => String(p.id) === String(id));
-  if (project && project.author_id !== currentUser.id) { showToast('❌ Non sei il proprietario di questo progetto.'); return; }
+  if (!project || !project.author_id || project.author_id !== currentUser.id) { showToast('❌ Non sei il proprietario di questo progetto.'); return; }
   if (!confirm('Sei sicuro di voler eliminare questo progetto?')) return;
   await _supabase.from('messages').delete().eq('project_id', id);
   await _supabase.from('proposals').delete().eq('project_id', id);
@@ -317,6 +326,7 @@ function setCategory(cat, el) {
 }
 
 function applyFilters() {
+  if (!document.getElementById('page-home').classList.contains('active')) return;
   filtered = getFilteredProjects(projects);
   renderProjects(filtered, 'projectsList');
   if (realProjects.length > 0) {
@@ -383,12 +393,15 @@ async function openProjectById(id) {
   window.history.pushState(null, '', '#project/' + id);
   updateMetaTags(p);
 
-  // Incrementa views reali in modo sicuro
+  // Incrementa views reali dopo 6 secondi (solo se loggato e non è l'autore)
+  clearTimeout(_viewsTimer);
+  _viewsTimer = null;
   if (p && p.isReal && currentUser && p.author_id !== currentUser.id) {
-    try {
-      _supabase.rpc('increment_views', { project_id: p.id });
-      p.views++; 
-    } catch (e) { console.error("Errore incremento views:", e); }
+    _viewsTimer = setTimeout(async () => {
+      try {
+        await _supabase.rpc('increment_views', { project_id: p.id });
+      } catch (e) { console.error("Errore incremento views:", e); }
+    }, 6000);
   }
 
   const sMap = {open:'s-open',progress:'s-progress',closed:'s-closed',completed:'s-completed'};
@@ -664,36 +677,60 @@ async function toggleLikeProject(projectId) {
   if (likeInFlight) return;
   if(!currentUser) return openAuth('login');
   likeInFlight = true;
+  projectId = String(projectId);
+
   const isLiked = likedProjectIds.includes(projectId);
-  try {
-  
-  // Troviamo il progetto per aggiornare il numero di like in tempo reale nell'interfaccia
   const project = realProjects.find(p => String(p.id) === String(projectId));
-  
+
+  // Aggiornamento ottimistico immediato dell'UI
   if (isLiked) {
-    await _supabase.from('saved_projects').delete().match({ user_id: currentUser.id, project_id: projectId });
     likedProjectIds = likedProjectIds.filter(id => id !== projectId);
-    
-    if(project) {
-        project.likes = Math.max(0, (project.likes || 1) - 1);
-        await _supabase.from('projects').update({ likes: project.likes }).eq('id', projectId);
-    }
-    showToast('Like rimosso');
+    if (project) project.likes = Math.max(0, (project.likes || 1) - 1);
   } else {
-    await _supabase.from('saved_projects').insert({ user_id: currentUser.id, project_id: projectId });
     likedProjectIds.push(projectId);
-    
-    if(project) {
-        project.likes = (project.likes || 0) + 1;
-        await _supabase.from('projects').update({ likes: project.likes }).eq('id', projectId);
-    }
-    showToast('Hai messo Like! ♥️');
+    if (project) project.likes = (project.likes || 0) + 1;
   }
-  
-  if(document.getElementById('page-profile').classList.contains('active')) {
-        loadUserProfile();
+  if (document.getElementById('page-profile').classList.contains('active')) {
+    loadUserProfile();
+  } else {
+    applyFilters();
+  }
+
+  try {
+    const { data, error } = await _supabase.rpc('handle_project_like', {
+      p_user_id: currentUser.id,
+      p_project_id: projectId
+    });
+    if (error) throw error;
+
+    // Aggiorna con il valore reale restituito dal server
+    if (project && data?.likes !== undefined) project.likes = data.likes;
+    if (data?.liked !== undefined) {
+      if (data.liked && !likedProjectIds.includes(projectId)) likedProjectIds.push(projectId);
+      if (!data.liked) likedProjectIds = likedProjectIds.filter(id => id !== projectId);
+    }
+    showToast(data?.liked ? 'Hai messo Like! ♥️' : 'Like rimosso');
+
+    if (document.getElementById('page-profile').classList.contains('active')) {
+      loadUserProfile();
     } else {
-        applyFilters();
+      applyFilters();
+    }
+  } catch (e) {
+    // Rollback: ripristina lo stato precedente in caso di errore
+    console.error("Errore like:", e);
+    if (isLiked) {
+      likedProjectIds.push(projectId);
+      if (project) project.likes = (project.likes || 0) + 1;
+    } else {
+      likedProjectIds = likedProjectIds.filter(id => id !== projectId);
+      if (project) project.likes = Math.max(0, (project.likes || 1) - 1);
+    }
+    showToast('❌ Errore, riprova.');
+    if (document.getElementById('page-profile').classList.contains('active')) {
+      loadUserProfile();
+    } else {
+      applyFilters();
     }
   } finally {
     likeInFlight = false;
@@ -733,7 +770,6 @@ function _similarityScore(titleA, tagsA, titleB, tagsB) {
 
 function _openSimilarityModal(similarProject, onProceed) {
   const t = i18n[currentLang];
-  _pendingSimilarProject = similarProject;
   document.getElementById('simAttentionLabel').textContent = t.sim_attention_label;
   document.getElementById('simModalTitle').textContent = t.similarity_title;
   document.getElementById('simModalMsg').textContent = t.similarity_msg;
@@ -741,7 +777,7 @@ function _openSimilarityModal(similarProject, onProceed) {
   document.getElementById('simProjectTitle').textContent = similarProject.title;
   const btnView = document.getElementById('btnViewExisting');
   btnView.textContent = t.btn_view_existing;
-  btnView.onclick = () => { closeModal('similarityModal'); closeModal('newProjectModal'); openProjectById(_pendingSimilarProject.id); };
+  btnView.onclick = () => { closeModal('similarityModal'); closeModal('newProjectModal'); openProjectById(similarProject.id); };
   const btnProceed = document.getElementById('btnProceedAnyway');
   btnProceed.textContent = t.btn_proceed_anyway;
   btnProceed.onclick = () => { closeModal('similarityModal'); _openFinalWarningModal(onProceed); };
@@ -903,7 +939,8 @@ document.querySelectorAll('.msg-item').forEach(el => {
 
   // FASE 9: Realtime Messages 🟡
   if (messageSubscription) {
-      _supabase.removeChannel(messageSubscription);
+      await _supabase.removeChannel(messageSubscription);
+      messageSubscription = null;
   }
   messageSubscription = _supabase.channel('chat_' + projectId)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `project_id=eq.${projectId}` }, payload => {
@@ -988,6 +1025,7 @@ async function loadTalents(reset = true) {
     return;
   }
 
+  if (error) console.error('Errore caricamento talenti:', error);
   if (data && data.length > 0) {
     if (reset) {
       allTalents = data;
@@ -1035,7 +1073,7 @@ function renderSocialLinks(social_links) {
   ];
   const html = links
     .filter(l => social_links[l.key])
-    .map(l => `<a href="${sanitize(social_links[l.key])}" target="_blank" rel="noopener noreferrer" title="${l.label}" style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:8px; background:var(--card2); color:var(--text2); text-decoration:none; transition:color .2s, background .2s;" onmouseover="this.style.color='var(--accent)';this.style.background='var(--accent-dim)';" onmouseout="this.style.color='var(--text2)';this.style.background='var(--card2)';">${l.icon}</a>`)
+    .map(l => `<a href="${sanitizeUrl(social_links[l.key])}" target="_blank" rel="noopener noreferrer" title="${l.label}" style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:8px; background:var(--surface3); color:var(--text2); text-decoration:none; transition:color .2s, background .2s;" onmouseover="this.style.color='var(--accent)';this.style.background='var(--accent-dim)';" onmouseout="this.style.color='var(--text2)';this.style.background='var(--surface3)';">${l.icon}</a>`)
     .join('');
   return html ? `<div style="display:flex; gap:8px; margin-top:10px;">${html}</div>` : '';
 }
@@ -1138,11 +1176,9 @@ async function applyTalentFilters() {
     return;
   }
 
-  // Ricerca attiva: nasconde "Carica altri" (Bug 2) e interroga tutto il DB (Bug 1)
+  // Ricerca attiva: filtra sul cache locale invece di interrogare il DB ogni volta
   if (btn) btn.style.display = 'none';
-  const { data } = await _supabase.from('profiles').select('*').order('full_name', { ascending: true });
-  const source = (data && data.length > 0) ? data : allTalents;
-  const filtered = source.filter(t => {
+  const filtered = allTalents.filter(t => {
     const name = (t.full_name || '').toLowerCase();
     const title = (t.title || '').toLowerCase();
     const bio = (t.bio || '').toLowerCase();
@@ -1194,7 +1230,8 @@ async function loadUserProfile() {
   document.getElementById('logoutBtn').style.display = 'inline-flex';
 
   let profileData = null;
-  const { data: profileDataResult } = await _supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+  const { data: profileDataResult, error: profileLoadError } = await _supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+  if (profileLoadError) console.error('Errore caricamento profilo utente:', profileLoadError);
   profileData = profileDataResult;
   if (profileData) {
     // FASE 10e: DNA Visivo Ruolo Primario
@@ -1680,6 +1717,8 @@ function closeModal(id) {
     el._trapFocusHandler = null;
   }
   if (id === 'projectModal') {
+    clearTimeout(_viewsTimer);
+    _viewsTimer = null;
     window.history.pushState(null, '', window.location.pathname);
     resetMetaTags();
   }
@@ -1939,6 +1978,9 @@ async function logout() {
   }
   currentUser = null;
   likedProjectIds = [];
+  currentChatUserId = null;
+  currentChatUserName = null;
+  currentChatProjectId = null;
   updateNavForUser(null);
   showToast('Hai effettuato il logout.');
   showPage('home');
@@ -2079,6 +2121,7 @@ const i18n = {
     accordi_title: '📋 I miei Accordi', no_notes: 'Nessun promemoria confermato ancora.',
     nota_btn: '📝 Nota', trending_empty: 'Nessuna tendenza al momento.',
     trending_cat_label: 'Categoria', trending_views_label: 'viste',
+    link_portfolio_label: 'Link & Portfolio',
   },
   en: {
     nav_home: 'Home', nav_messages: 'Messages', nav_profile: 'Profile', nav_about: 'About',
@@ -2196,6 +2239,7 @@ const i18n = {
     accordi_title: '📋 My Agreements', no_notes: 'No confirmed notes yet.',
     nota_btn: '📝 Note', trending_empty: 'No trending projects yet.',
     trending_cat_label: 'Category', trending_views_label: 'views',
+    link_portfolio_label: 'Links & Portfolio',
   }
 };
 
