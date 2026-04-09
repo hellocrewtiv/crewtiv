@@ -139,16 +139,16 @@
 
   <div class="cats-wrap">
     <span class="cats-label">Filtra:</span>
-    <span class="cat-pill active" onclick="setCategory('all',this)">Tutti</span>
-    <span class="cat-pill" onclick="setCategory('game',this)">🎮 Videogiochi</span>
-    <span class="cat-pill" onclick="setCategory('arch',this)">🏛 Architettura</span>
-    <span class="cat-pill" onclick="setCategory('app',this)">📱 App</span>
-    <span class="cat-pill" onclick="setCategory('art',this)">🎨 Arte & Design</span>
-    <span class="cat-pill" onclick="setCategory('music',this)">🎵 Musica</span>
-    <span class="cat-pill" onclick="setCategory('science',this)">🔬 Scienza</span>
-    <span class="cat-pill" onclick="setCategory('film',this)">🎬 Film</span>
-    <span class="cat-pill" onclick="setCategory('hardware',this)">🔧 Hardware</span>
-    <span class="cat-pill" onclick="setCategory('other',this)">✦ Altro</span>
+    <span class="cat-pill active" onclick="setCategory('all',this)" role="button" tabindex="0">Tutti</span>
+    <span class="cat-pill" onclick="setCategory('game',this)" role="button" tabindex="0">🎮 Videogiochi</span>
+    <span class="cat-pill" onclick="setCategory('arch',this)" role="button" tabindex="0">🏛 Architettura</span>
+    <span class="cat-pill" onclick="setCategory('app',this)" role="button" tabindex="0">📱 App</span>
+    <span class="cat-pill" onclick="setCategory('art',this)" role="button" tabindex="0">🎨 Arte & Design</span>
+    <span class="cat-pill" onclick="setCategory('music',this)" role="button" tabindex="0">🎵 Musica</span>
+    <span class="cat-pill" onclick="setCategory('science',this)" role="button" tabindex="0">🔬 Scienza</span>
+    <span class="cat-pill" onclick="setCategory('film',this)" role="button" tabindex="0">🎬 Film</span>
+    <span class="cat-pill" onclick="setCategory('hardware',this)" role="button" tabindex="0">🔧 Hardware</span>
+    <span class="cat-pill" onclick="setCategory('other',this)" role="button" tabindex="0">✦ Altro</span>
   </div>
 
   <div class="main">
@@ -551,7 +551,7 @@
         <input class="form-input" id="epSkills" placeholder="es. Figma, Unity, C#, Fotografia…">
       </div>
       <div class="form-group">
-        <label class="form-label">Link & Portfolio</label>
+        <label class="form-label" data-i18n="link_portfolio_label">Link & Portfolio</label>
         <input class="form-input" id="epLinkedIn" placeholder="LinkedIn (https://linkedin.com/in/…)" type="url">
         <input class="form-input" id="epGitHub" placeholder="GitHub (https://github.com/…)" type="url" style="margin-top:8px">
         <input class="form-input" id="epBehance" placeholder="Behance (https://behance.net/…)" type="url" style="margin-top:8px">
