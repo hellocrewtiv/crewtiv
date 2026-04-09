@@ -78,8 +78,23 @@
       <button class="btn btn-ghost btn-sm" onclick="openAuth('login')" data-i18n="nav_login">Accedi</button>
       <button class="btn btn-accent btn-sm" onclick="openAuth('register')" data-i18n="nav_register">Registrati</button>
     </div>
+    <button class="menu-toggle" id="menu-toggle" aria-label="Apri menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<div class="mobile-nav-wrapper" id="mobile-nav">
+  <div class="mobile-nav-content">
+    <button class="mobile-nav-close" id="menu-close" aria-label="Chiudi menu">&times;</button>
+    <div class="mobile-nav-links">
+      <a class="nav-link" href="#" onclick="showPage('home'); return false;" data-i18n="nav_home">Home</a>
+      <a class="nav-link" href="#" onclick="showPage('messages'); return false;" data-i18n="nav_messages">Messaggi</a>
+      <a class="nav-link" href="#" onclick="showPage('talents'); return false;" data-i18n="nav_talents">Talenti</a>
+      <a class="nav-link" href="#" onclick="showPage('about'); return false;" data-i18n="nav_about">Chi siamo</a>
+    </div>
+  </div>
+</div>
 
 <main id="page-home" class="page">
 
