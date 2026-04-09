@@ -738,3 +738,105 @@ nav {
   .form-row { grid-template-columns: 1fr; }
   .profile-inner { flex-direction: column; align-items: flex-start; }
 }
+
+/* MOBILE MENU — hamburger + drawer */
+
+/* Hamburger: nascosto su desktop */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 36px; height: 36px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+.menu-toggle span {
+  display: block;
+  width: 16px; height: 2px;
+  background: var(--text2);
+  border-radius: 2px;
+  transition: background .2s;
+}
+.menu-toggle:hover span { background: var(--text); }
+
+/* Drawer: nascosto di default */
+.mobile-nav-wrapper {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(10,10,15,0.96);
+  backdrop-filter: blur(16px);
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.mobile-nav-wrapper.active {
+  opacity: 1;
+}
+
+/* Contenuto interno del drawer */
+.mobile-nav-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  position: relative;
+  padding: 24px;
+}
+
+/* Pulsante chiusura × */
+.mobile-nav-close {
+  position: absolute;
+  top: 20px; right: 20px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  font-size: 22px;
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: color .2s, border-color .2s;
+  line-height: 1;
+}
+.mobile-nav-close:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
+
+/* Link del drawer */
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+.mobile-nav-links .nav-link {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text2);
+  padding: 12px 24px;
+  border-radius: 12px;
+  width: 100%;
+  text-align: center;
+  transition: color .2s, background .2s;
+}
+.mobile-nav-links .nav-link:hover,
+.mobile-nav-links .nav-link.active {
+  color: var(--text);
+  background: var(--surface2);
+}
+
+/* Mostra hamburger e nascondi nav-right su mobile */
+@media (max-width: 768px) {
+  .menu-toggle { display: flex; }
+  .nav-right { display: none; }
+  .mobile-nav-wrapper { display: block; pointer-events: none; }
+  .mobile-nav-wrapper.active { pointer-events: all; }
+}
