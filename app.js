@@ -2375,6 +2375,23 @@ showPage(initialPage);
 
 applyLang();
 
+/* MOBILE MENU */
+(function() {
+  const toggle = document.getElementById('menu-toggle');
+  const closeBtn = document.getElementById('menu-close');
+  const nav = document.getElementById('mobile-nav');
+  if (!toggle || !closeBtn || !nav) return;
+
+  function openMenu() { nav.classList.add('active'); document.body.style.overflow = 'hidden'; }
+  function closeMenu() { nav.classList.remove('active'); document.body.style.overflow = ''; }
+
+  toggle.addEventListener('click', openMenu);
+  closeBtn.addEventListener('click', closeMenu);
+  nav.querySelectorAll('.nav-link').forEach(function(link) {
+    link.addEventListener('click', closeMenu);
+  });
+})();
+
 function closeBeta() {
   document.getElementById('betaOverlay').classList.remove('open');
   sessionStorage.setItem('betaSeen', '1');
