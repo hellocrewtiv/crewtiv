@@ -266,7 +266,7 @@ async function loadTrendingSidebar() {
     .limit(4);
     
   if (error || !data || data.length === 0) {
-    listEl.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:8px">Nessuna tendenza al momento.</div>';
+    listEl.innerHTML = `<div style="font-size:12px;color:var(--text3);padding:8px">${i18n[currentLang].trending_empty}</div>`;
     return;
   }
   
@@ -277,7 +277,7 @@ async function loadTrendingSidebar() {
       <div class="trank">0${i+1}</div>
       <div>
         <div class="ttitle">${sanitize(p.title)}</div>
-        <div class="tmeta">${catIcons[p.category] || '✦'} Categoria · ${p.views || 0} viste</div>
+        <div class="tmeta">${catIcons[p.category] || '✦'} ${i18n[currentLang].trending_cat_label} · ${p.views || 0} ${i18n[currentLang].trending_views_label}</div>
       </div>
     </div>
   `).join('');
@@ -1272,7 +1272,7 @@ async function loadUserProfile() {
                   <div style="margin-top:10px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                       <span style="font-size:11px; font-weight:600; color:#57ff85;">${tProp.in_team}</span>
                       <button class="btn btn-accent btn-sm" onclick="openChat('${pr.applicant_id}', '${pr.applicant_name}', '${pr.projects?.id}')">${tProp.open_chat_btn}</button>
-                      <button class="btn btn-ghost btn-sm" onclick="openSharedNote('${pr.project_id}', '${pr.applicant_id}', '${pr.applicant_name}', '${pr.projects?.title || ''}')">📝 Nota${_pendingNoteForMe.has(pr.project_id + '_' + pr.applicant_id) ? '<span class=\'note-pending-badge\'></span>' : (_pendingNoteSentByMe.has(pr.project_id + '_' + pr.applicant_id) ? ' ⏳' : '')}</button>
+                      <button class="btn btn-ghost btn-sm" onclick="openSharedNote('${pr.project_id}', '${pr.applicant_id}', '${pr.applicant_name}', '${pr.projects?.title || ''}')">${i18n[currentLang].nota_btn}${_pendingNoteForMe.has(pr.project_id + '_' + pr.applicant_id) ? '<span class=\'note-pending-badge\'></span>' : (_pendingNoteSentByMe.has(pr.project_id + '_' + pr.applicant_id) ? ' ⏳' : '')}</button>
                       <button class="btn btn-ghost btn-sm" style="color:var(--red); border-color:rgba(255,87,87,0.3);" onclick="updateProposalStatus('${pr.id}', 'terminated', 'Collaboratore rimosso')">${tProp.remove_btn}</button>
                   </div>`}
               </div>
@@ -1300,7 +1300,7 @@ const { data: sentProps } = await _supabase.from('proposals').select('*, project
               actionBtns = `<button class="btn btn-ghost btn-sm" style="margin-top:8px; color:var(--red); border-color:rgba(255,87,87,0.3);" onclick="event.stopPropagation(); updateProposalStatus('${pr.id}', 'withdrawn', 'Candidatura ritirata')">${tSent.withdraw_btn}</button>`;
           } else if (pr.status === 'accepted' && ownerId) {
               const _noteBadge = projId ? (_pendingNoteForMe.has(projId + '_' + ownerId) ? '<span class="note-pending-badge"></span>' : (_pendingNoteSentByMe.has(projId + '_' + ownerId) ? ' ⏳' : '')) : '';
-              const _noteBtn = projId ? `<button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="event.stopPropagation(); openSharedNote('${projId}', '${ownerId}', '${ownerName}', '${pr.projects?.title || ''}')">📝 Nota${_noteBadge}</button>` : '';
+              const _noteBtn = projId ? `<button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="event.stopPropagation(); openSharedNote('${projId}', '${ownerId}', '${ownerName}', '${pr.projects?.title || ''}')">${i18n[currentLang].nota_btn}${_noteBadge}</button>` : '';
               actionBtns = `
                 <button class="btn btn-accent btn-sm" style="margin-top:8px;" onclick="event.stopPropagation(); openChat('${ownerId}', '${ownerName}', '${projId}')">${tSent.open_chat_btn}</button>
                 ${_noteBtn}
@@ -1393,7 +1393,7 @@ const { data: sentProps } = await _supabase.from('proposals').select('*, project
       </div>`;
     }).join('');
   } else {
-    _archiveEl.innerHTML = `<div style="color:var(--text3);font-size:13px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;">Nessun promemoria confermato ancora.</div>`;
+    _archiveEl.innerHTML = `<div style="color:var(--text3);font-size:13px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;">${i18n[currentLang].no_notes}</div>`;
   }
 }
 
@@ -2076,6 +2076,9 @@ const i18n = {
     beta_check_label: 'Ho letto e accetto che Crewtiv è in versione Beta. Comprendo che il servizio è sperimentale e potrebbe subire modifiche o interruzioni.',
     legal_check_label: 'Capisco che pubblicare su Crewtiv registra la mia idea con data e nome tramite un Codice Hash. Questo non è una tutela legale, ma una prova di anteriorità. Per protezione reale devo rivolgermi a un professionista.',
     legal_check_toast: '⚠️ Spunta la casella legale prima di pubblicare.',
+    accordi_title: '📋 I miei Accordi', no_notes: 'Nessun promemoria confermato ancora.',
+    nota_btn: '📝 Nota', trending_empty: 'Nessuna tendenza al momento.',
+    trending_cat_label: 'Categoria', trending_views_label: 'viste',
   },
   en: {
     nav_home: 'Home', nav_messages: 'Messages', nav_profile: 'Profile', nav_about: 'About',
@@ -2190,6 +2193,9 @@ const i18n = {
     beta_check_label: 'I have read and accept that Crewtiv is in Beta. I understand the service is experimental and may undergo changes or interruptions.',
     legal_check_label: 'I understand that publishing on Crewtiv registers my idea with date and name via a Hash Code. This is not legal protection, but proof of prior art. For real protection I must consult a professional.',
     legal_check_toast: '⚠️ Please check the legal disclaimer before publishing.',
+    accordi_title: '📋 My Agreements', no_notes: 'No confirmed notes yet.',
+    nota_btn: '📝 Note', trending_empty: 'No trending projects yet.',
+    trending_cat_label: 'Category', trending_views_label: 'views',
   }
 };
 
