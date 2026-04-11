@@ -382,11 +382,6 @@ function resetMetaTags() {
 async function openProjectById(id) {
   currentProject = realProjects.find(p=> String(p.id) === String(id)) || projects.find(p=> String(p.id) === String(id));
   if (!currentProject) return;
-  if (!currentUser) {
-    openAuth('register');
-    document.getElementById('authSubtitle').textContent = i18n[currentLang].gate_project_msg;
-    return;
-  }
   const p = currentProject;
   
   // FASE 6: Aggiornamento URL Hash
@@ -512,7 +507,7 @@ async function openProjectById(id) {
     demoNotice.style.display = 'none';
     
     if(!currentUser) {
-        proposeForm.innerHTML = `<button class="btn btn-accent" onclick="closeModal('projectModal');openAuth('login')" style="margin-top:10px;">Accedi per proporti →</button>`;
+        proposeForm.innerHTML = `<button class="btn btn-accent" onclick="closeModal('projectModal');openAuth('register')" style="margin-top:10px;">Proponi →</button>`;
         proposeForm.style.display = 'block';
     } else if (p.author_id === currentUser.id) {
         proposeForm.innerHTML = `<div style="color:var(--text3); font-size:12px; margin-top:10px;">Questo è un tuo progetto.</div>`;
