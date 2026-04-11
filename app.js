@@ -1930,12 +1930,18 @@ async function updateNavForUser(user) {
         <div id="navBadge" class="nav-badge" style="display:none;">0</div>
       </div>
     `;
+    const navAvatarMobile = document.getElementById('navAvatarMobile');
+    if (navAvatarMobile) {
+      navAvatarMobile.innerHTML = `<div class="avatar" style="width:32px;height:32px;border-radius:9px;font-size:12px;background:${userColor};color:#0a0a0f">${initials}</div>`;
+    }
     fetchNotifications();
   } else {
     navRight.innerHTML = `
       <button class="btn btn-ghost btn-sm" onclick="openAuth('login')">Accedi</button>
       <button class="btn btn-accent btn-sm" onclick="openAuth('register')">Registrati</button>
     `;
+    const navAvatarMobile = document.getElementById('navAvatarMobile');
+    if (navAvatarMobile) navAvatarMobile.innerHTML = '';
   }
 }
 
