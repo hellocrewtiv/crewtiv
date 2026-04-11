@@ -2006,6 +2006,7 @@ _supabase.auth.getSession().then(({ data: { session } }) => {
       window.history.replaceState(null, '', window.location.pathname);
     }
   } else {
+    updateNavForUser(null);
     showPage(localStorage.getItem('crewtiv_lastPage') || 'home');
   }
 });
