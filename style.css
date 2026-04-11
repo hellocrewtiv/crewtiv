@@ -839,4 +839,5 @@ nav {
   .nav-right { display: none; }
   .mobile-nav-wrapper { display: block; pointer-events: none; }
   .mobile-nav-wrapper.active { pointer-events: all; }
+  #navAvatarMobile { display: flex; align-items: center; }
 }
