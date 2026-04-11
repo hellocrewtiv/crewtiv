@@ -833,11 +833,13 @@ nav {
   background: var(--surface2);
 }
 
+#navAvatarMobile { display: none; }
+
 /* Mostra hamburger e nascondi nav-right su mobile */
 @media (max-width: 768px) {
   .menu-toggle { display: flex; }
   .nav-right { display: none; }
   .mobile-nav-wrapper { display: block; pointer-events: none; }
   .mobile-nav-wrapper.active { pointer-events: all; }
-  #navAvatarMobile { display: flex; align-items: center; }
+  #navAvatarMobile:not(:empty) { display: flex; align-items: center; }
 }
