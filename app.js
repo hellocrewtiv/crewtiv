@@ -1941,7 +1941,10 @@ async function updateNavForUser(user) {
       <button class="btn btn-accent btn-sm" onclick="openAuth('register')">Registrati</button>
     `;
     const navAvatarMobile = document.getElementById('navAvatarMobile');
-    if (navAvatarMobile) navAvatarMobile.innerHTML = '';
+    if (navAvatarMobile) navAvatarMobile.innerHTML = `
+      <button class="btn btn-ghost btn-sm" onclick="openAuth('login')" data-i18n="nav_login">Accedi</button>
+      <button class="btn btn-accent btn-sm" onclick="openAuth('register')" data-i18n="nav_register">Registrati</button>
+    `;
   }
 }
 
